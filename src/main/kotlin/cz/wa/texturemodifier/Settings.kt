@@ -12,7 +12,9 @@ class Settings(
     var outPostfix: String = "",
     var outFormat: String = "png",
     var seamlessDist: Int = 8,
-    var seamlessAlpha: Boolean = false
+    var seamlessAlpha: Boolean = false,
+    var blurRadius: Double = 3.0,
+    var blurRatio: Double = 0.5
 ) {
     companion object {
         const val GUI_BG_COLOR = "gui-bg-color"
@@ -21,6 +23,8 @@ class Settings(
         const val OUT_FORMAT = "out-format"
         const val SEAMLESS_DIST = "seamless-dist"
         const val SEAMLESS_ALPHA = "seamless-alpha"
+        const val BLUR_RADIUS = "blur-radius"
+        const val BLUR_RATIO = "blur-ratio"
 
         fun parseFile(fileName: String): Settings {
             val ret = parseString(File(fileName).readText())
@@ -51,6 +55,12 @@ class Settings(
                 if (entry.key == SEAMLESS_ALPHA) {
                     ret.seamlessAlpha = parseBool(entry)
                 }
+                if (entry.key == BLUR_RADIUS) {
+                    ret.blurRadius = parseDouble(entry)
+                }
+                if (entry.key == BLUR_RATIO) {
+                    ret.blurRatio = parseDouble(entry)
+                }
             }
             if (ret.outPrefix.isEmpty() && ret.outPostfix.isEmpty()) {
                 throw IllegalArgumentException("$OUT_PREFIX and $OUT_POSTFIX must not be both empty")
@@ -67,6 +77,8 @@ class Settings(
             write(sb, OUT_FORMAT, s.outFormat)
             write(sb, SEAMLESS_DIST, s.seamlessDist)
             write(sb, SEAMLESS_ALPHA, s.seamlessAlpha)
+            write(sb, BLUR_RADIUS, s.blurRadius)
+            write(sb, BLUR_RATIO, s.blurRatio)
 
             file.writeText(sb.toString())
         }
@@ -83,6 +95,17 @@ class Settings(
                 return entry.value.toString().toInt()
             } catch (e: Throwable) {
                 throw IllegalArgumentException("Failed to convert ${entry.key} = ${entry.value} to int", e)
+            }
+        }
+
+        private fun parseDouble(entry: MutableMap.MutableEntry<Any, Any>): Double {
+            if (entry.value.toString().isEmpty()) {
+                throw IllegalArgumentException("Empty value for ${entry.key}")
+            }
+            try {
+                return entry.value.toString().toDouble()
+            } catch (e: Throwable) {
+                throw IllegalArgumentException("Failed to convert ${entry.key} = ${entry.value} to double", e)
             }
         }
 

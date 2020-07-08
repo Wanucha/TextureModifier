@@ -2,10 +2,10 @@ package cz.wa.texturemodifier.gui.tabs.seamless
 
 import cz.wa.texturemodifier.command.SeamlessCommand
 import cz.wa.texturemodifier.gui.ContentHolder
+import cz.wa.texturemodifier.gui.utils.GuiUtils
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
-import java.text.NumberFormat
 import javax.swing.*
 
 class SeamlessPanel(val contentHolder: ContentHolder) : JPanel() {
@@ -26,12 +26,13 @@ class SeamlessPanel(val contentHolder: ContentHolder) : JPanel() {
     }
 
     class ToolPanel(val contentHolder: ContentHolder, val canvas: SeamlessViewer) : JPanel() {
-        val distTf = JFormattedTextField(NumberFormat.getNumberInstance())
+        val distTf = GuiUtils.createNumTextField()
         val alphaCb = JCheckBox("Alpha blending")
 
         init {
             maximumSize = Dimension(120, 4096)
 
+            // distance
             val p1 = JPanel(FlowLayout())
 
             p1.add(JLabel("Distance PX"))
@@ -42,9 +43,11 @@ class SeamlessPanel(val contentHolder: ContentHolder) : JPanel() {
 
             add(p1)
 
+            // alpha
             alphaCb.isSelected = contentHolder.settings.seamlessAlpha
             add(alphaCb)
 
+            // apply
             val applyB = JButton("Apply")
             add(applyB)
             applyB.addActionListener{

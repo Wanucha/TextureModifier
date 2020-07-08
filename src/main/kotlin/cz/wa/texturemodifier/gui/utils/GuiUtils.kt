@@ -1,6 +1,9 @@
 package cz.wa.texturemodifier.gui.utils
 
 import java.awt.Component
+import java.text.NumberFormat
+import java.util.*
+import javax.swing.JFormattedTextField
 import javax.swing.JOptionPane
 
 object GuiUtils {
@@ -16,4 +19,6 @@ object GuiUtils {
             showError(parent, e)
         }
     }
+
+    fun createNumTextField() = JFormattedTextField(NumberFormat.getInstance(Locale.US))
 }

@@ -6,6 +6,9 @@ import cz.wa.tilepalleteresize.Settings
 import java.awt.image.BufferedImage
 import kotlin.random.Random
 
+/**
+ * Copies side pixels to oposite edge with ratio.
+ */
 class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
     override fun execute(image: BufferedImage): BufferedImage {
         if (settings.seamlessDist <= 0) {
