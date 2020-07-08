@@ -1,0 +1,1 @@
+copy build\libs\TextureModifier-1.0-SNAPSHOT.jar TextureModifier.jar

@@ -1,0 +1,37 @@
+.gradle
+/build/
+*.log*
+/public/
+/gradle/
+*.jar
+/img/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+/out/
+!.idea/codeStyles/
+/.idea/codeStyles/Project.xml
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+/src/main/resources/static/
+
+### VS Code ###
+/bin/
+.vscode
