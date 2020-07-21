@@ -1,5 +1,6 @@
 package cz.wa.texturemodifier
 
+import cz.wa.texturemodifier.math.ColorUtils
 import java.awt.Color
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -14,7 +15,13 @@ class Settings(
     var seamlessDist: Int = 8,
     var seamlessAlpha: Boolean = false,
     var blurRadius: Double = 3.0,
-    var blurRatio: Double = 0.5
+    var blurRatio: Double = 0.5,
+    var pixelateScale: Int = 4,
+    var pixelateColors: Int = 12,
+    var pixelateScaleType: ScaleType = ScaleType.NEAREST,
+    var pixelateScaleColorTolerance: Int = 5,
+    var pixelateIgnoreBgColor: Boolean = false,
+    var pixelateBgColor: Color = Color.BLACK
 ) {
     companion object {
         const val GUI_BG_COLOR = "gui-bg-color"
@@ -25,6 +32,12 @@ class Settings(
         const val SEAMLESS_ALPHA = "seamless-alpha"
         const val BLUR_RADIUS = "blur-radius"
         const val BLUR_RATIO = "blur-ratio"
+        const val PIXELATE_SCALE = "pixelate-scale"
+        const val PIXELATE_COLORS = "pixelate-colors"
+        const val PIXELATE_SCALE_TYPE = "pixelate-scale-type"
+        const val PIXELATE_SCALE_COLOR_TOLERANCE = "pixelate-scale-color-tolerance"
+        const val PIXELATE_IGNORE_BG_COLOR = "pixelate-ignore-bg-color"
+        const val PIXELATE_BG_COLOR = "pixelate-bg-color"
 
         fun parseFile(fileName: String): Settings {
             val ret = parseString(File(fileName).readText())
@@ -61,6 +74,24 @@ class Settings(
                 if (entry.key == BLUR_RATIO) {
                     ret.blurRatio = parseDouble(entry)
                 }
+                if (entry.key == PIXELATE_SCALE) {
+                    ret.pixelateScale = parseInt(entry)
+                }
+                if (entry.key == PIXELATE_COLORS) {
+                    ret.pixelateColors = parseInt(entry)
+                }
+                if (entry.key == PIXELATE_SCALE_TYPE) {
+                    ret.pixelateScaleType = parseEnum(entry, ScaleType::class.java)
+                }
+                if (entry.key == PIXELATE_SCALE_COLOR_TOLERANCE) {
+                    ret.pixelateScaleColorTolerance = parseInt(entry)
+                }
+                if (entry.key == PIXELATE_IGNORE_BG_COLOR) {
+                    ret.pixelateIgnoreBgColor= parseBool(entry)
+                }
+                if (entry.key == PIXELATE_BG_COLOR) {
+                    ret.pixelateBgColor = parseColor(entry)
+                }
             }
             if (ret.outPrefix.isEmpty() && ret.outPostfix.isEmpty()) {
                 throw IllegalArgumentException("$OUT_PREFIX and $OUT_POSTFIX must not be both empty")
@@ -71,7 +102,7 @@ class Settings(
         fun save(s: Settings, file: File) {
             val sb = StringBuilder()
 
-            write(sb, GUI_BG_COLOR, colorToString(s.guiBgColor))
+            write(sb, GUI_BG_COLOR, ColorUtils.toString(s.guiBgColor))
             write(sb, OUT_PREFIX, s.outPrefix)
             write(sb, OUT_POSTFIX, s.outPostfix)
             write(sb, OUT_FORMAT, s.outFormat)
@@ -79,6 +110,12 @@ class Settings(
             write(sb, SEAMLESS_ALPHA, s.seamlessAlpha)
             write(sb, BLUR_RADIUS, s.blurRadius)
             write(sb, BLUR_RATIO, s.blurRatio)
+            write(sb, PIXELATE_SCALE, s.pixelateScale)
+            write(sb, PIXELATE_COLORS, s.pixelateColors)
+            write(sb, PIXELATE_SCALE_TYPE, s.pixelateScaleType)
+            write(sb, PIXELATE_SCALE_COLOR_TOLERANCE, s.pixelateScaleColorTolerance)
+            write(sb, PIXELATE_IGNORE_BG_COLOR, s.pixelateIgnoreBgColor)
+            write(sb, PIXELATE_BG_COLOR, s.pixelateBgColor)
 
             file.writeText(sb.toString())
         }
@@ -118,12 +155,11 @@ class Settings(
         }
 
         private fun parseColor(entry: MutableMap.MutableEntry<Any, Any>): Color {
-            return Color(Integer.parseInt(entry.value.toString().replaceFirst("#", ""), 16))
+            return ColorUtils.parse(entry.value.toString())
         }
 
-        private fun colorToString(c: Color): String {
-            // TODO fix format when 0
-            return "#${c.red.toString(16)}${c.green.toString(16)}${c.blue.toString(16)}"
+        private fun <E: Enum<E>> parseEnum(entry: MutableMap.MutableEntry<Any, Any>, enumClass: Class<E>): E {
+            return java.lang.Enum.valueOf(enumClass, entry.value.toString());
         }
     }
 }

@@ -1,10 +1,10 @@
 package cz.wa.texturemodifier.gui.utils
 
 import java.awt.Component
+import java.awt.FlowLayout
 import java.text.NumberFormat
 import java.util.*
-import javax.swing.JFormattedTextField
-import javax.swing.JOptionPane
+import javax.swing.*
 
 object GuiUtils {
     fun showError(parent: Component, content: Any) {
@@ -21,4 +21,13 @@ object GuiUtils {
     }
 
     fun createNumTextField() = JFormattedTextField(NumberFormat.getInstance(Locale.US))
+
+    fun createValuePanel(label: String?, component: JComponent): JPanel {
+        val ret = JPanel(FlowLayout())
+        if (label != null) {
+            ret.add(JLabel(label))
+        }
+        ret.add(component)
+        return ret
+    }
 }

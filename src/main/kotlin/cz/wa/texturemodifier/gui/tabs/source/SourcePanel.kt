@@ -31,6 +31,7 @@ class SourcePanel(val contentHolder: ContentHolder) : JPanel() {
         init {
             add(labelW)
             add(labelH)
+            updateSize(File(""))
 
             val fol = object : MainFrame.FileOpenListener {
                 override fun fileOpened(file: File) {

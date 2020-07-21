@@ -3,6 +3,7 @@ package cz.wa.texturemodifier.gui
 import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.TextureModifierMain
 import cz.wa.texturemodifier.gui.tabs.blur.BlurPanel
+import cz.wa.texturemodifier.gui.tabs.blur.PixelatePanel
 import cz.wa.texturemodifier.gui.tabs.propertieseditor.PropertiesEditor
 import cz.wa.texturemodifier.gui.tabs.seamless.SeamlessPanel
 import cz.wa.texturemodifier.gui.tabs.source.SourcePanel
@@ -124,7 +125,9 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         tabs.addTab("Source image", SourcePanel(contentHolder))
         tabs.addTab("Seamless", SeamlessPanel(contentHolder))
         tabs.addTab("Blur", BlurPanel(contentHolder))
+        tabs.addTab("Pixelate", PixelatePanel(contentHolder))
         tabs.addTab("Properties", PropertiesEditor(contentHolder))
+        // TODO display each tab
     }
 
     fun addImageOpenListener(l: FileOpenListener) {
