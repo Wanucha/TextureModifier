@@ -1,7 +1,6 @@
 package cz.wa.texturemodifier
 
 import cz.wa.texturemodifier.gui.MainFrame
-import cz.wa.tilepalleteresize.Settings
 
 class TextureModifierMain {
 

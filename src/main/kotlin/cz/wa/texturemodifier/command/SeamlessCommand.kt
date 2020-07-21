@@ -1,8 +1,8 @@
 package cz.wa.texturemodifier.command
 
+import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.math.ColorUtils
-import cz.wa.tilepalleteresize.Settings
 import java.awt.image.BufferedImage
 import kotlin.random.Random
 

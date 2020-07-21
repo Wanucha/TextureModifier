@@ -1,6 +1,6 @@
 package cz.wa.texturemodifier.gui
 
-import cz.wa.tilepalleteresize.Settings
+import cz.wa.texturemodifier.Settings
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO

@@ -1,6 +1,6 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.tilepalleteresize.Settings
+import cz.wa.texturemodifier.Settings
 import java.awt.Color
 
 abstract class AbstractCommand(val settings: Settings) : Command {

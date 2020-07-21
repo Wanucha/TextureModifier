@@ -1,4 +1,4 @@
-package cz.wa.tilepalleteresize
+package cz.wa.texturemodifier
 
 import java.awt.Color
 import java.io.ByteArrayInputStream

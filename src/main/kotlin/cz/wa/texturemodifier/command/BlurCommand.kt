@@ -1,9 +1,9 @@
 package cz.wa.texturemodifier.command
 
+import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.utils.MathUtils
 import cz.wa.texturemodifier.image.ColorF
 import cz.wa.texturemodifier.image.TextureF
-import cz.wa.tilepalleteresize.Settings
 import java.awt.image.BufferedImage
 import kotlin.math.roundToInt
 

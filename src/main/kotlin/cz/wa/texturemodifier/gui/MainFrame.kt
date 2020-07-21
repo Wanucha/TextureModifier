@@ -1,5 +1,6 @@
 package cz.wa.texturemodifier.gui
 
+import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.TextureModifierMain
 import cz.wa.texturemodifier.gui.tabs.blur.BlurPanel
 import cz.wa.texturemodifier.gui.tabs.propertieseditor.PropertiesEditor
@@ -8,7 +9,6 @@ import cz.wa.texturemodifier.gui.tabs.source.SourcePanel
 import cz.wa.texturemodifier.gui.utils.ColorSlider
 import cz.wa.texturemodifier.gui.utils.ConfirmFileChooser
 import cz.wa.texturemodifier.gui.utils.GuiUtils
-import cz.wa.tilepalleteresize.Settings
 import java.awt.BorderLayout
 import java.awt.Rectangle
 import java.awt.Toolkit
@@ -35,7 +35,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
     init {
         instance = this
-        title = "Tile pallete resize v${TextureModifierMain.VERSION}"
+        title = "Texture modifier v${TextureModifierMain.VERSION}"
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 
         if (files is MutableList) {
@@ -53,11 +53,11 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
     private fun initComponents() {
         // Menu
-        jMenuBar = menu;
+        jMenuBar = menu
 
         // image
-        val imageMenu = JMenu("Image");
-        menu.add(imageMenu);
+        val imageMenu = JMenu("Image")
+        menu.add(imageMenu)
 
         val imageFile = if (contentHolder.files.isEmpty()) contentHolder.settings.file
             ?: contentHolder.sourceFile else contentHolder.sourceFile
@@ -149,6 +149,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
             contentHolder.files.add("");
         }
         contentHolder.files[0] = file.absolutePath
+        imageSaveChooser.selectedFile = file
         tabs.selectedComponent.paint(tabs.selectedComponent.graphics)
         SwingUtilities.invokeLater(Runnable {
             for (l in imageOpenListeners) {
