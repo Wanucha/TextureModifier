@@ -127,7 +127,20 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         tabs.addTab("Blur", BlurPanel(contentHolder))
         tabs.addTab("Pixelate", PixelatePanel(contentHolder))
         tabs.addTab("Properties", PropertiesEditor(contentHolder))
-        // TODO display each tab
+
+        // select each tab
+        tabs.selectedIndex = tabs.tabCount - 1
+        showPrevTab()
+    }
+
+    private fun showPrevTab() {
+        if (tabs.selectedIndex == 0) {
+            return
+        }
+        SwingUtilities.invokeLater {
+            tabs.selectedIndex--
+            showPrevTab()
+        }
     }
 
     fun addImageOpenListener(l: FileOpenListener) {
