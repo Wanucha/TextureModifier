@@ -1,7 +1,7 @@
 package cz.wa.texturemodifier.gui.tabs.blur
 
 import cz.wa.texturemodifier.ScaleType
-import cz.wa.texturemodifier.command.BlurCommand
+import cz.wa.texturemodifier.command.PixelateCommand
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import cz.wa.texturemodifier.math.ColorUtils
@@ -81,7 +81,7 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
             contentHolder.settings.pixelateScaleColorTolerance = (toleranceTf.value as Number).toInt()
             contentHolder.settings.pixelateIgnoreBgColor = ignoreBgCb.isSelected
             contentHolder.settings.pixelateBgColor = ColorUtils.parse(bgColorTf.text)
-            contentHolder.outputImage = BlurCommand(contentHolder.settings).execute(contentHolder.sourceImage!!)
+            contentHolder.outputImage = PixelateCommand(contentHolder.settings).execute(contentHolder.sourceImage!!)
             canvas.refresh()
         }
     }

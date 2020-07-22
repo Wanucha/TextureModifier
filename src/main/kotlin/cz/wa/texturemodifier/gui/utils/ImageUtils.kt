@@ -23,7 +23,15 @@ class ImageUtils {
             return (img.getRaster().getDataBuffer() as DataBufferInt).data
         }
 
-        fun convertToIntBuffer(img: BufferedImage): BufferedImage {
+        fun getImageWithIntBuffer(img: BufferedImage) : BufferedImage {
+            if (img.raster.dataBuffer is DataBufferInt) {
+                return img
+            } else {
+                return ImageUtils.convertToIntBuffer(img)
+            }
+        }
+
+        private fun convertToIntBuffer(img: BufferedImage): BufferedImage {
             val ret = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
             val outData = (ret.raster.dataBuffer as DataBufferInt).data
             val data = (img.raster.dataBuffer as DataBufferByte).data

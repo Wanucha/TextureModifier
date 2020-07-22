@@ -3,7 +3,6 @@ package cz.wa.texturemodifier.image
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.math.Vec2i
 import java.awt.image.BufferedImage
-import java.awt.image.DataBufferInt
 
 /***
  * Creates new texture made of ColorF pixels from existing image.
@@ -41,15 +40,5 @@ class TextureF(val width: Int, val height: Int) {
             }
         }
         return ret
-    }
-
-    companion object {
-        fun createTexture(image: BufferedImage) : TextureF {
-            var img = image
-            if (!(img.raster.dataBuffer is DataBufferInt)) {
-                img = ImageUtils.convertToIntBuffer(img)
-            }
-            return TextureF(Texture(img))
-        }
     }
 }

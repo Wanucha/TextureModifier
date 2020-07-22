@@ -3,6 +3,7 @@ package cz.wa.texturemodifier.command
 import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.utils.MathUtils
 import cz.wa.texturemodifier.image.ColorF
+import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.image.TextureF
 import java.awt.image.BufferedImage
 import kotlin.math.roundToInt
@@ -18,7 +19,7 @@ class BlurCommand(settings: Settings) : AbstractCommand(settings) {
         check(settings.blurRatio > 0 && settings.blurRatio <= 1) { throw IllegalArgumentException("blurRatio must be > 0 and <= 1") }
 
         val core = generateCore(settings.blurRadius)
-        val orig = TextureF.createTexture(image)
+        val orig = TextureF(Texture(image))
         var tmp = TextureF(orig)
         val blured = TextureF(tmp.width, tmp.height)
 
