@@ -6,6 +6,8 @@ import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
 import java.awt.image.BufferedImage
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -56,7 +58,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
                 if (!settings.pixelateIgnoreBgColor) {
                     c = roundColor(inTex.getPoint(middle(px), middle(py)))
                 } else {
-                    // TODO
+                    // TODO find first not BG
                     c = roundColor(inTex.getPoint(middle(px), middle(py)))
                 }
             }
@@ -69,13 +71,37 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
 
     private fun findMostColor(inTex: Texture, px: IntRange, py: IntRange): Int {
         val colors = settings.pixelateColors
+        val bgColor = settings.pixelateBgColor.rgb
+        // count colors
         val counts = IntArray(colors * colors * colors)
         for (y in py) {
             for (x in px) {
-                // TODO
+                val c = inTex.getPoint(x, y)
+                if (settings.pixelateIgnoreBgColor && c == bgColor) {
+                    // ignore bg
+                    continue
+                }
+                for (ci in getColorIndexRange(c)) {
+                    counts[ci]++
+                }
             }
         }
-        return 0
+        // get the most
+        var maxI = 0
+        var maxC = 0
+        for (i in 0 until counts.size) {
+            val c = counts[i]
+            if (c > maxC) {
+                maxC = c
+                maxI = i
+            }
+        }
+        if (maxC == 0) {
+            // only bg
+            return settings.pixelateBgColor.rgb
+        }
+
+        return unindexColor(maxI)
     }
 
     private fun middle(r: IntRange) = (r.first + r.endInclusive) / 2
@@ -92,4 +118,48 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
     } else {
         (a * (settings.pixelateColors / 256.0)).toInt() * 255 / (settings.pixelateColors - 1)
     }
+
+    private fun getColorIndexRange(c: Int): List<Int> {
+        val r = getColorIndexChannel(ColorUtils.getRed(c))
+        val g = getColorIndexChannel(ColorUtils.getGreen(c))
+        val b = getColorIndexChannel(ColorUtils.getBlue(c))
+        val tol = getColorIndexChannel(settings.pixelateScaleColorTolerance)
+        if (tol == 0) {
+            return listOf(getColorIndex(r, g, b))
+        }
+
+        val ret = ArrayList<Int>()
+        for (ri in getColorRange(r, tol)) {
+            for (gi in getColorRange(g, tol)) {
+                for (bi in getColorRange(b, tol)) {
+                    ret.add(getColorIndex(ri, gi, bi))
+                }
+            }
+        }
+        return ret
+    }
+
+    private fun getColorRange(c: Int, tol: Int) : IntRange {
+        return IntRange(max(c - tol, 0), min(c + tol, settings.pixelateColors - 1))
+    }
+
+    private fun unindexColor(c: Int): Int {
+        val r = c % settings.pixelateColors
+        val g = (c / settings.pixelateColors) % settings.pixelateColors
+        val b = c / (settings.pixelateColors * settings.pixelateColors)
+        val m = 255 / (settings.pixelateColors - 1)
+        return ColorUtils.fromRGB(r * m, g * m, b * m)
+    }
+
+    private fun getColorIndex(c: Int): Int {
+        val r = getColorIndexChannel(ColorUtils.getRed(c))
+        val g = getColorIndexChannel(ColorUtils.getGreen(c))
+        val b = getColorIndexChannel(ColorUtils.getBlue(c))
+        return getColorIndex(r, g, b)
+    }
+
+    private fun getColorIndex(r: Int, g: Int, b: Int) =
+        r + g * settings.pixelateColors + b * settings.pixelateColors * settings.pixelateColors
+
+    private fun getColorIndexChannel(a: Int) = (a * (settings.pixelateColors / 256.0)).toInt()
 }

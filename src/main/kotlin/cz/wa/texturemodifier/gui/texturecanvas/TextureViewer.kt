@@ -9,7 +9,6 @@ import cz.wa.texturemodifier.math.Vec2i
 import java.awt.*
 import java.awt.event.*
 import java.awt.image.BufferedImage
-import java.io.File
 import kotlin.math.roundToInt
 
 /**
@@ -53,13 +52,6 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
 
         minimumSize = Dimension(16, 16)
         maximumSize = Dimension(4096, 4096)
-
-        val fol = object: MainFrame.FileOpenListener {
-            override fun fileOpened(file: File) {
-                refresh()
-            }
-        }
-        MainFrame.instance!!.addImageOpenListener(fol)
     }
 
     private fun paintComponent(g: Graphics) {
