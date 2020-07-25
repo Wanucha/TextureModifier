@@ -27,10 +27,10 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
     }
 
     class ToolPanel(val contentHolder: ContentHolder, val canvas: PixelateViewer) : JPanel() {
-        val scaleTf = GuiUtils.createNumTextField()
-        val colorsTf = GuiUtils.createNumTextField()
+        val scaleTf = JTextField()
+        val colorsTf = JTextField()
         val typeCb = JComboBox<ScaleType>(ScaleType.values())
-        val toleranceTf = GuiUtils.createNumTextField()
+        val toleranceTf = JTextField()
         val ignoreBgCb = JCheckBox("Ignore BG color")
         val bgColorTf = JTextField("#000000")
 
@@ -38,12 +38,12 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
             maximumSize = Dimension(270, 4096)
 
             // scale
-            scaleTf.value = contentHolder.settings.pixelateScale
+            scaleTf.text = contentHolder.settings.pixelateScale.toString()
             scaleTf.columns = 2
             add(GuiUtils.createValuePanel("Scale down", scaleTf))
 
             // colors
-            colorsTf.value = contentHolder.settings.pixelateColors
+            colorsTf.text = contentHolder.settings.pixelateColors.toString()
             colorsTf.columns = 3
             add(GuiUtils.createValuePanel("Colors per channel", colorsTf))
 
@@ -53,7 +53,7 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
             add(GuiUtils.createValuePanel("Colors per channel", typeCb))
 
             // tolerance
-            toleranceTf.value = contentHolder.settings.pixelateScaleColorTolerance
+            toleranceTf.text = contentHolder.settings.pixelateScaleColorTolerance.toString()
             toleranceTf.columns = 3
             add(GuiUtils.createValuePanel("Scale color tolerance", toleranceTf))
 
@@ -69,16 +69,18 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
             // apply
             val applyB = JButton("Apply")
             add(applyB)
-            applyB.addActionListener{
-                apply()
+            applyB.addActionListener {
+                GuiUtils.runCatch(this, Runnable {
+                    apply()
+                })
             }
         }
 
         private fun apply() {
-            contentHolder.settings.pixelateScale = (scaleTf.value as Number).toInt()
-            contentHolder.settings.pixelateColors = (colorsTf.value as Number).toInt()
+            contentHolder.settings.pixelateScale = scaleTf.text.toInt()
+            contentHolder.settings.pixelateColors = colorsTf.text.toInt()
             contentHolder.settings.pixelateScaleType = typeCb.selectedItem as ScaleType
-            contentHolder.settings.pixelateScaleColorTolerance = (toleranceTf.value as Number).toInt()
+            contentHolder.settings.pixelateScaleColorTolerance = toleranceTf.text.toInt()
             contentHolder.settings.pixelateIgnoreBgColor = ignoreBgCb.isSelected
             contentHolder.settings.pixelateBgColor = ColorUtils.parse(bgColorTf.text)
             contentHolder.outputImage = PixelateCommand(contentHolder.settings).execute(contentHolder.sourceImage!!)

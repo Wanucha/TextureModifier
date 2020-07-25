@@ -32,6 +32,10 @@ object ColorUtils {
 
     fun getAlpha(c: Int) = c shr 24 and 0xFF
 
+    fun toString(c: Int): String {
+        return toString(Color(c))
+    }
+
     fun toString(c: Color): String {
         return "#${c.red.toString(16).padStart(2, '0')}" +
                 "${c.green.toString(16).padStart(2, '0')}" +

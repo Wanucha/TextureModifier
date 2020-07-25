@@ -26,7 +26,7 @@ class SeamlessPanel(val contentHolder: ContentHolder) : JPanel() {
     }
 
     class ToolPanel(val contentHolder: ContentHolder, val canvas: SeamlessViewer) : JPanel() {
-        val distTf = GuiUtils.createNumTextField()
+        val distTf = JTextField()
         val alphaCb = JCheckBox("Alpha blending")
 
         init {
@@ -37,7 +37,7 @@ class SeamlessPanel(val contentHolder: ContentHolder) : JPanel() {
 
             p1.add(JLabel("Distance PX"))
 
-            distTf.value = contentHolder.settings.seamlessDist
+            distTf.text = contentHolder.settings.seamlessDist.toString()
             distTf.columns = 4
             p1.add(distTf)
 
@@ -50,13 +50,15 @@ class SeamlessPanel(val contentHolder: ContentHolder) : JPanel() {
             // apply
             val applyB = JButton("Apply")
             add(applyB)
-            applyB.addActionListener{
-                apply()
+            applyB.addActionListener {
+                GuiUtils.runCatch(this, Runnable {
+                    apply()
+                })
             }
         }
 
         private fun apply() {
-            contentHolder.settings.seamlessDist = (distTf.value as Number).toInt()
+            contentHolder.settings.seamlessDist = distTf.text.toInt()
             contentHolder.settings.seamlessAlpha = alphaCb.isSelected
             contentHolder.outputImage = SeamlessCommand(contentHolder.settings).execute(contentHolder.sourceImage!!)
             canvas.refresh()

@@ -8,7 +8,7 @@ import java.io.File
 /**
  * Displays original texture
  */
-class SourceViewer(contentHolder: ContentHolder, val toolPanel: SourcePanel.ToolPanel) : TextureViewer(contentHolder) {
+class SourceViewer(contentHolder: ContentHolder) : TextureViewer(contentHolder) {
     init {
         val fol = object: MainFrame.FileOpenListener {
             override fun fileOpened(file: File) {

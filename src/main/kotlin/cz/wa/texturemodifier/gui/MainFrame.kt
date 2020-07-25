@@ -13,6 +13,7 @@ import cz.wa.texturemodifier.gui.utils.GuiUtils
 import java.awt.BorderLayout
 import java.awt.Rectangle
 import java.awt.Toolkit
+import java.awt.event.KeyEvent
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.*
@@ -63,18 +64,21 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         val imageFile = if (contentHolder.files.isEmpty()) contentHolder.settings.file
             ?: contentHolder.sourceFile else contentHolder.sourceFile
 
-        val openImage = JMenuItem("Open (Ctrl+O)")
+        val openImage = JMenuItem("Open")
         openImage.addActionListener({ openImage() })
+        openImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(openImage)
         imageOpenChooser.fileFilter = imagesFilter;
         imageOpenChooser.currentDirectory = imageFile
 
-        val quickOpenImage = JMenuItem("Open in directory (Ctrl+L)")
+        val quickOpenImage = JMenuItem("Open in directory")
         quickOpenImage.addActionListener({ quickOpenImage() })
+        quickOpenImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(quickOpenImage)
 
-        val saveImage = JMenuItem("Save as (Ctrl+S)")
+        val saveImage = JMenuItem("Save as")
         saveImage.addActionListener({ saveImage() })
+        saveImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(saveImage)
         imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Png", "png"))
         imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Jpg", "jpg"))
@@ -83,16 +87,18 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Bmp", "bmp"))
         imageSaveChooser.currentDirectory = imageFile
 
-        val reloadImage = JMenuItem("Reload (Ctrl+R)")
+        val reloadImage = JMenuItem("Reload")
         reloadImage.addActionListener({ reloadImage() })
+        reloadImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(reloadImage)
 
         // properties
         val propMenu = JMenu("Properties");
         menu.add(propMenu);
 
-        val openProp = JMenuItem("Open (Ctrl+P)")
+        val openProp = JMenuItem("Open")
         openProp.addActionListener({ openProperties() })
+        openProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(openProp)
         propsOpenChooser.fileFilter = FileNameExtensionFilter("Properties", "properties");
         propsOpenChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile

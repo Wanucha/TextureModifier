@@ -2,9 +2,9 @@ package cz.wa.texturemodifier.gui.texturecanvas
 
 import com.sun.javafx.geom.Vec2d
 import cz.wa.texturemodifier.gui.ContentHolder
-import cz.wa.texturemodifier.gui.MainFrame
 import cz.wa.texturemodifier.gui.utils.CanvasBuffer
 import cz.wa.texturemodifier.gui.utils.GuiUtils
+import cz.wa.texturemodifier.math.ColorUtils
 import cz.wa.texturemodifier.math.Vec2i
 import java.awt.*
 import java.awt.event.*
@@ -69,13 +69,17 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
     }
 
     protected open fun drawSourceImage(g: Graphics) {
-        val img = when (imageSource) {
+        val img = getImage()
+        if (img != null) {
+            drawImage(img, g)
+        }
+    }
+
+    private fun getImage(): BufferedImage? {
+        return when (imageSource) {
             ImageSource.SOURCE -> contentHolder.sourceImage!!
             ImageSource.OUTPUT -> contentHolder.outputImage!!
             else -> customImage
-        }
-        if (img != null) {
-            drawImage(img, g)
         }
     }
 
@@ -98,7 +102,15 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
     }
 
     protected open fun drawTileInfo(g: Graphics) {
-        val text = "coords: ${scrToImg(currMousePos)}"
+        val p = scrToImg(currMousePos)
+        var text = "coords: $p"
+
+        val image = getImage()
+        if (image != null && p.x >= 0 && p.x < image.width && p.y >= 0 && p.y < image.height) {
+            val color = image.getRGB(p.x, p.y)
+            text += ", color: ${ColorUtils.toString(color)}"
+        }
+
         g.font = infoFont
 
         g.color = infoBgColor
@@ -239,20 +251,6 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
                 posX = 0.0
                 posY = 0.0
                 refresh()
-            }
-            // save/load
-            if (e.isControlDown) {
-                if (e.keyCode == KeyEvent.VK_O) {
-                    MainFrame.instance!!.openImage()
-                } else if (e.keyCode == KeyEvent.VK_S) {
-                    MainFrame.instance!!.saveImage()
-                } else if (e.keyCode == KeyEvent.VK_L) {
-                    MainFrame.instance!!.quickOpenImage()
-                } else if (e.keyCode == KeyEvent.VK_R) {
-                    MainFrame.instance!!.reloadImage()
-                } else if (e.keyCode == KeyEvent.VK_P) {
-                    MainFrame.instance!!.openProperties()
-                }
             }
         })
     }
