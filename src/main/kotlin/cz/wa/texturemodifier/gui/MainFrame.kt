@@ -13,11 +13,13 @@ import cz.wa.texturemodifier.gui.utils.GuiUtils
 import java.awt.BorderLayout
 import java.awt.Rectangle
 import java.awt.Toolkit
+import java.awt.datatransfer.DataFlavor
 import java.awt.event.KeyEvent
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
+
 
 class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     private val tabs: JTabbedPane = JTabbedPane()
@@ -45,6 +47,10 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         } else {
             contentHolder = ContentHolder(settings, ArrayList<String>(files))
         }
+
+        // allow drop files
+        transferHandler = FileTransferHandler()
+
         initComponents()
         val screenSize = Toolkit.getDefaultToolkit().getScreenSize()
         val initW = 800
@@ -252,6 +258,33 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
     interface FileOpenListener {
         fun fileOpened(file: File)
+    }
+
+    private class FileTransferHandler : TransferHandler() {
+        override fun canImport(support: TransferHandler.TransferSupport): Boolean {
+            if (!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                return false
+            }
+            return true
+        }
+
+        override fun importData(support: TransferSupport): Boolean {
+            if (!canImport(support)) {
+                return false
+            }
+            val t = support.transferable
+            val files =
+                t.getTransferData(DataFlavor.javaFileListFlavor) as List<File>
+            for (file in files) {
+                if (IMAGE_EXTS.contains(file.extension)) {
+                    GuiUtils.runCatch(MainFrame.instance!!, Runnable {
+                        MainFrame.instance!!.openImage(file)
+                    })
+                    return true
+                }
+            }
+            return false
+        }
     }
 
     companion object {
