@@ -37,7 +37,7 @@ class ImageUtils {
             val data = (img.raster.dataBuffer as DataBufferByte).data
 
             val length = img.width * img.height
-            if (length == data.size) {
+            if (length == data.size && img.type != BufferedImage.TYPE_BYTE_INDEXED) {
                 for (i in 0 until length) {
                     val i2 = i * 4
                     outData[i] =

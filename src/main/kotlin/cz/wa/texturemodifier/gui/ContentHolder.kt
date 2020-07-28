@@ -1,6 +1,7 @@
 package cz.wa.texturemodifier.gui
 
 import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.gui.utils.ImageUtils
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
@@ -32,6 +33,9 @@ class ContentHolder(var settings: Settings, var files: MutableList<String>) {
             } catch (e: Throwable) {
                 println("Failed to read image ${file.absoluteFile}")
             }
+        }
+        if (sourceImage == null) {
+            sourceImage = ImageUtils.createEmptyImage(1, 1)
         }
     }
 }
