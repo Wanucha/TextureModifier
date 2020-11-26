@@ -16,7 +16,6 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
         }
 
         val d = settings.seamlessDist
-        val d2 = d * 2
         val w = image.width
         val h = image.height
         val wd = w - d

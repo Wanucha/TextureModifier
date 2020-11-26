@@ -23,7 +23,8 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
 
 
     override fun execute(image: BufferedImage): BufferedImage {
-        check(settings.pixelateScale >= 1) { throw IllegalArgumentException("pixelateScale must be >= 1") }
+        check(settings.pixelateSizeX >= 1) { throw IllegalArgumentException("pixelateSizeX must be >= 1") }
+        check(settings.pixelateSizeY >= 1) { throw IllegalArgumentException("pixelateSizeY must be >= 1") }
         check(settings.pixelateColors > 1 && settings.pixelateColors <= 256) { throw IllegalArgumentException("pixelateColors must be > 1 and <= 256") }
         check(settings.pixelateScaleColorTolerance >= 0 && settings.pixelateScaleColorTolerance < 256) {
             throw IllegalArgumentException(
@@ -33,17 +34,18 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
 
         val inTex = Texture(image)
 
-        val w2 = (image.width / settings.pixelateScale.toDouble()).roundToInt()
-        val h2 = (image.height / settings.pixelateScale.toDouble()).roundToInt()
+        val w2 =  settings.pixelateSizeX
+        val h2 = settings.pixelateSizeY
         val ret = ImageUtils.createEmptyImage(w2, h2)
         val outTex = Texture(ret)
 
-        val r = image.width / w2.toDouble()
+        val rx = image.width / w2.toDouble()
+        val ry = image.height / h2.toDouble()
 
         for (y in 0 until h2) {
             for (x in 0 until w2) {
-                val px = IntRange((r * x).roundToInt(), (r * (x + 1)).roundToInt() - 1)
-                val py = IntRange((r * y).roundToInt(), (r * (y + 1)).roundToInt() - 1)
+                val px = IntRange((rx * x).roundToInt(), (rx * (x + 1)).roundToInt() - 1)
+                val py = IntRange((ry * y).roundToInt(), (ry * (y + 1)).roundToInt() - 1)
                 processPixel(outTex, x, y, inTex, px, py)
             }
         }

@@ -16,7 +16,9 @@ class Settings(
     var seamlessAlpha: Boolean = false,
     var blurRadius: Double = 3.0,
     var blurRatio: Double = 0.5,
-    var pixelateScale: Int = 4,
+    var pixelateScale: Double = 4.0,
+    var pixelateSizeX: Int = 0,
+    var pixelateSizeY: Int = 0,
     var pixelateColors: Int = 12,
     var pixelateScaleType: ScaleType = ScaleType.NEAREST,
     var pixelateScaleColorTolerance: Int = 5,
@@ -75,7 +77,7 @@ class Settings(
                     ret.blurRatio = parseDouble(entry)
                 }
                 if (entry.key == PIXELATE_SCALE) {
-                    ret.pixelateScale = parseInt(entry)
+                    ret.pixelateScale = parseDouble(entry)
                 }
                 if (entry.key == PIXELATE_COLORS) {
                     ret.pixelateColors = parseInt(entry)

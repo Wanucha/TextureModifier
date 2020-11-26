@@ -8,6 +8,7 @@ import cz.wa.texturemodifier.math.ColorUtils
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*
+import kotlin.math.roundToInt
 
 class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
     private val canvas = PixelateViewer(contentHolder)
@@ -28,6 +29,8 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
 
     class ToolPanel(val contentHolder: ContentHolder, val canvas: PixelateViewer) : JPanel() {
         val scaleTf = JTextField()
+        var sizeXTf = JTextField()
+        var sizeYTf = JTextField()
         val colorsTf = JTextField()
         val typeCb = JComboBox<ScaleType>(ScaleType.values())
         val toleranceTf = JTextField()
@@ -41,6 +44,22 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
             scaleTf.text = contentHolder.settings.pixelateScale.toString()
             scaleTf.columns = 2
             add(GuiUtils.createValuePanel("Scale down", scaleTf))
+            var bApplyScale = JButton("Use")
+            bApplyScale.addActionListener{
+                val scale = scaleTf.text.toDouble()
+                sizeXTf.text = (contentHolder.sourceImage!!.width / scale).roundToInt().toString()
+                sizeYTf.text = (contentHolder.sourceImage!!.height / scale).roundToInt().toString()
+            }
+            add(bApplyScale)
+
+            // size
+            sizeXTf.text = contentHolder.settings.pixelateScale.toString()
+            sizeXTf.columns = 4
+            add(GuiUtils.createValuePanel("Size X", sizeXTf))
+
+            sizeYTf.text = contentHolder.settings.pixelateScale.toString()
+            sizeYTf.columns = 4
+            add(GuiUtils.createValuePanel("Size Y", sizeYTf))
 
             // colors
             colorsTf.text = contentHolder.settings.pixelateColors.toString()
@@ -77,7 +96,9 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
         }
 
         private fun apply() {
-            contentHolder.settings.pixelateScale = scaleTf.text.toInt()
+            contentHolder.settings.pixelateScale = scaleTf.text.toDouble()
+            contentHolder.settings.pixelateSizeX = sizeXTf.text.toInt()
+            contentHolder.settings.pixelateSizeY = sizeYTf.text.toInt()
             contentHolder.settings.pixelateColors = colorsTf.text.toInt()
             contentHolder.settings.pixelateScaleType = typeCb.selectedItem as ScaleType
             contentHolder.settings.pixelateScaleColorTolerance = toleranceTf.text.toInt()
