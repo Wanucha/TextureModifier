@@ -6,7 +6,10 @@ import cz.wa.texturemodifier.gui.utils.GuiUtils
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
-import javax.swing.*
+import javax.swing.JButton
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.JTextField
 
 class BlurPanel(val contentHolder: ContentHolder) : JPanel() {
     private val canvas = BlurViewer(contentHolder)
@@ -18,11 +21,8 @@ class BlurPanel(val contentHolder: ContentHolder) : JPanel() {
 
     private fun initComponents() {
         layout = BorderLayout()
-        val split = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-        add(split)
-        split.rightComponent = toolPanel
-        split.leftComponent = canvas
-        split.dividerLocation = 650
+        add(canvas, BorderLayout.CENTER)
+        add(toolPanel, BorderLayout.EAST)
     }
 
     class ToolPanel(val contentHolder: ContentHolder, val canvas: BlurViewer) : JPanel() {
@@ -30,7 +30,8 @@ class BlurPanel(val contentHolder: ContentHolder) : JPanel() {
         val ratioTf = JTextField()
 
         init {
-            maximumSize = Dimension(120, 4096)
+            maximumSize = Dimension(150, 4096)
+            preferredSize = maximumSize
 
             // radius
             val p1 = JPanel(FlowLayout())

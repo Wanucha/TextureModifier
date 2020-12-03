@@ -20,11 +20,8 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
 
     private fun initComponents() {
         layout = BorderLayout()
-        val split = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-        add(split)
-        split.rightComponent = toolPanel
-        split.leftComponent = canvas
-        split.dividerLocation = 530
+        add(canvas, BorderLayout.CENTER)
+        add(toolPanel, BorderLayout.EAST)
     }
 
     /**
@@ -41,7 +38,8 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
         val bgColorTf = JTextField("#000000")
 
         init {
-            maximumSize = Dimension(270, 4096)
+            maximumSize = Dimension(200, 4096)
+            preferredSize = maximumSize
 
             // scale
             scaleTf.text = contentHolder.settings.pixelateScale.toString()

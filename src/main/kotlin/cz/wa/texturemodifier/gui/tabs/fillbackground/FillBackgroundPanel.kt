@@ -6,7 +6,10 @@ import cz.wa.texturemodifier.gui.utils.GuiUtils
 import cz.wa.texturemodifier.math.ColorUtils
 import java.awt.BorderLayout
 import java.awt.Dimension
-import javax.swing.*
+import javax.swing.JButton
+import javax.swing.JCheckBox
+import javax.swing.JPanel
+import javax.swing.JTextField
 
 class FillBackgroundPanel(val contentHolder: ContentHolder) : JPanel() {
     private val canvas = FillBackgroundViewer(contentHolder)
@@ -18,11 +21,8 @@ class FillBackgroundPanel(val contentHolder: ContentHolder) : JPanel() {
 
     private fun initComponents() {
         layout = BorderLayout()
-        val split = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-        add(split)
-        split.rightComponent = toolPanel
-        split.leftComponent = canvas
-        split.dividerLocation = 530
+        add(canvas, BorderLayout.CENTER)
+        add(toolPanel, BorderLayout.EAST)
     }
 
     /**
@@ -35,7 +35,8 @@ class FillBackgroundPanel(val contentHolder: ContentHolder) : JPanel() {
         val bgColorTf = JTextField("#000000")
 
         init {
-            maximumSize = Dimension(270, 4096)
+            maximumSize = Dimension(200, 4096)
+            preferredSize = maximumSize
 
             // scale
             iterationsTf.text = contentHolder.settings.fillBgIterations.toString()

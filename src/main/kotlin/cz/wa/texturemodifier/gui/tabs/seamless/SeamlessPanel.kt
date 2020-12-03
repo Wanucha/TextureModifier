@@ -18,11 +18,8 @@ class SeamlessPanel(val contentHolder: ContentHolder) : JPanel() {
 
     private fun initComponents() {
         layout = BorderLayout()
-        val split = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-        add(split)
-        split.rightComponent = toolPanel
-        split.leftComponent = canvas
-        split.dividerLocation = 650
+        add(canvas, BorderLayout.CENTER)
+        add(toolPanel, BorderLayout.EAST)
     }
 
     class ToolPanel(val contentHolder: ContentHolder, val canvas: SeamlessViewer) : JPanel() {
@@ -30,7 +27,8 @@ class SeamlessPanel(val contentHolder: ContentHolder) : JPanel() {
         val alphaCb = JCheckBox("Alpha blending")
 
         init {
-            maximumSize = Dimension(120, 4096)
+            maximumSize = Dimension(150, 4096)
+            preferredSize = maximumSize
 
             // distance
             val p1 = JPanel(FlowLayout())
