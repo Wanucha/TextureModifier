@@ -41,4 +41,8 @@ class Texture(img: BufferedImage) {
         }
         return getPoint(ix, iy)
     }
+
+    fun containsPoint(x: Int, y: Int): Boolean {
+        return x >= 0 && y >= 0 && x < size.x && y < size.y
+    }
 }

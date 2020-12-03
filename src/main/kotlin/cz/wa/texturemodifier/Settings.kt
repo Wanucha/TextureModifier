@@ -23,7 +23,11 @@ class Settings(
     var pixelateScaleType: ScaleType = ScaleType.NEAREST,
     var pixelateScaleColorTolerance: Int = 5,
     var pixelateIgnoreBgColor: Boolean = false,
-    var pixelateBgColor: Color = Color.BLACK
+    var pixelateBgColor: Color = Color.BLACK,
+    var fillBgIterations: Int = 1,
+    var fillBgIncludeCorners: Boolean = false,
+    var fillBgAverageFill: Boolean = true,
+    var fillBgBgColor: Color = Color.BLACK,
 ) {
     companion object {
         const val GUI_BG_COLOR = "gui-bg-color"
@@ -40,6 +44,10 @@ class Settings(
         const val PIXELATE_SCALE_COLOR_TOLERANCE = "pixelate-scale-color-tolerance"
         const val PIXELATE_IGNORE_BG_COLOR = "pixelate-ignore-bg-color"
         const val PIXELATE_BG_COLOR = "pixelate-bg-color"
+        const val FILL_BG_ITERATIONS = "fillbg-"
+        const val FILL_BG_INCLUDE_CORNERS = "fillbg-include-corners"
+        const val FILL_BG_AVERAGE_FILL = "fillbg-average-fill"
+        const val FILL_BG_BG_COLOR = "fillbg-bg-color"
 
         fun parseFile(fileName: String): Settings {
             val ret = parseString(File(fileName).readText())
@@ -94,6 +102,18 @@ class Settings(
                 if (entry.key == PIXELATE_BG_COLOR) {
                     ret.pixelateBgColor = parseColor(entry)
                 }
+                if (entry.key == FILL_BG_ITERATIONS) {
+                    ret.fillBgIterations = parseInt(entry)
+                }
+                if (entry.key == FILL_BG_INCLUDE_CORNERS) {
+                    ret.fillBgIncludeCorners = parseBool(entry)
+                }
+                if (entry.key == FILL_BG_AVERAGE_FILL) {
+                    ret.fillBgAverageFill = parseBool(entry)
+                }
+                if (entry.key == FILL_BG_BG_COLOR) {
+                    ret.fillBgBgColor = parseColor(entry)
+                }
             }
             if (ret.outPrefix.isEmpty() && ret.outPostfix.isEmpty()) {
                 throw IllegalArgumentException("$OUT_PREFIX and $OUT_POSTFIX must not be both empty")
@@ -118,6 +138,10 @@ class Settings(
             write(sb, PIXELATE_SCALE_COLOR_TOLERANCE, s.pixelateScaleColorTolerance)
             write(sb, PIXELATE_IGNORE_BG_COLOR, s.pixelateIgnoreBgColor)
             write(sb, PIXELATE_BG_COLOR, s.pixelateBgColor)
+            write(sb, FILL_BG_ITERATIONS, s.fillBgIterations)
+            write(sb, FILL_BG_INCLUDE_CORNERS, s.fillBgIncludeCorners)
+            write(sb, FILL_BG_AVERAGE_FILL, s.fillBgAverageFill)
+            write(sb, FILL_BG_BG_COLOR, s.fillBgBgColor)
 
             file.writeText(sb.toString())
         }

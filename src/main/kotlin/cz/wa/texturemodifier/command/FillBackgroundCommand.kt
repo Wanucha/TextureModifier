@@ -1,0 +1,143 @@
+package cz.wa.texturemodifier.command
+
+import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.gui.utils.ImageUtils
+import cz.wa.texturemodifier.image.Texture
+import cz.wa.texturemodifier.math.ColorUtils
+import cz.wa.texturemodifier.math.Vec2i
+import java.awt.image.BufferedImage
+import kotlin.math.roundToInt
+
+/**
+ * Fills background with color computed from neighbouring pixels.
+ */
+class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
+
+    private var bgColor: Int = 0;
+
+    override fun execute(image: BufferedImage): BufferedImage {
+        check(settings.fillBgIterations >= 1) { "fillBgIterations must be >= 1" }
+
+        var inTex = Texture(image)
+        val ret = ImageUtils.copyImage(image)
+        var outTex = Texture(ret)
+        bgColor = settings.fillBgBgColor.rgb
+
+        var started = false
+        for (i in 0 until settings.fillBgIterations) {
+            if (started) {
+                inTex = outTex
+                outTex = Texture(ImageUtils.copyImage(inTex.img))
+            }
+            for (y in 0 until image.height) {
+                for (x in 0 until image.width) {
+                    processPixel(inTex, x, y, outTex, bgColor)
+                }
+            }
+            started = true
+        }
+
+        return outTex.img
+    }
+
+    private fun processPixel(inTex: Texture, x: Int, y: Int, outTex: Texture, bgColor: Int) {
+        if (outTex.getPoint(x, y) == bgColor && hasNearColor(inTex, x, y)) {
+            outTex.setPoint(x, y, computeColor(inTex, x, y))
+        }
+    }
+
+    private fun hasNearColor(inTex: Texture, x: Int, y: Int): Boolean {
+        var ret = false
+        iterateNearPixels(inTex, x, y) {
+            if (it != bgColor) {
+                ret = true
+                false
+            } else {
+                true
+            }
+        }
+        return ret
+    }
+
+    private fun computeColor(inTex: Texture, x: Int, y: Int): Int {
+        val colors = ArrayList<Int>(if (settings.fillBgIncludeCorners) 8 else 4)
+        iterateNearPixels(inTex, x, y) {
+            if (it != bgColor) {
+                colors.add(it)
+            }
+            true
+        }
+
+        if (settings.fillBgAverageFill) {
+            return averageColor(colors)
+        } else {
+            return mostColor(colors)
+        }
+    }
+
+    private fun averageColor(colors: ArrayList<Int>): Int {
+        var r = 0
+        var g = 0
+        var b = 0
+        for (c in colors) {
+            r += ColorUtils.getRed(c)
+            g += ColorUtils.getGreen(c)
+            b += ColorUtils.getBlue(c)
+        }
+        val count = colors.size.toDouble()
+        r = (r / count).roundToInt()
+        g = (g / count).roundToInt()
+        b = (b / count).roundToInt()
+        return ColorUtils.fromRGB(r, g, b)
+    }
+
+    private fun mostColor(colors: ArrayList<Int>): Int {
+        val counts = HashMap<Int, Int>(colors.size)
+        for (c in colors) {
+            if (counts.containsKey(c)) {
+                counts.put(c, counts.getValue(c) + 1)
+            } else {
+                counts.put(c, 1)
+            }
+        }
+        var max = 0
+        var ret = 0
+        for (entry in counts) {
+            if (entry.value > max) {
+                max = entry.value
+                ret = entry.key
+            }
+        }
+        return ret
+    }
+
+    private fun iterateNearPixels(inTex: Texture, x: Int, y: Int, function: (Int) -> Boolean) {
+        for (p in NEIGHBORS1) {
+            if (inTex.containsPoint(x + p.x, y + p.y) && !function.invoke(inTex.getPoint(x + p.x, y + p.y))) {
+                return;
+            }
+        }
+        if (settings.fillBgIncludeCorners) {
+            for (p in NEIGHBORS2) {
+                if (inTex.containsPoint(x + p.x, y + p.y) && !function.invoke(inTex.getPoint(x + p.x, y + p.y))) {
+                    return;
+                }
+            }
+        }
+    }
+
+    companion object {
+        private val NEIGHBORS1 = arrayOf(
+            Vec2i(-1, 0),
+            Vec2i(0, -1),
+            Vec2i(1, 0),
+            Vec2i(0, 1)
+        )
+        private val NEIGHBORS2 = arrayOf(
+            Vec2i(-1, -1),
+            Vec2i(1, -1),
+            Vec2i(1, 1),
+            Vec2i(-1, 1)
+        )
+    }
+}

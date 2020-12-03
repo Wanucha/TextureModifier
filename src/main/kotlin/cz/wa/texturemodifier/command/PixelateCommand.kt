@@ -21,20 +21,17 @@ import kotlin.math.roundToInt
  */
 class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
 
-
     override fun execute(image: BufferedImage): BufferedImage {
-        check(settings.pixelateSizeX >= 1) { throw IllegalArgumentException("pixelateSizeX must be >= 1") }
-        check(settings.pixelateSizeY >= 1) { throw IllegalArgumentException("pixelateSizeY must be >= 1") }
-        check(settings.pixelateColors > 1 && settings.pixelateColors <= 256) { throw IllegalArgumentException("pixelateColors must be > 1 and <= 256") }
+        check(settings.pixelateSizeX >= 1) { "pixelateSizeX must be >= 1" }
+        check(settings.pixelateSizeY >= 1) { "pixelateSizeY must be >= 1" }
+        check(settings.pixelateColors > 1 && settings.pixelateColors <= 256) { "pixelateColors must be > 1 and <= 256" }
         check(settings.pixelateScaleColorTolerance >= 0 && settings.pixelateScaleColorTolerance < 256) {
-            throw IllegalArgumentException(
-                "pixelateScaleColorTolerance must be >= 0 and < 256"
-            )
+            "pixelateScaleColorTolerance must be >= 0 and < 256"
         }
 
         val inTex = Texture(image)
 
-        val w2 =  settings.pixelateSizeX
+        val w2 = settings.pixelateSizeX
         val h2 = settings.pixelateSizeY
         val ret = ImageUtils.createEmptyImage(w2, h2)
         val outTex = Texture(ret)
@@ -141,7 +138,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
         return ret
     }
 
-    private fun getColorRange(c: Int, tol: Int) : IntRange {
+    private fun getColorRange(c: Int, tol: Int): IntRange {
         return IntRange(max(c - tol, 0), min(c + tol, settings.pixelateColors - 1))
     }
 
