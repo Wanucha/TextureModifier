@@ -41,7 +41,7 @@ class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
     }
 
     private fun processPixel(inTex: Texture, x: Int, y: Int, outTex: Texture, bgColor: Int) {
-        if (outTex.getPoint(x, y) == bgColor && hasNearColor(inTex, x, y)) {
+        if (inTex.getPoint(x, y) == bgColor && hasNearColor(inTex, x, y)) {
             outTex.setPoint(x, y, computeColor(inTex, x, y))
         }
     }
