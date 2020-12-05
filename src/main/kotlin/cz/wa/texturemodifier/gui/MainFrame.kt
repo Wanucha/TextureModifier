@@ -142,6 +142,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         // show bounds
         val boundsCb = JCheckBox("Show bounds")
         boundsCb.isSelected = true
+        boundsCb.addActionListener { contentHolder.settings.guiShowBounds = boundsCb.isSelected }
         menu.add(boundsCb)
 
         // bg color
