@@ -2,6 +2,7 @@ package cz.wa.texturemodifier.gui.texturecanvas
 
 import com.sun.javafx.geom.Vec2d
 import cz.wa.texturemodifier.gui.ContentHolder
+import cz.wa.texturemodifier.gui.MainFrame
 import cz.wa.texturemodifier.gui.utils.CanvasBuffer
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import cz.wa.texturemodifier.math.ColorUtils
@@ -9,6 +10,7 @@ import cz.wa.texturemodifier.math.Vec2i
 import java.awt.*
 import java.awt.event.*
 import java.awt.image.BufferedImage
+import java.io.File
 import kotlin.math.roundToInt
 
 /**
@@ -60,12 +62,39 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
         if (contentHolder.sourceImage == null) {
             return
         }
+        if (contentHolder.settings.guiShowBounds) {
+            drawBounds(g)
+        }
         drawBefore(g)
         drawSourceImage(g)
         drawAfter(g)
         if (mouseInside && drawInfo) {
             drawTileInfo(g)
         }
+    }
+
+    private fun drawBounds(g: Graphics) {
+        val c = contentHolder.settings.guiBgColor
+        g.color = Color((c.red + 128) % 256, (c.green + 128) % 256, (c.blue + 128) % 256)
+        val image = getImage()!!
+        val w = image.width
+        val h = image.height
+
+        var p1 = imgToScr(0, -BOUNDS_LENGTH)
+        var p2 = imgToScr(0, h + BOUNDS_LENGTH)
+        g.drawLine(p1.x - 1, p1.y, p2.x - 1, p2.y)
+
+        p1 = imgToScr(-BOUNDS_LENGTH, 0)
+        p2 = imgToScr(w + BOUNDS_LENGTH, 0)
+        g.drawLine(p1.x, p1.y - 1, p2.x, p2.y - 1)
+
+        p1 = imgToScr(w, -BOUNDS_LENGTH)
+        p2 = imgToScr(w, h + BOUNDS_LENGTH)
+        g.drawLine(p1.x, p1.y, p2.x, p2.y)
+
+        p1 = imgToScr(-BOUNDS_LENGTH, h)
+        p2 = imgToScr(w + BOUNDS_LENGTH, h)
+        g.drawLine(p1.x, p1.y, p2.x, p2.y)
     }
 
     protected open fun drawSourceImage(g: Graphics) {
@@ -75,7 +104,7 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
         }
     }
 
-    private fun getImage(): BufferedImage? {
+    protected fun getImage(): BufferedImage? {
         return when (imageSource) {
             ImageSource.SOURCE -> contentHolder.sourceImage!!
             ImageSource.OUTPUT -> contentHolder.outputImage!!
@@ -93,6 +122,12 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
         g.drawImage(img, p1.x, p1.y, p2.x, p2.y, null)
     }
 
+    protected fun drawLine(g: Graphics, x1: Int, y1: Int, x2: Int, y2: Int) {
+        val p1 = imgToScr(x1, y1)
+        val p2 = imgToScr(x2, y2)
+        g.drawLine(p1.x, p1.y, p2.x, p2.y)
+    }
+
     protected open fun drawBefore(g: Graphics) {
         // empty
     }
@@ -103,13 +138,7 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
 
     protected open fun drawTileInfo(g: Graphics) {
         val p = scrToImg(currMousePos)
-        var text = "coords: $p"
-
-        val image = getImage()
-        if (image != null && p.x >= 0 && p.x < image.width && p.y >= 0 && p.y < image.height) {
-            val color = image.getRGB(p.x, p.y)
-            text += ", color: ${ColorUtils.toString(color)}"
-        }
+        val text = getInfoText(p)
 
         g.font = infoFont
 
@@ -121,8 +150,19 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
         g.drawString(text, infoGap, height - infoGap)
     }
 
+    protected open fun getInfoText(p: Vec2i): String {
+        var text = "coords: $p"
+
+        val image = getImage()
+        if (image != null && p.x >= 0 && p.x < image.width && p.y >= 0 && p.y < image.height) {
+            val color = image.getRGB(p.x, p.y)
+            text += ", color: ${ColorUtils.toString(color)}"
+        }
+        return text
+    }
+
     protected fun getImageWidth(): Int {
-        return when(imageSource) {
+        return when (imageSource) {
             ImageSource.SOURCE -> contentHolder.sourceImage!!.width
             ImageSource.OUTPUT -> contentHolder.outputImage!!.width
             ImageSource.CUSTOM -> customSize!!.width
@@ -130,7 +170,7 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
     }
 
     protected fun getImageHeight(): Int {
-        return when(imageSource) {
+        return when (imageSource) {
             ImageSource.SOURCE -> contentHolder.sourceImage!!.height
             ImageSource.OUTPUT -> contentHolder.outputImage!!.height
             ImageSource.CUSTOM -> customSize!!.height
@@ -174,6 +214,10 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
 
     protected fun imgToScr(x: Int): Int {
         return imgToScr(x.toDouble())
+    }
+
+    protected fun imgToScr(x: Int, y: Int): Vec2i {
+        return imgToScr(Vec2d(x.toDouble(), y.toDouble()))
     }
 
     override fun mouseEntered(e: MouseEvent) {
@@ -270,6 +314,18 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
     /** Redraw component without buffer, used by swing */
     override fun paint(g: Graphics) {
         paintComponent(g)
+    }
+
+    protected fun createImageListener(): MainFrame.FileOpenListener {
+        return object : MainFrame.FileOpenListener {
+            override fun fileOpened(file: File) {
+                refresh()
+            }
+        }
+    }
+
+    companion object {
+        private const val BOUNDS_LENGTH = 20
     }
 
     protected enum class ImageSource {

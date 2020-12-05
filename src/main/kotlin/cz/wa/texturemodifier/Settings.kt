@@ -9,6 +9,7 @@ import java.util.*
 class Settings(
     var file: File? = null,
     var guiBgColor: Color = Color.BLACK,
+    var guiShowBounds: Boolean = true,
     var outPrefix: String = "",
     var outPostfix: String = "",
     var outFormat: String = "png",
@@ -28,9 +29,15 @@ class Settings(
     var fillBgIncludeCorners: Boolean = false,
     var fillBgAverageFill: Boolean = true,
     var fillBgBgColor: Color = Color.BLACK,
+    var mergeMapsLayout: MapType = MapType.TWO_SIDE,
+    var mergeMapsMap1: String = "RGB-R",
+    var mergeMapsMap2: String = "RGB-A",
+    var mergeMapsMap3: String = "RGB-G",
+    var mergeMapsMap4: String = "RGB-B",
 ) {
     companion object {
         const val GUI_BG_COLOR = "gui-bg-color"
+        const val GUI_SHOW_BOUNDS = "gui-show_bounds"
         const val OUT_PREFIX = "out-prefix"
         const val OUT_POSTFIX = "out-postfix"
         const val OUT_FORMAT = "out-format"
@@ -48,6 +55,11 @@ class Settings(
         const val FILL_BG_INCLUDE_CORNERS = "fillbg-include-corners"
         const val FILL_BG_AVERAGE_FILL = "fillbg-average-fill"
         const val FILL_BG_BG_COLOR = "fillbg-bg-color"
+        const val MERGE_MAPS_LAYOUT = "merge-maps-layout"
+        const val MERGE_MAPS_Map1 = "merge-maps-map1"
+        const val MERGE_MAPS_Map2 = "merge-maps-map2"
+        const val MERGE_MAPS_Map3 = "merge-maps-map3"
+        const val MERGE_MAPS_Map4 = "merge-maps-map4"
 
         fun parseFile(fileName: String): Settings {
             val ret = parseString(File(fileName).readText())
@@ -62,6 +74,9 @@ class Settings(
             for (entry in p) {
                 if (entry.key == GUI_BG_COLOR) {
                     ret.guiBgColor = parseColor(entry)
+                }
+                if (entry.key == GUI_SHOW_BOUNDS) {
+                    ret.guiShowBounds = parseBool(entry)
                 }
                 if (entry.key == OUT_PREFIX) {
                     ret.outPrefix = parseString(entry)
@@ -125,6 +140,7 @@ class Settings(
             val sb = StringBuilder()
 
             write(sb, GUI_BG_COLOR, ColorUtils.toString(s.guiBgColor))
+            write(sb, GUI_SHOW_BOUNDS, s.guiShowBounds)
             write(sb, OUT_PREFIX, s.outPrefix)
             write(sb, OUT_POSTFIX, s.outPostfix)
             write(sb, OUT_FORMAT, s.outFormat)

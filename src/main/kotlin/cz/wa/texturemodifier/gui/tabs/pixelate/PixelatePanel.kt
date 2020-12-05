@@ -11,7 +11,7 @@ import javax.swing.*
 import kotlin.math.roundToInt
 
 class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
-    private val canvas = FillBackgroundViewer(contentHolder)
+    private val canvas = PixelateViewer(contentHolder)
     private val toolPanel = ToolPanel(contentHolder, canvas)
 
     init {
@@ -27,7 +27,7 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
     /**
      * UI Panel
      */
-    class ToolPanel(val contentHolder: ContentHolder, val canvas: FillBackgroundViewer) : JPanel() {
+    class ToolPanel(val contentHolder: ContentHolder, val canvas: PixelateViewer) : JPanel() {
         val scaleTf = JTextField()
         var sizeXTf = JTextField()
         var sizeYTf = JTextField()

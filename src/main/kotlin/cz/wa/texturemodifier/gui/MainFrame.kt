@@ -4,6 +4,7 @@ import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.TextureModifierMain
 import cz.wa.texturemodifier.gui.tabs.blur.BlurPanel
 import cz.wa.texturemodifier.gui.tabs.blur.FillBackgroundPanel
+import cz.wa.texturemodifier.gui.tabs.blur.MergeMapsPanel
 import cz.wa.texturemodifier.gui.tabs.blur.PixelatePanel
 import cz.wa.texturemodifier.gui.tabs.propertieseditor.PropertiesEditor
 import cz.wa.texturemodifier.gui.tabs.seamless.SeamlessPanel
@@ -31,9 +32,10 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     private val propsSaveChooser = ConfirmFileChooser()
     private val imageOpenChooser = JFileChooser()
     private val imageSaveChooser = ConfirmFileChooser()
-    private val imagesFilter = FileNameExtensionFilter("Images (PNG, JPG, GIF, BMP)", *IMAGE_EXTS)
+    private val imagesFilter = FileNameExtensionFilter("Images (PNG, JPG, GIF, BMP)", *TextureModifierMain.IMAGE_EXTS)
 
     private val imageOpenListeners = ArrayList<FileOpenListener>()
+    private val imageRevertListeners = ArrayList<FileOpenListener>()
     private val propertiesOpenListeners = ArrayList<FileOpenListener>()
 
     val contentHolder: ContentHolder
@@ -99,6 +101,11 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         reloadImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(reloadImage)
 
+        val revertImage = JMenuItem("Revert")
+        revertImage.addActionListener({ revertImage() })
+        revertImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK)
+        imageMenu.add(revertImage)
+
         // properties
         val propMenu = JMenu("Properties");
         menu.add(propMenu);
@@ -112,6 +119,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
         val saveProp = JMenuItem("Save as")
         saveProp.addActionListener({ saveProperties() })
+        saveProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(saveProp)
         propsSaveChooser.fileFilter = FileNameExtensionFilter("Properties", "properties");
         propsSaveChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile
@@ -121,10 +129,20 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         propsLabel.text = "= ${contentHolder.settings.file?.name}"
         menu.add(propsLabel)
 
+        // args help
+        val argsHelp = JMenuItem("Program args")
+        argsHelp.addActionListener({ showArgsHelp() })
+        menu.add(argsHelp)
+
         // help
-        val help = JMenuItem("Program args help")
+        val help = JMenuItem("Help")
         help.addActionListener({ showHelp() })
         menu.add(help)
+
+        // show bounds
+        val boundsCb = JCheckBox("Show bounds")
+        boundsCb.isSelected = true
+        menu.add(boundsCb)
 
         // bg color
         val bgColor = ColorSlider(contentHolder)
@@ -140,6 +158,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         tabs.addTab("Blur", BlurPanel(contentHolder))
         tabs.addTab("Pixelate", PixelatePanel(contentHolder))
         tabs.addTab("Fill background", FillBackgroundPanel(contentHolder))
+        tabs.addTab("Merge maps", MergeMapsPanel(contentHolder))
         tabs.addTab("Properties", PropertiesEditor(contentHolder))
 
         // select each tab
@@ -159,6 +178,10 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
     fun addImageOpenListener(l: FileOpenListener) {
         imageOpenListeners.add(l)
+    }
+
+    fun addImageRevertListener(l: FileOpenListener) {
+        imageRevertListeners.add(l)
     }
 
     fun addPropertiesOpenListener(l: FileOpenListener) {
@@ -191,7 +214,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     public fun quickOpenImage() {
         quickOpenMenu.removeAll()
         val files =
-            contentHolder.sourceFile.parentFile.listFiles { f -> IMAGE_EXTS.any { f.name.endsWith(".${it}") } }
+            contentHolder.sourceFile.parentFile.listFiles { f -> TextureModifierMain.IMAGE_EXTS.any { f.name.endsWith(".${it}") } }
         for (file in files!!) {
             val item = JMenuItem(file.name)
             item.addActionListener({
@@ -207,7 +230,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         if (contentHolder.outputImage != null) {
             if (imageSaveChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                 val file = imageSaveChooser.selectedFile
-                if (!IMAGE_EXTS.contains(file.extension)) {
+                if (!TextureModifierMain.IMAGE_EXTS.contains(file.extension)) {
                     JOptionPane.showMessageDialog(this, "Unknown image extension: ${file.extension}")
                     return
                 }
@@ -223,6 +246,11 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
     public fun reloadImage() {
         openImage(File(contentHolder.files[0]))
+    }
+
+    public fun revertImage() {
+        contentHolder.outputImage = contentHolder.sourceImage
+        imageRevertListeners.forEach { it.fileOpened(File(contentHolder.files[0])) }
     }
 
     public fun openProperties() {
@@ -252,9 +280,50 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         }
     }
 
-    private fun showHelp() {
+    private fun showArgsHelp() {
         JOptionPane.showMessageDialog(
             this, "${TextureModifierMain.printTitle()}${TextureModifierMain.printUsage()}"
+        )
+    }
+
+    private fun showHelp() {
+        JOptionPane.showMessageDialog(
+            this,
+            "There are loaded 3 files:\n" +
+                    "* settings\n" +
+                    "* input image\n" +
+                    "* output image\n" +
+                    "\n" +
+                    "The settings can be modified, loaded and saved independently.\n" +
+                    "\n" +
+                    "Input image is the opened image, modifiers cannot change it.\n" +
+                    "If you apply some modifier, the input image remains original.\n" +
+                    "Next time you apply a modifier, it will be applied to the original image.\n" +
+                    "\n" +
+                    "Output image is the currently modified image.\n" +
+                    "If you open a new image, input and output images will be overwritten by the new one.\n" +
+                    "When saving image, saved is always the output.\n" +
+                    "\n" +
+                    "To apply next modifier to a modified image, switch to source tab and click 'Apply modified'.\n" +
+                    "It will copy the output -> input but not write any data to disk.\n" +
+                    "\n" +
+                    "Image view:\n" +
+                    "* Right mouse button - move\n" +
+                    "* Mouse wheel - zoom\n" +
+                    "* Home - reset view\n" +
+                    "\n" +
+                    "Bugs:\n" +
+                    "* Sometimes the viewed image is not refreshed (when you change bg color).\n" +
+                    "Resolution: move or zoom the view.\n" +
+                    "* Sometimes the main menu is overdrawn by image view.\n" +
+                    "Resolution: use shortcuts:\n" +
+                    "* Open - ctrl+O\n" +
+                    "* Open in direscory - ctrl+L (show list of images in current directory)\n" +
+                    "* Save as - ctrl+S (save output image)\n" +
+                    "* Reload - ctrl+R (reload from disk)\n" +
+                    "* Revert - ctrl+Z (copy input -> output without reloading)\n" +
+                    "* Open properties - ctrl+P\n" +
+                    "* Save properties as - ctrl+U\n"
         )
     }
 
@@ -278,7 +347,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
             val files =
                 t.getTransferData(DataFlavor.javaFileListFlavor) as List<File>
             for (file in files) {
-                if (IMAGE_EXTS.contains(file.extension)) {
+                if (TextureModifierMain.IMAGE_EXTS.contains(file.extension)) {
                     GuiUtils.runCatch(MainFrame.instance!!, Runnable {
                         MainFrame.instance!!.openImage(file)
                     })
@@ -290,8 +359,6 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     }
 
     companion object {
-        public val IMAGE_EXTS = arrayOf("png", "jpg", "jpeg", "gif", "bmp")
-
         public var instance: MainFrame? = null
     }
 }

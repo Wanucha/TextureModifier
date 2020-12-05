@@ -6,7 +6,6 @@ import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
 import cz.wa.texturemodifier.math.Vec2i
 import java.awt.image.BufferedImage
-import kotlin.math.roundToInt
 
 /**
  * Fills background with color computed from neighbouring pixels.
@@ -69,26 +68,10 @@ class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
         }
 
         if (settings.fillBgAverageFill) {
-            return averageColor(colors)
+            return ColorUtils.averageColor(colors)
         } else {
             return mostColor(colors)
         }
-    }
-
-    private fun averageColor(colors: ArrayList<Int>): Int {
-        var r = 0
-        var g = 0
-        var b = 0
-        for (c in colors) {
-            r += ColorUtils.getRed(c)
-            g += ColorUtils.getGreen(c)
-            b += ColorUtils.getBlue(c)
-        }
-        val count = colors.size.toDouble()
-        r = (r / count).roundToInt()
-        g = (g / count).roundToInt()
-        b = (b / count).roundToInt()
-        return ColorUtils.fromRGB(r, g, b)
     }
 
     private fun mostColor(colors: ArrayList<Int>): Int {
