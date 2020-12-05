@@ -36,17 +36,20 @@ class PropertiesEditor(val contentHolder: ContentHolder) : JPanel() {
         applyB.addActionListener({ applySettings() })
         toolPanel.add(applyB)
 
-        val revertB = JButton("Revert")
-        revertB.addActionListener({ revertSettings() })
-        toolPanel.add(revertB)
+        val generateB = JButton("Generate")
+        generateB.addActionListener({ generateSettings() })
+        toolPanel.add(generateB)
 
+        val reloadB = JButton("Reload")
+        reloadB.addActionListener({ reloadSettings() })
+        toolPanel.add(reloadB)
 
         textArea.autoscrolls = true
         layout = BorderLayout()
         add(textArea, BorderLayout.CENTER)
         add(toolPanel, BorderLayout.EAST)
         if (contentHolder.settings.file != null) {
-            revertSettings()
+            reloadSettings()
         }
     }
 
@@ -54,7 +57,11 @@ class PropertiesEditor(val contentHolder: ContentHolder) : JPanel() {
         contentHolder.settings = Settings.parseString(textArea.text)
     }
 
-    private fun revertSettings() {
+    private fun generateSettings() {
+        textArea.text = Settings.generateText(contentHolder.settings)
+    }
+
+    private fun reloadSettings() {
         reload(contentHolder.settings.file!!)
     }
 

@@ -51,7 +51,7 @@ class Settings(
         const val PIXELATE_SCALE_COLOR_TOLERANCE = "pixelate-scale-color-tolerance"
         const val PIXELATE_IGNORE_BG_COLOR = "pixelate-ignore-bg-color"
         const val PIXELATE_BG_COLOR = "pixelate-bg-color"
-        const val FILL_BG_ITERATIONS = "fillbg-"
+        const val FILL_BG_ITERATIONS = "fillbg-iterations"
         const val FILL_BG_INCLUDE_CORNERS = "fillbg-include-corners"
         const val FILL_BG_AVERAGE_FILL = "fillbg-average-fill"
         const val FILL_BG_BG_COLOR = "fillbg-bg-color"
@@ -137,6 +137,10 @@ class Settings(
         }
 
         fun save(s: Settings, file: File) {
+            file.writeText(generateText(s))
+        }
+
+        fun generateText(s: Settings): String {
             val sb = StringBuilder()
 
             write(sb, GUI_BG_COLOR, ColorUtils.toString(s.guiBgColor))
@@ -153,13 +157,12 @@ class Settings(
             write(sb, PIXELATE_SCALE_TYPE, s.pixelateScaleType)
             write(sb, PIXELATE_SCALE_COLOR_TOLERANCE, s.pixelateScaleColorTolerance)
             write(sb, PIXELATE_IGNORE_BG_COLOR, s.pixelateIgnoreBgColor)
-            write(sb, PIXELATE_BG_COLOR, s.pixelateBgColor)
+            write(sb, PIXELATE_BG_COLOR, ColorUtils.toString(s.pixelateBgColor))
             write(sb, FILL_BG_ITERATIONS, s.fillBgIterations)
             write(sb, FILL_BG_INCLUDE_CORNERS, s.fillBgIncludeCorners)
             write(sb, FILL_BG_AVERAGE_FILL, s.fillBgAverageFill)
-            write(sb, FILL_BG_BG_COLOR, s.fillBgBgColor)
-
-            file.writeText(sb.toString())
+            write(sb, FILL_BG_BG_COLOR, ColorUtils.toString(s.fillBgBgColor))
+            return sb.toString()
         }
 
         fun write(sb: StringBuilder, key: String, value: Any) {

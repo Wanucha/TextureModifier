@@ -295,6 +295,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
                     "* output image\n" +
                     "\n" +
                     "The settings can be modified, loaded and saved independently.\n" +
+                    "When a modifier is applied, its settings are stored to memory (not disk).\n" +
                     "\n" +
                     "Input image is the opened image, modifiers cannot change it.\n" +
                     "If you apply some modifier, the input image remains original.\n" +
