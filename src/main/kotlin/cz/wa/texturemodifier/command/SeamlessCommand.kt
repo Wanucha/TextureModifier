@@ -55,6 +55,10 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
         return ret
     }
 
+    override fun getHelp(): String = "Generates seamless texture by repeating a part of it on the opposite edge.\n" +
+            "* Distance PX - size of copied edge\n" +
+            "* Alpha blending - true averages between original and copied edge, false copies pixels using dithering"
+
     private fun processEdge(
         src: BufferedImage,
         x: Int,

@@ -3,32 +3,19 @@ package cz.wa.texturemodifier.gui.tabs.blur
 import cz.wa.texturemodifier.MapType
 import cz.wa.texturemodifier.command.MergeMapCommand
 import cz.wa.texturemodifier.gui.ContentHolder
+import cz.wa.texturemodifier.gui.tabs.AbstractPanel
 import cz.wa.texturemodifier.gui.utils.GuiUtils
-import java.awt.BorderLayout
-import java.awt.Dimension
-import javax.swing.JButton
 import javax.swing.JComboBox
-import javax.swing.JPanel
 import javax.swing.JTextField
 
-class MergeMapsPanel(val contentHolder: ContentHolder) : JPanel() {
-    private val canvas = MergeMapsViewer(contentHolder)
-    private val toolPanel = ToolPanel(contentHolder, canvas)
+class MergeMapsPanel(contentHolder: ContentHolder) :
+    AbstractPanel<MergeMapsViewer>(contentHolder, MergeMapsViewer(contentHolder)) {
 
-    init {
-        initComponents()
-    }
+    override fun createPanel(contentHolder: ContentHolder, canvas: MergeMapsViewer) = ToolPanel(contentHolder, canvas)
 
-    private fun initComponents() {
-        layout = BorderLayout()
-        add(canvas, BorderLayout.CENTER)
-        add(toolPanel, BorderLayout.EAST)
-    }
+    protected class ToolPanel(contentHolder: ContentHolder, canvas: MergeMapsViewer) :
+        AbstractToolPanel<MergeMapsViewer>(contentHolder, canvas, 240, MergeMapCommand::class.java) {
 
-    /**
-     * UI Panel
-     */
-    class ToolPanel(val contentHolder: ContentHolder, val canvas: MergeMapsViewer) : JPanel() {
         val layoutCb = JComboBox<MapType>(MapType.values())
         val map1Tf = JTextField()
         val map2Tf = JTextField()
@@ -36,8 +23,8 @@ class MergeMapsPanel(val contentHolder: ContentHolder) : JPanel() {
         val map4Tf = JTextField()
 
         init {
-            maximumSize = Dimension(240, 4096)
-            preferredSize = maximumSize
+            // apply
+            add(createHelpButton())
 
             // type
             layoutCb.isEditable = false
@@ -62,23 +49,15 @@ class MergeMapsPanel(val contentHolder: ContentHolder) : JPanel() {
             add(GuiUtils.createValuePanel("Map 4 (lower right)", map4Tf))
 
             // apply
-            val applyB = JButton("Apply")
-            add(applyB)
-            applyB.addActionListener {
-                GuiUtils.runCatch(this, Runnable {
-                    apply()
-                })
-            }
+            add(createApplyButton())
         }
 
-        private fun apply() {
+        override fun applySettings() {
             contentHolder.settings.mergeMapsLayout = layoutCb.selectedItem as MapType
             contentHolder.settings.mergeMapsMap1 = map1Tf.text
             contentHolder.settings.mergeMapsMap2 = map2Tf.text
             contentHolder.settings.mergeMapsMap3 = map3Tf.text
             contentHolder.settings.mergeMapsMap4 = map4Tf.text
-            contentHolder.outputImage = MergeMapCommand(contentHolder.settings).execute(contentHolder.sourceImage!!)
-            canvas.refresh()
         }
     }
 }

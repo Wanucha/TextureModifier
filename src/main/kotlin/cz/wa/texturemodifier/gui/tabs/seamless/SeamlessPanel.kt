@@ -2,33 +2,27 @@ package cz.wa.texturemodifier.gui.tabs.seamless
 
 import cz.wa.texturemodifier.command.SeamlessCommand
 import cz.wa.texturemodifier.gui.ContentHolder
-import cz.wa.texturemodifier.gui.utils.GuiUtils
-import java.awt.BorderLayout
-import java.awt.Dimension
+import cz.wa.texturemodifier.gui.tabs.AbstractPanel
 import java.awt.FlowLayout
-import javax.swing.*
+import javax.swing.JCheckBox
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.JTextField
 
-class SeamlessPanel(val contentHolder: ContentHolder) : JPanel() {
-    private val canvas = SeamlessViewer(contentHolder)
-    private val toolPanel = ToolPanel(contentHolder, canvas)
+class SeamlessPanel(contentHolder: ContentHolder) :
+    AbstractPanel<SeamlessViewer>(contentHolder, SeamlessViewer(contentHolder)) {
 
-    init {
-        initComponents()
-    }
+    override fun createPanel(contentHolder: ContentHolder, canvas: SeamlessViewer) = ToolPanel(contentHolder, canvas)
 
-    private fun initComponents() {
-        layout = BorderLayout()
-        add(canvas, BorderLayout.CENTER)
-        add(toolPanel, BorderLayout.EAST)
-    }
+    protected class ToolPanel(contentHolder: ContentHolder, canvas: SeamlessViewer) :
+        AbstractToolPanel<SeamlessViewer>(contentHolder, canvas, 150, SeamlessCommand::class.java) {
 
-    class ToolPanel(val contentHolder: ContentHolder, val canvas: SeamlessViewer) : JPanel() {
         val distTf = JTextField()
         val alphaCb = JCheckBox("Alpha blending")
 
         init {
-            maximumSize = Dimension(150, 4096)
-            preferredSize = maximumSize
+            // help
+            add(createHelpButton())
 
             // distance
             val p1 = JPanel(FlowLayout())
@@ -46,20 +40,12 @@ class SeamlessPanel(val contentHolder: ContentHolder) : JPanel() {
             add(alphaCb)
 
             // apply
-            val applyB = JButton("Apply")
-            add(applyB)
-            applyB.addActionListener {
-                GuiUtils.runCatch(this, Runnable {
-                    apply()
-                })
-            }
+            add(createApplyButton())
         }
 
-        private fun apply() {
+        override fun applySettings() {
             contentHolder.settings.seamlessDist = distTf.text.toInt()
             contentHolder.settings.seamlessAlpha = alphaCb.isSelected
-            contentHolder.outputImage = SeamlessCommand(contentHolder.settings).execute(contentHolder.sourceImage!!)
-            canvas.refresh()
         }
     }
 }

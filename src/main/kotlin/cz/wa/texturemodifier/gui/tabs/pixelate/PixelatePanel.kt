@@ -3,31 +3,22 @@ package cz.wa.texturemodifier.gui.tabs.blur
 import cz.wa.texturemodifier.ScaleType
 import cz.wa.texturemodifier.command.PixelateCommand
 import cz.wa.texturemodifier.gui.ContentHolder
+import cz.wa.texturemodifier.gui.tabs.AbstractPanel
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import cz.wa.texturemodifier.math.ColorUtils
-import java.awt.BorderLayout
-import java.awt.Dimension
-import javax.swing.*
+import javax.swing.JButton
+import javax.swing.JCheckBox
+import javax.swing.JComboBox
+import javax.swing.JTextField
 import kotlin.math.roundToInt
 
-class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
-    private val canvas = PixelateViewer(contentHolder)
-    private val toolPanel = ToolPanel(contentHolder, canvas)
+class PixelatePanel(contentHolder: ContentHolder) :
+    AbstractPanel<PixelateViewer>(contentHolder, PixelateViewer(contentHolder)) {
 
-    init {
-        initComponents()
-    }
+    override fun createPanel(contentHolder: ContentHolder, canvas: PixelateViewer) = ToolPanel(contentHolder, canvas)
 
-    private fun initComponents() {
-        layout = BorderLayout()
-        add(canvas, BorderLayout.CENTER)
-        add(toolPanel, BorderLayout.EAST)
-    }
-
-    /**
-     * UI Panel
-     */
-    class ToolPanel(val contentHolder: ContentHolder, val canvas: PixelateViewer) : JPanel() {
+    protected class ToolPanel(contentHolder: ContentHolder, canvas: PixelateViewer) :
+        AbstractToolPanel<PixelateViewer>(contentHolder, canvas, 200, PixelateCommand::class.java) {
         val scaleTf = JTextField()
         var sizeXTf = JTextField()
         var sizeYTf = JTextField()
@@ -38,15 +29,16 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
         val bgColorTf = JTextField("#000000")
 
         init {
-            maximumSize = Dimension(200, 4096)
-            preferredSize = maximumSize
+            // help
+            add(createHelpButton())
+            add(createEmptyPanel(40))
 
             // scale
             scaleTf.text = contentHolder.settings.pixelateScale.toString()
-            scaleTf.columns = 2
+            scaleTf.columns = 4
             add(GuiUtils.createValuePanel("Scale down", scaleTf))
             val bApplyScale = JButton("Use")
-            bApplyScale.addActionListener{
+            bApplyScale.addActionListener {
                 val scale = scaleTf.text.toDouble()
                 sizeXTf.text = (contentHolder.sourceImage!!.width / scale).roundToInt().toString()
                 sizeYTf.text = (contentHolder.sourceImage!!.height / scale).roundToInt().toString()
@@ -54,11 +46,11 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
             add(bApplyScale)
 
             // size
-            sizeXTf.text = contentHolder.settings.pixelateScale.toString()
+            sizeXTf.text = contentHolder.settings.pixelateSizeX.toString()
             sizeXTf.columns = 4
             add(GuiUtils.createValuePanel("Size X", sizeXTf))
 
-            sizeYTf.text = contentHolder.settings.pixelateScale.toString()
+            sizeYTf.text = contentHolder.settings.pixelateSizeY.toString()
             sizeYTf.columns = 4
             add(GuiUtils.createValuePanel("Size Y", sizeYTf))
 
@@ -70,7 +62,7 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
             // scale type
             typeCb.isEditable = false
             typeCb.selectedItem = contentHolder.settings.pixelateScaleType
-            add(GuiUtils.createValuePanel("Colors per channel", typeCb))
+            add(GuiUtils.createValuePanel("Scale filter", typeCb))
 
             // tolerance
             toleranceTf.text = contentHolder.settings.pixelateScaleColorTolerance.toString()
@@ -87,16 +79,10 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
             add(GuiUtils.createValuePanel("BG color", bgColorTf))
 
             // apply
-            val applyB = JButton("Apply")
-            add(applyB)
-            applyB.addActionListener {
-                GuiUtils.runCatch(this, Runnable {
-                    apply()
-                })
-            }
+            add(createApplyButton())
         }
 
-        private fun apply() {
+        override fun applySettings() {
             contentHolder.settings.pixelateScale = scaleTf.text.toDouble()
             contentHolder.settings.pixelateSizeX = sizeXTf.text.toInt()
             contentHolder.settings.pixelateSizeY = sizeYTf.text.toInt()
@@ -105,8 +91,6 @@ class PixelatePanel(val contentHolder: ContentHolder) : JPanel() {
             contentHolder.settings.pixelateScaleColorTolerance = toleranceTf.text.toInt()
             contentHolder.settings.pixelateIgnoreBgColor = ignoreBgCb.isSelected
             contentHolder.settings.pixelateBgColor = ColorUtils.parse(bgColorTf.text)
-            contentHolder.outputImage = PixelateCommand(contentHolder.settings).execute(contentHolder.sourceImage!!)
-            canvas.refresh()
         }
     }
 }

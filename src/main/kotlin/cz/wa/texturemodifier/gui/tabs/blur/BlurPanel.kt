@@ -2,36 +2,26 @@ package cz.wa.texturemodifier.gui.tabs.blur
 
 import cz.wa.texturemodifier.command.BlurCommand
 import cz.wa.texturemodifier.gui.ContentHolder
-import cz.wa.texturemodifier.gui.utils.GuiUtils
-import java.awt.BorderLayout
-import java.awt.Dimension
+import cz.wa.texturemodifier.gui.tabs.AbstractPanel
 import java.awt.FlowLayout
-import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 
-class BlurPanel(val contentHolder: ContentHolder) : JPanel() {
-    private val canvas = BlurViewer(contentHolder)
-    private val toolPanel = ToolPanel(contentHolder, canvas)
+class BlurPanel(contentHolder: ContentHolder) :
+    AbstractPanel<BlurViewer>(contentHolder, BlurViewer(contentHolder)) {
 
-    init {
-        initComponents()
-    }
+    override fun createPanel(contentHolder: ContentHolder, canvas: BlurViewer) = ToolPanel(contentHolder, canvas)
 
-    private fun initComponents() {
-        layout = BorderLayout()
-        add(canvas, BorderLayout.CENTER)
-        add(toolPanel, BorderLayout.EAST)
-    }
+    protected class ToolPanel(contentHolder: ContentHolder, canvas: BlurViewer) :
+        AbstractToolPanel<BlurViewer>(contentHolder, canvas, 150, BlurCommand::class.java) {
 
-    class ToolPanel(val contentHolder: ContentHolder, val canvas: BlurViewer) : JPanel() {
         val radiusTf = JTextField()
         val ratioTf = JTextField()
 
         init {
-            maximumSize = Dimension(150, 4096)
-            preferredSize = maximumSize
+            // apply
+            add(createHelpButton())
 
             // radius
             val p1 = JPanel(FlowLayout())
@@ -56,20 +46,12 @@ class BlurPanel(val contentHolder: ContentHolder) : JPanel() {
             add(p2)
 
             // apply
-            val applyB = JButton("Apply")
-            add(applyB)
-            applyB.addActionListener {
-                GuiUtils.runCatch(this, Runnable {
-                    apply()
-                })
-            }
+            add(createApplyButton())
         }
 
-        private fun apply() {
+        override fun applySettings() {
             contentHolder.settings.blurRadius = radiusTf.text.toDouble()
             contentHolder.settings.blurRatio = ratioTf.text.toDouble()
-            contentHolder.outputImage = BlurCommand(contentHolder.settings).execute(contentHolder.sourceImage!!)
-            canvas.refresh()
         }
     }
 }

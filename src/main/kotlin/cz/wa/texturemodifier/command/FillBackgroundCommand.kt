@@ -39,6 +39,13 @@ class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
         return outTex.img
     }
 
+    override fun getHelp(): String = "Fills pixels of background color with color computed from neighbors\n" +
+            "For each BG pixel computes new color from all non BG colors\n" +
+            "* iterations - apply modifier multiple times\n" +
+            "* include corner pixels - false uses only 4 adject pixels, true uses 8 pixels around\n" +
+            "* average color - true averages all neighboring colors, false takes the most frequent color\n" +
+            "* BG color - define which color will be replaced"
+
     private fun processPixel(inTex: Texture, x: Int, y: Int, outTex: Texture, bgColor: Int) {
         if (inTex.getPoint(x, y) == bgColor && hasNearColor(inTex, x, y)) {
             outTex.setPoint(x, y, computeColor(inTex, x, y))

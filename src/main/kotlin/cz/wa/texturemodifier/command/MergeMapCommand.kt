@@ -46,6 +46,20 @@ class MergeMapCommand(settings: Settings) : AbstractCommand(settings) {
         return ret
     }
 
+    override fun getHelp(): String = "Converts multiple parts of the input into specified channels\n" +
+            "The input consist of multiple variants of a single texture, e. g.:\n" +
+            "Size is 32x16, left image is 16x16 metallic map, right image is 16x16 smoothness map.\n" +
+            "Then it converts each map into single 16x16 image, where each channel is generated from different input map.\n" +
+            "* input layout:\n" +
+            "\t- TWO_SIDE: 2 images side by side (1 left, 2 right)\n" +
+            "\t- TWO_ABOVE: 2 images first on top, second below (1 top, 2 bottom)\n" +
+            "\t- FOUR_SQUARE: 4 images in 2x2 grid (1 upper left, 2 upper right, 3 lower left, 4 lower right)\n" +
+            "* map [1-4] - defines conversion for each input map, format is 'input-output'\n" +
+            "\tinput and output must consists only from characters R, G, B, A\n" +
+            "\tconversion takes all input channels, averages them and fills each output channel\n" +
+            "\texample1: RGB-R take gray value and fill red channel\n" +
+            "\texample2: RB-AG take average of red and blue and fill green and alpha channels with the value"
+
     private fun convertPixel(inTex: Texture, x: Int, y: Int, outTex: Texture, maps: ArrayList<MapConvert>) {
         val output = ArrayList<Int>(4)
         val c1 = getInputPixel(inTex, x, y, Vec2i.ZERO)

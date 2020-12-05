@@ -54,6 +54,10 @@ class BlurCommand(settings: Settings) : AbstractCommand(settings) {
         return blured.generateImage()
     }
 
+    override fun getHelp(): String = "Blurs the texture by gaussian\n" +
+            "* radius - radius of the blur\n" +
+            "* ratio - merges blurred result with original image, 1 means fully blurred, 0.5 means average between original and blurred"
+
     private fun blurPixel(source: TextureF, core: FloatArray, x: Int, y: Int, dirX: Boolean): ColorF {
         var r = 0f
         var g = 0f
