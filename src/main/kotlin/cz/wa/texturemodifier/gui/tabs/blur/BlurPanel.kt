@@ -3,18 +3,19 @@ package cz.wa.texturemodifier.gui.tabs.blur
 import cz.wa.texturemodifier.command.BlurCommand
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.tabs.AbstractPanel
+import cz.wa.texturemodifier.gui.tabs.ModifierViewer
 import java.awt.FlowLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 
 class BlurPanel(contentHolder: ContentHolder) :
-    AbstractPanel<BlurViewer>(contentHolder, BlurViewer(contentHolder)) {
+    AbstractPanel<ModifierViewer>(contentHolder, ModifierViewer(contentHolder)) {
 
-    override fun createPanel(contentHolder: ContentHolder, canvas: BlurViewer) = ToolPanel(contentHolder, canvas)
+    override fun createPanel(contentHolder: ContentHolder, canvas: ModifierViewer) = ToolPanel(contentHolder, canvas)
 
-    protected class ToolPanel(contentHolder: ContentHolder, canvas: BlurViewer) :
-        AbstractToolPanel<BlurViewer>(contentHolder, canvas, 150, BlurCommand::class.java) {
+    protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierViewer) :
+        AbstractToolPanel<ModifierViewer>(contentHolder, canvas, 150, BlurCommand::class.java) {
 
         val radiusTf = JTextField()
         val ratioTf = JTextField()

@@ -4,17 +4,18 @@ import cz.wa.texturemodifier.MapType
 import cz.wa.texturemodifier.command.MergeMapCommand
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.tabs.AbstractPanel
+import cz.wa.texturemodifier.gui.tabs.ModifierAlphaViewer
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import javax.swing.JComboBox
 import javax.swing.JTextField
 
 class MergeMapsPanel(contentHolder: ContentHolder) :
-    AbstractPanel<MergeMapsViewer>(contentHolder, MergeMapsViewer(contentHolder)) {
+    AbstractPanel<ModifierAlphaViewer>(contentHolder, ModifierAlphaViewer(contentHolder)) {
 
-    override fun createPanel(contentHolder: ContentHolder, canvas: MergeMapsViewer) = ToolPanel(contentHolder, canvas)
+    override fun createPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) = ToolPanel(contentHolder, canvas)
 
-    protected class ToolPanel(contentHolder: ContentHolder, canvas: MergeMapsViewer) :
-        AbstractToolPanel<MergeMapsViewer>(contentHolder, canvas, 240, MergeMapCommand::class.java) {
+    protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) :
+        AbstractToolPanel<ModifierAlphaViewer>(contentHolder, canvas, 240, MergeMapCommand::class.java) {
 
         val layoutCb = JComboBox<MapType>(MapType.values())
         val map1Tf = JTextField()

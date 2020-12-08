@@ -3,19 +3,20 @@ package cz.wa.texturemodifier.gui.tabs.blur
 import cz.wa.texturemodifier.command.FillBackgroundCommand
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.tabs.AbstractPanel
+import cz.wa.texturemodifier.gui.tabs.ModifierViewer
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import cz.wa.texturemodifier.math.ColorUtils
 import javax.swing.JCheckBox
 import javax.swing.JTextField
 
 class FillBackgroundPanel(contentHolder: ContentHolder) :
-    AbstractPanel<FillBackgroundViewer>(contentHolder, FillBackgroundViewer(contentHolder)) {
+    AbstractPanel<ModifierViewer>(contentHolder, ModifierViewer(contentHolder)) {
 
-    override fun createPanel(contentHolder: ContentHolder, canvas: FillBackgroundViewer) =
+    override fun createPanel(contentHolder: ContentHolder, canvas: ModifierViewer) =
         ToolPanel(contentHolder, canvas)
 
-    protected class ToolPanel(contentHolder: ContentHolder, canvas: FillBackgroundViewer) :
-        AbstractToolPanel<FillBackgroundViewer>(contentHolder, canvas, 200, FillBackgroundCommand::class.java) {
+    protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierViewer) :
+        AbstractToolPanel<ModifierViewer>(contentHolder, canvas, 200, FillBackgroundCommand::class.java) {
 
         val iterationsTf = JTextField()
         val includeCornersCb = JCheckBox("Fill color include corner pixels")

@@ -4,6 +4,7 @@ import cz.wa.texturemodifier.ScaleType
 import cz.wa.texturemodifier.command.PixelateCommand
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.tabs.AbstractPanel
+import cz.wa.texturemodifier.gui.tabs.ModifierViewer
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import cz.wa.texturemodifier.math.ColorUtils
 import javax.swing.JButton
@@ -13,12 +14,12 @@ import javax.swing.JTextField
 import kotlin.math.roundToInt
 
 class PixelatePanel(contentHolder: ContentHolder) :
-    AbstractPanel<PixelateViewer>(contentHolder, PixelateViewer(contentHolder)) {
+    AbstractPanel<ModifierViewer>(contentHolder, ModifierViewer(contentHolder)) {
 
-    override fun createPanel(contentHolder: ContentHolder, canvas: PixelateViewer) = ToolPanel(contentHolder, canvas)
+    override fun createPanel(contentHolder: ContentHolder, canvas: ModifierViewer) = ToolPanel(contentHolder, canvas)
 
-    protected class ToolPanel(contentHolder: ContentHolder, canvas: PixelateViewer) :
-        AbstractToolPanel<PixelateViewer>(contentHolder, canvas, 200, PixelateCommand::class.java) {
+    protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierViewer) :
+        AbstractToolPanel<ModifierViewer>(contentHolder, canvas, 200, PixelateCommand::class.java) {
         val scaleTf = JTextField()
         var sizeXTf = JTextField()
         var sizeYTf = JTextField()

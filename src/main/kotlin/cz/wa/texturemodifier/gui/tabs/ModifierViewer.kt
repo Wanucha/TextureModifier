@@ -1,13 +1,13 @@
-package cz.wa.texturemodifier.gui.tabs.blur
+package cz.wa.texturemodifier.gui.tabs
 
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.MainFrame
 import cz.wa.texturemodifier.gui.texturecanvas.TextureViewer
 
 /**
- * Displays blur texture
+ * Displays modified image
  */
-class BlurViewer(contentHolder: ContentHolder) : TextureViewer(contentHolder) {
+class ModifierViewer(contentHolder: ContentHolder) : TextureViewer(contentHolder) {
     init {
         imageSource = ImageSource.OUTPUT
         val l = createImageListener()

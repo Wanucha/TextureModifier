@@ -1,0 +1,41 @@
+package cz.wa.texturemodifier.command
+
+import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.gui.utils.ImageUtils
+import cz.wa.texturemodifier.image.Texture
+import cz.wa.texturemodifier.math.ColorUtils
+import java.awt.image.BufferedImage
+
+class RemoveAlphaCommand(settings: Settings) : AbstractCommand(settings) {
+
+    override fun execute(image: BufferedImage): BufferedImage {
+        check(settings.removeAlphaThreshhold >= 0 && settings.removeAlphaThreshhold <= 256) { "removeAlphaThreshhold must be 0..256" }
+
+        val ret = ImageUtils.copyImage(image)
+        val tex = Texture(ret)
+
+        for (y in 0 until ret.height) {
+            for (x in 0 until ret.width) {
+                var c = tex.getPoint(x, y)
+                val a = ColorUtils.getAlpha(c)
+                if (a > 0 && a < 255) {
+                    c = ColorUtils.setAlpha(c, computeAlpha(a))
+                    tex.setPoint(x, y, c)
+                }
+            }
+        }
+        return ret
+    }
+
+    private fun computeAlpha(a: Int): Int {
+        if (a >= settings.removeAlphaThreshhold) {
+            return 255
+        } else {
+            return 0
+        }
+    }
+
+    override fun getHelp(): String = "Removes alpha and replaces with value 0 or 255\n" +
+            "* hreshhold - alpha >= value will be 255, < will be 0"
+
+}

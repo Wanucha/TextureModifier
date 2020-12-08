@@ -1,4 +1,4 @@
-package cz.wa.texturemodifier.gui.tabs.blur
+package cz.wa.texturemodifier.gui.tabs
 
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.MainFrame
@@ -7,7 +7,10 @@ import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
 import cz.wa.texturemodifier.math.Vec2i
 
-class MergeMapsViewer(contentHolder: ContentHolder) : TextureViewer(contentHolder) {
+/**
+ * Also displays alpha
+ */
+class ModifierAlphaViewer(contentHolder: ContentHolder) : TextureViewer(contentHolder) {
     init {
         imageSource = ImageSource.OUTPUT
         val l = createImageListener()

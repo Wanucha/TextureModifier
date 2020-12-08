@@ -3,6 +3,7 @@ package cz.wa.texturemodifier.gui.tabs.seamless
 import cz.wa.texturemodifier.command.SeamlessCommand
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.tabs.AbstractPanel
+import cz.wa.texturemodifier.gui.tabs.ModifierViewer
 import java.awt.FlowLayout
 import javax.swing.JCheckBox
 import javax.swing.JLabel
@@ -10,12 +11,12 @@ import javax.swing.JPanel
 import javax.swing.JTextField
 
 class SeamlessPanel(contentHolder: ContentHolder) :
-    AbstractPanel<SeamlessViewer>(contentHolder, SeamlessViewer(contentHolder)) {
+    AbstractPanel<ModifierViewer>(contentHolder, ModifierViewer(contentHolder)) {
 
-    override fun createPanel(contentHolder: ContentHolder, canvas: SeamlessViewer) = ToolPanel(contentHolder, canvas)
+    override fun createPanel(contentHolder: ContentHolder, canvas: ModifierViewer) = ToolPanel(contentHolder, canvas)
 
-    protected class ToolPanel(contentHolder: ContentHolder, canvas: SeamlessViewer) :
-        AbstractToolPanel<SeamlessViewer>(contentHolder, canvas, 150, SeamlessCommand::class.java) {
+    protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierViewer) :
+        AbstractToolPanel<ModifierViewer>(contentHolder, canvas, 150, SeamlessCommand::class.java) {
 
         val distTf = JTextField()
         val alphaCb = JCheckBox("Alpha blending")

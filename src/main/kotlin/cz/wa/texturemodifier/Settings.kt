@@ -34,6 +34,7 @@ class Settings(
     var mergeMapsMap2: String = "RGB-A",
     var mergeMapsMap3: String = "RGB-G",
     var mergeMapsMap4: String = "RGB-B",
+    var removeAlphaThreshhold: Int = 128,
 ) {
     companion object {
         const val GUI_BG_COLOR = "gui-bg-color"
@@ -56,10 +57,11 @@ class Settings(
         const val FILL_BG_AVERAGE_FILL = "fillbg-average-fill"
         const val FILL_BG_BG_COLOR = "fillbg-bg-color"
         const val MERGE_MAPS_LAYOUT = "merge-maps-layout"
-        const val MERGE_MAPS_Map1 = "merge-maps-map1"
-        const val MERGE_MAPS_Map2 = "merge-maps-map2"
-        const val MERGE_MAPS_Map3 = "merge-maps-map3"
-        const val MERGE_MAPS_Map4 = "merge-maps-map4"
+        const val MERGE_MAPS_MAP1 = "merge-maps-map1"
+        const val MERGE_MAPS_MAP2 = "merge-maps-map2"
+        const val MERGE_MAPS_MAP3 = "merge-maps-map3"
+        const val MERGE_MAPS_MAP4 = "merge-maps-map4"
+        const val REMOVE_ALPHA_THRESHHOLD = "remove-alpha-threshhold"
 
         fun parseFile(fileName: String): Settings {
             val ret = parseString(File(fileName).readText())
@@ -129,6 +131,24 @@ class Settings(
                 if (entry.key == FILL_BG_BG_COLOR) {
                     ret.fillBgBgColor = parseColor(entry)
                 }
+                if (entry.key == MERGE_MAPS_LAYOUT) {
+                    ret.mergeMapsLayout = parseEnum(entry, MapType::class.java)
+                }
+                if (entry.key == MERGE_MAPS_MAP1) {
+                    ret.mergeMapsMap1 = parseString(entry)
+                }
+                if (entry.key == MERGE_MAPS_MAP2) {
+                    ret.mergeMapsMap2 = parseString(entry)
+                }
+                if (entry.key == MERGE_MAPS_MAP3) {
+                    ret.mergeMapsMap3 = parseString(entry)
+                }
+                if (entry.key == MERGE_MAPS_MAP4) {
+                    ret.mergeMapsMap4 = parseString(entry)
+                }
+                if (entry.key == REMOVE_ALPHA_THRESHHOLD) {
+                    ret.removeAlphaThreshhold = parseInt(entry)
+                }
             }
             if (ret.outPrefix.isEmpty() && ret.outPostfix.isEmpty()) {
                 throw IllegalArgumentException("$OUT_PREFIX and $OUT_POSTFIX must not be both empty")
@@ -162,6 +182,12 @@ class Settings(
             write(sb, FILL_BG_INCLUDE_CORNERS, s.fillBgIncludeCorners)
             write(sb, FILL_BG_AVERAGE_FILL, s.fillBgAverageFill)
             write(sb, FILL_BG_BG_COLOR, ColorUtils.toString(s.fillBgBgColor))
+            write(sb, MERGE_MAPS_LAYOUT, s.mergeMapsLayout)
+            write(sb, MERGE_MAPS_MAP1, s.mergeMapsMap1)
+            write(sb, MERGE_MAPS_MAP2, s.mergeMapsMap2)
+            write(sb, MERGE_MAPS_MAP3, s.mergeMapsMap3)
+            write(sb, MERGE_MAPS_MAP4, s.mergeMapsMap4)
+            write(sb, REMOVE_ALPHA_THRESHHOLD, s.removeAlphaThreshhold)
             return sb.toString()
         }
 

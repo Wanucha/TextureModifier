@@ -40,6 +40,8 @@ object ColorUtils {
 
     fun getAlpha(c: Int) = c shr 24 and 0xFF
 
+    fun setAlpha(c: Int, a: Int)= (c and 0xFFFFFF) or (a and 0xFF shl 24)
+
     fun toString(c: Int): String {
         return toString(Color(c))
     }

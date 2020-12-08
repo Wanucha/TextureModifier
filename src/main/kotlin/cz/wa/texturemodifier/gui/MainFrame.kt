@@ -2,10 +2,7 @@ package cz.wa.texturemodifier.gui
 
 import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.TextureModifierMain
-import cz.wa.texturemodifier.gui.tabs.blur.BlurPanel
-import cz.wa.texturemodifier.gui.tabs.blur.FillBackgroundPanel
-import cz.wa.texturemodifier.gui.tabs.blur.MergeMapsPanel
-import cz.wa.texturemodifier.gui.tabs.blur.PixelatePanel
+import cz.wa.texturemodifier.gui.tabs.blur.*
 import cz.wa.texturemodifier.gui.tabs.propertieseditor.PropertiesEditor
 import cz.wa.texturemodifier.gui.tabs.seamless.SeamlessPanel
 import cz.wa.texturemodifier.gui.tabs.source.SourcePanel
@@ -18,6 +15,7 @@ import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.KeyEvent
 import java.io.File
+import java.util.*
 import javax.imageio.ImageIO
 import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -160,6 +158,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         tabs.addTab("Pixelate", PixelatePanel(contentHolder))
         tabs.addTab("Fill background", FillBackgroundPanel(contentHolder))
         tabs.addTab("Merge maps", MergeMapsPanel(contentHolder))
+        tabs.addTab("Remove alpha", RemoveAlphaPanel(contentHolder))
         tabs.addTab("Properties", PropertiesEditor(contentHolder))
 
         // select each tab
