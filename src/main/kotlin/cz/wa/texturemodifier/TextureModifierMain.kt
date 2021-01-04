@@ -64,7 +64,7 @@ class TextureModifierMain {
         }
 
         fun printUsage(): String {
-            return "Usage:???"
+            return "Usage: TODO implement args"
         }
     }
 }

@@ -14,6 +14,7 @@ import java.awt.Rectangle
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.KeyEvent
+import java.awt.image.BufferedImage
 import java.io.File
 import java.util.*
 import javax.imageio.ImageIO
@@ -42,6 +43,11 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         instance = this
         title = "Texture modifier v${TextureModifierMain.VERSION}"
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+        try {
+            iconImages = loadIcons()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         if (files is MutableList) {
             contentHolder = ContentHolder(settings, files)
@@ -164,6 +170,14 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         // select each tab
         tabs.selectedIndex = tabs.tabCount - 1
         showPrevTab()
+    }
+
+    private fun loadIcons(): List<BufferedImage> {
+        return listOf(
+            ImageIO.read(MainFrame::class.java.getResourceAsStream("/icon16.png")),
+            ImageIO.read(MainFrame::class.java.getResourceAsStream("/icon32.png")),
+            ImageIO.read(MainFrame::class.java.getResourceAsStream("/icon64.png"))
+        )
     }
 
     private fun showPrevTab() {
@@ -317,7 +331,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
                     "* Sometimes the viewed image is not refreshed (when you change bg color).\n" +
                     "Resolution: move or zoom the view.\n" +
                     "* Sometimes the main menu is overdrawn by image view.\n" +
-                    "Resolution: use shortcuts:\n" +
+                    "Resolution: switch to properties tab or use shortcuts:\n" +
                     "* Open - ctrl+O\n" +
                     "* Open in direscory - ctrl+L (show list of images in current directory)\n" +
                     "* Save as - ctrl+S (save output image)\n" +
