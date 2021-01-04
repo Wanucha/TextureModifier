@@ -14,7 +14,7 @@ class Settings(
     var outPostfix: String = "",
     var outFormat: String = "png",
     var seamlessDist: Int = 8,
-    var seamlessAlpha: Boolean = false,
+    var seamlessAlpha: Boolean = true,
     var blurRadius: Double = 3.0,
     var blurRatio: Double = 0.5,
     var pixelateScale: Double = 4.0,

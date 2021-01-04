@@ -2,6 +2,7 @@ package cz.wa.texturemodifier.command
 
 import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.utils.ImageUtils
+import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
 import java.awt.image.BufferedImage
 import kotlin.random.Random
@@ -21,8 +22,8 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
         val wd = w - d
         val hd = h - d
 
-        var src = image
-        var ret = ImageUtils.copyImage(src)
+        var src = Texture(image)
+        var ret = Texture(ImageUtils.copyImage(image))
 
         // left
         for (y in 0 until h) {
@@ -38,7 +39,7 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
         }
 
         src = ret
-        ret = ImageUtils.copyImage(src)
+        ret = Texture(ImageUtils.copyImage(src.img))
 
         // top
         for (y in 0 until d) {
@@ -49,10 +50,10 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
         // bottom
         for (y in hd until h) {
             for (x in 0 until w) {
-                processEdge(src, x, y, ret, x, w - y - 1, d - y + hd - 1, d)
+                processEdge(src, x, y, ret, x, h - y - 1, d - y + hd - 1, d)
             }
         }
-        return ret
+        return ret.img
     }
 
     override fun getHelp(): String = "Generates seamless texture by repeating a part of it on the opposite edge.\n" +
@@ -60,10 +61,10 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
             "* Alpha blending - true averages between original and copied edge, false copies pixels using dithering"
 
     private fun processEdge(
-        src: BufferedImage,
+        src: Texture,
         x: Int,
         y: Int,
-        ret: BufferedImage,
+        ret: Texture,
         x2: Int,
         y2: Int,
         curr: Int,
@@ -72,13 +73,13 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
         val r = getRatio(curr, max)
         if (!settings.seamlessAlpha) {
             if (Random.nextDouble() <= r) {
-                val c = src.getRGB(x2, y2)
-                ret.setRGB(x, y, c)
+                val c = src.getPoint(x2, y2)
+                ret.setPoint(x, y, c)
             }
         } else {
-            val c = src.getRGB(x2, y2)
-            val c2 = ret.getRGB(x, y)
-            ret.setRGB(x, y, ColorUtils.lerp(c2, c, r))
+            val c = src.getPoint(x2, y2)
+            val c2 = ret.getPoint(x, y)
+            ret.setPoint(x, y, ColorUtils.lerp(c2, c, r))
         }
     }
 
