@@ -1,11 +1,11 @@
 package cz.wa.texturemodifier.gui.texturecanvas
 
-import com.sun.javafx.geom.Vec2d
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.MainFrame
 import cz.wa.texturemodifier.gui.utils.CanvasBuffer
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import cz.wa.texturemodifier.math.ColorUtils
+import cz.wa.texturemodifier.math.Vec2d
 import cz.wa.texturemodifier.math.Vec2i
 import java.awt.*
 import java.awt.event.*

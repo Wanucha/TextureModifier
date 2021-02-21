@@ -1,7 +1,5 @@
 package cz.wa.texturemodifier.math
 
-import com.sun.javafx.geom.Vec2d
-
 class Vec2i (val x: Int, val y: Int) {
 
     constructor(v: Vec2d): this(v.x.toInt(), v.y.toInt())
@@ -35,7 +33,7 @@ class Vec2i (val x: Int, val y: Int) {
     }
 
     fun toDouble(): Vec2d {
-        return Vec2d(x.toDouble(), y.toDouble())
+        return Vec2d(this)
     }
 
     companion object {
