@@ -47,16 +47,16 @@ object ColorUtils {
     }
 
     fun toStringWithAlpha(c: Int): String {
-        return "#${getRed(c).toString(16).padStart(2, '0')}" +
+        return ("#${getRed(c).toString(16).padStart(2, '0')}" +
                 "${getGreen(c).toString(16).padStart(2, '0')}" +
                 "${getBlue(c).toString(16).padStart(2, '0')}" +
-                "${getAlpha(c).toString(16).padStart(2, '0')}"
+                "${getAlpha(c).toString(16).padStart(2, '0')}").toUpperCase()
     }
 
     fun toString(c: Color): String {
-        return "#${c.red.toString(16).padStart(2, '0')}" +
+        return ("#${c.red.toString(16).padStart(2, '0')}" +
                 "${c.green.toString(16).padStart(2, '0')}" +
-                "${c.blue.toString(16).padStart(2, '0')}"
+                "${c.blue.toString(16).padStart(2, '0')}").toUpperCase()
     }
 
     fun averageColor(colors: ArrayList<Int>): Int {

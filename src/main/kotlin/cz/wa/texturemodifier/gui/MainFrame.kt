@@ -164,6 +164,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         tabs.addTab("Pixelate", PixelatePanel(contentHolder))
         tabs.addTab("Fill background", FillBackgroundPanel(contentHolder))
         tabs.addTab("Merge maps", MergeMapsPanel(contentHolder))
+        tabs.addTab("Multiply color", MultiplyColorPanel(contentHolder))
         tabs.addTab("Remove alpha", RemoveAlphaPanel(contentHolder))
         tabs.addTab("Properties", PropertiesEditor(contentHolder))
 

@@ -34,6 +34,8 @@ class Settings(
     var mergeMapsMap2: String = "RGB-A",
     var mergeMapsMap3: String = "RGB-G",
     var mergeMapsMap4: String = "RGB-B",
+    var multiplyColorMulColor: Color = Color.WHITE,
+    var multiplyColorAddColor: Color = Color.BLACK,
     var removeAlphaThreshhold: Int = 128,
 ) {
     companion object {
@@ -61,6 +63,8 @@ class Settings(
         const val MERGE_MAPS_MAP2 = "merge-maps-map2"
         const val MERGE_MAPS_MAP3 = "merge-maps-map3"
         const val MERGE_MAPS_MAP4 = "merge-maps-map4"
+        const val MULTIPLY_COLOR_MUL_COLOR = "multiply-color-mul-color"
+        const val MULTIPLY_COLOR_ADD_COLOR = "multiply-color-add-color"
         const val REMOVE_ALPHA_THRESHHOLD = "remove-alpha-threshhold"
 
         fun parseFile(fileName: String): Settings {
@@ -149,6 +153,12 @@ class Settings(
                 if (entry.key == REMOVE_ALPHA_THRESHHOLD) {
                     ret.removeAlphaThreshhold = parseInt(entry)
                 }
+                if (entry.key == MULTIPLY_COLOR_MUL_COLOR) {
+                    ret.multiplyColorMulColor = parseColor(entry)
+                }
+                if (entry.key == MULTIPLY_COLOR_ADD_COLOR) {
+                    ret.multiplyColorAddColor = parseColor(entry)
+                }
             }
             if (ret.outPrefix.isEmpty() && ret.outPostfix.isEmpty()) {
                 throw IllegalArgumentException("$OUT_PREFIX and $OUT_POSTFIX must not be both empty")
@@ -187,6 +197,8 @@ class Settings(
             write(sb, MERGE_MAPS_MAP2, s.mergeMapsMap2)
             write(sb, MERGE_MAPS_MAP3, s.mergeMapsMap3)
             write(sb, MERGE_MAPS_MAP4, s.mergeMapsMap4)
+            write(sb, MULTIPLY_COLOR_MUL_COLOR, s.multiplyColorMulColor)
+            write(sb, MULTIPLY_COLOR_ADD_COLOR, s.multiplyColorAddColor)
             write(sb, REMOVE_ALPHA_THRESHHOLD, s.removeAlphaThreshhold)
             return sb.toString()
         }
