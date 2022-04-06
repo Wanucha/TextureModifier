@@ -27,6 +27,8 @@ compileTestKotlin {
 
 //create a single Jar with all dependencies
 task fatJar(type: Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     manifest {
         attributes 'Implementation-Title': 'Gradle Jar File Example',
                 'Implementation-Version': version,
