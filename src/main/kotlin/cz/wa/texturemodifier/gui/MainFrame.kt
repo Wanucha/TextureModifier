@@ -16,7 +16,6 @@ import java.awt.datatransfer.DataFlavor
 import java.awt.event.KeyEvent
 import java.awt.image.BufferedImage
 import java.io.File
-import java.util.*
 import javax.imageio.ImageIO
 import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -82,7 +81,6 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         openImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(openImage)
         imageOpenChooser.fileFilter = imagesFilter;
-        imageOpenChooser.currentDirectory = imageFile
 
         val quickOpenImage = JMenuItem("Open in directory")
         quickOpenImage.addActionListener({ quickOpenImage() })
@@ -98,7 +96,6 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Jpeg", "jpeg"))
         imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Gif", "gif"))
         imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Bmp", "bmp"))
-        imageSaveChooser.currentDirectory = imageFile
 
         val reloadImage = JMenuItem("Reload")
         reloadImage.addActionListener({ reloadImage() })
@@ -119,14 +116,12 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         openProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(openProp)
         propsOpenChooser.fileFilter = FileNameExtensionFilter("Properties", "properties");
-        propsOpenChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile
 
         val saveProp = JMenuItem("Save as")
         saveProp.addActionListener({ saveProperties() })
         saveProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(saveProp)
         propsSaveChooser.fileFilter = FileNameExtensionFilter("Properties", "properties");
-        propsSaveChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile
 
         // props label
         propsLabel.isEnabled = false
@@ -171,6 +166,14 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         // select each tab
         tabs.selectedIndex = tabs.tabCount - 1
         showPrevTab()
+        SwingUtilities.invokeLater({ initComponentsLater(imageFile) })
+    }
+
+    private fun initComponentsLater(imageFile: File) {
+        imageOpenChooser.currentDirectory = imageFile
+        imageSaveChooser.currentDirectory = imageFile
+        propsOpenChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile
+        propsSaveChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile
     }
 
     private fun loadIcons(): List<BufferedImage> {
