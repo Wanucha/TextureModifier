@@ -8,6 +8,7 @@ import java.awt.BorderLayout
 import java.awt.Dimension
 import java.io.File
 import javax.swing.JButton
+import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.JTextArea
 
@@ -54,7 +55,11 @@ class PropertiesEditor(val contentHolder: ContentHolder) : JPanel() {
     }
 
     private fun applySettings() {
-        contentHolder.settings = Settings.parseString(textArea.text)
+        if (textArea.text.isBlank()) {
+            JOptionPane.showMessageDialog(this,"No properties defined")
+        } else {
+            contentHolder.settings = Settings.parseString(textArea.text)
+        }
     }
 
     private fun generateSettings() {
@@ -62,7 +67,11 @@ class PropertiesEditor(val contentHolder: ContentHolder) : JPanel() {
     }
 
     private fun reloadSettings() {
-        reload(contentHolder.settings.file!!)
+        if (contentHolder.settings.file == null) {
+            JOptionPane.showMessageDialog(this,"No properties file opened")
+        } else {
+            reload(contentHolder.settings.file!!)
+        }
     }
 
     fun reload(file: File) {

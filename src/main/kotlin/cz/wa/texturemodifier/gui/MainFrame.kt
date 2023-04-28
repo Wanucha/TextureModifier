@@ -2,6 +2,7 @@ package cz.wa.texturemodifier.gui
 
 import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.TextureModifierMain
+import cz.wa.texturemodifier.gui.help.HelpFrame
 import cz.wa.texturemodifier.gui.tabs.blur.*
 import cz.wa.texturemodifier.gui.tabs.propertieseditor.PropertiesEditor
 import cz.wa.texturemodifier.gui.tabs.seamless.SeamlessPanel
@@ -24,6 +25,7 @@ import javax.swing.filechooser.FileNameExtensionFilter
 class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     private val tabs: JTabbedPane = JTabbedPane()
     private val menu: JMenuBar = JMenuBar()
+    private val help: HelpFrame = HelpFrame()
     private val quickOpenMenu = JPopupMenu()
     private val propsLabel = JMenuItem("= ")
     private val propsOpenChooser = JFileChooser()
@@ -130,12 +132,12 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
         // args help
         val argsHelp = JMenuItem("Program args")
-        argsHelp.addActionListener({ showArgsHelp() })
+        argsHelp.addActionListener { showArgsHelp() }
         menu.add(argsHelp)
 
         // help
         val help = JMenuItem("Help")
-        help.addActionListener({ showHelp() })
+        help.addActionListener { showHelp() }
         menu.add(help)
 
         // show bounds
@@ -206,7 +208,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         propertiesOpenListeners.add(l)
     }
 
-    public fun openImage() {
+    fun openImage() {
         if (imageOpenChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             GuiUtils.runCatch(this, Runnable {
                 openImage(imageOpenChooser.selectedFile)
@@ -229,7 +231,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         })
     }
 
-    public fun quickOpenImage() {
+    fun quickOpenImage() {
         quickOpenMenu.removeAll()
         val files =
             contentHolder.sourceFile.parentFile.listFiles { f -> TextureModifierMain.IMAGE_EXTS.any { f.name.endsWith(".${it}") } }
@@ -244,7 +246,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         quickOpenMenu.show(this, mPos.x, mPos.y)
     }
 
-    public fun saveImage() {
+    fun saveImage() {
         if (contentHolder.outputImage != null) {
             if (imageSaveChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                 val file = imageSaveChooser.selectedFile
@@ -262,16 +264,16 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         }
     }
 
-    public fun reloadImage() {
+    fun reloadImage() {
         openImage(File(contentHolder.files[0]))
     }
 
-    public fun revertImage() {
+    fun revertImage() {
         contentHolder.outputImage = contentHolder.sourceImage
         imageRevertListeners.forEach { it.fileOpened(File(contentHolder.files[0])) }
     }
 
-    public fun openProperties() {
+    fun openProperties() {
         if (propsOpenChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             GuiUtils.runCatch(this, Runnable {
                 val file = propsOpenChooser.selectedFile
@@ -286,7 +288,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         }
     }
 
-    public fun saveProperties() {
+    fun saveProperties() {
         if (propsSaveChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             val file = propsSaveChooser.selectedFile
             GuiUtils.runCatch(this, Runnable {
@@ -305,45 +307,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     }
 
     private fun showHelp() {
-        JOptionPane.showMessageDialog(
-            this,
-            "There are loaded 3 files:\n" +
-                    "* settings\n" +
-                    "* input image\n" +
-                    "* output image\n" +
-                    "\n" +
-                    "The settings can be modified, loaded and saved independently.\n" +
-                    "When a modifier is applied, its settings are stored to memory (not disk).\n" +
-                    "\n" +
-                    "Input image is the opened image, modifiers cannot change it.\n" +
-                    "If you apply some modifier, the input image remains original.\n" +
-                    "Next time you apply a modifier, it will be applied to the original image.\n" +
-                    "\n" +
-                    "Output image is the currently modified image.\n" +
-                    "If you open a new image, input and output images will be overwritten by the new one.\n" +
-                    "When saving image, saved is always the output.\n" +
-                    "\n" +
-                    "To apply next modifier to a modified image, switch to source tab and click 'Apply modified'.\n" +
-                    "It will copy the output -> input but not write any data to disk.\n" +
-                    "\n" +
-                    "Image view:\n" +
-                    "* Right mouse button - move\n" +
-                    "* Mouse wheel - zoom\n" +
-                    "* Home - reset view\n" +
-                    "\n" +
-                    "Bugs:\n" +
-                    "* Sometimes the viewed image is not refreshed (when you change bg color).\n" +
-                    "Resolution: move or zoom the view.\n" +
-                    "* Sometimes the main menu is overdrawn by image view.\n" +
-                    "Resolution: switch to properties tab or use shortcuts:\n" +
-                    "* Open - ctrl+O\n" +
-                    "* Open in direscory - ctrl+L (show list of images in current directory)\n" +
-                    "* Save as - ctrl+S (save output image)\n" +
-                    "* Reload - ctrl+R (reload from disk)\n" +
-                    "* Revert - ctrl+Z (copy input -> output without reloading)\n" +
-                    "* Open properties - ctrl+P\n" +
-                    "* Save properties as - ctrl+U\n"
-        )
+        help.isVisible = true
     }
 
     interface FileOpenListener {
@@ -378,6 +342,6 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     }
 
     companion object {
-        public var instance: MainFrame? = null
+        var instance: MainFrame? = null
     }
 }

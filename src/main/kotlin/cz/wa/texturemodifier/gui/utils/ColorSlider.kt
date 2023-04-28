@@ -15,9 +15,9 @@ import kotlin.math.roundToInt
  * Slider for color, currently changes bg color
  */
 class ColorSlider(val contentHolder: ContentHolder) : JPanel(), MouseListener, MouseMotionListener {
-    public var color1: Color = Color.BLACK
-    public var color2: Color = Color.WHITE
-    public var valueColor = Color.RED
+    var color1: Color = Color.BLACK
+    var color2: Color = Color.WHITE
+    var valueColor = Color.RED
 
     private var bgImage: BufferedImage = generateBgImage()
 

@@ -6,7 +6,7 @@ import java.io.File
 class TextureModifierMain {
 
     companion object {
-        const val VERSION = "0.1"
+        const val VERSION = "0.2.0"
         val IMAGE_EXTS = arrayOf("png", "jpg", "jpeg", "gif", "bmp")
 
         @JvmStatic
@@ -14,7 +14,7 @@ class TextureModifierMain {
             var settings = Settings()
             var files = emptyList<String>()
             try {
-                if (args.size > 0) {
+                if (args.isNotEmpty()) {
                     val settingsFile = findProperties(args)
                     if (settingsFile.isNotEmpty()) {
                         settings = Settings.parseFile(settingsFile)
@@ -64,7 +64,9 @@ class TextureModifierMain {
         }
 
         fun printUsage(): String {
-            return "Usage: TODO implement args"
+            return "Usage:\n" +
+                    "file path as an argument - open the file at start (can be image or properties)\n" +
+                    "TODO implement commands for batching"
         }
     }
 }

@@ -11,7 +11,7 @@ class Settings(
     var guiBgColor: Color = Color.BLACK,
     var guiShowBounds: Boolean = true,
     var outPrefix: String = "",
-    var outPostfix: String = "",
+    var outPostfix: String = "_",
     var outFormat: String = "png",
     var seamlessDist: Int = 8,
     var seamlessAlpha: Boolean = true,
@@ -77,93 +77,103 @@ class Settings(
             val p = Properties()
             p.load(ByteArrayInputStream(text.toByteArray(Charsets.UTF_8)))
             val ret = Settings()
+            var i = 0;
             for (entry in p) {
-                if (entry.key == GUI_BG_COLOR) {
-                    ret.guiBgColor = parseColor(entry)
-                }
-                if (entry.key == GUI_SHOW_BOUNDS) {
-                    ret.guiShowBounds = parseBool(entry)
-                }
-                if (entry.key == OUT_PREFIX) {
-                    ret.outPrefix = parseString(entry)
-                }
-                if (entry.key == OUT_POSTFIX) {
-                    ret.outPostfix = parseString(entry)
-                }
-                if (entry.key == OUT_FORMAT) {
-                    ret.outFormat = parseString(entry)
-                }
-                if (entry.key == SEAMLESS_DIST) {
-                    ret.seamlessDist = parseInt(entry)
-                }
-                if (entry.key == SEAMLESS_ALPHA) {
-                    ret.seamlessAlpha = parseBool(entry)
-                }
-                if (entry.key == BLUR_RADIUS) {
-                    ret.blurRadius = parseDouble(entry)
-                }
-                if (entry.key == BLUR_RATIO) {
-                    ret.blurRatio = parseDouble(entry)
-                }
-                if (entry.key == PIXELATE_SCALE) {
-                    ret.pixelateScale = parseDouble(entry)
-                }
-                if (entry.key == PIXELATE_COLORS) {
-                    ret.pixelateColors = parseInt(entry)
-                }
-                if (entry.key == PIXELATE_SCALE_TYPE) {
-                    ret.pixelateScaleType = parseEnum(entry, ScaleType::class.java)
-                }
-                if (entry.key == PIXELATE_SCALE_COLOR_TOLERANCE) {
-                    ret.pixelateScaleColorTolerance = parseInt(entry)
-                }
-                if (entry.key == PIXELATE_IGNORE_BG_COLOR) {
-                    ret.pixelateIgnoreBgColor= parseBool(entry)
-                }
-                if (entry.key == PIXELATE_BG_COLOR) {
-                    ret.pixelateBgColor = parseColor(entry)
-                }
-                if (entry.key == FILL_BG_ITERATIONS) {
-                    ret.fillBgIterations = parseInt(entry)
-                }
-                if (entry.key == FILL_BG_INCLUDE_CORNERS) {
-                    ret.fillBgIncludeCorners = parseBool(entry)
-                }
-                if (entry.key == FILL_BG_AVERAGE_FILL) {
-                    ret.fillBgAverageFill = parseBool(entry)
-                }
-                if (entry.key == FILL_BG_BG_COLOR) {
-                    ret.fillBgBgColor = parseColor(entry)
-                }
-                if (entry.key == MERGE_MAPS_LAYOUT) {
-                    ret.mergeMapsLayout = parseEnum(entry, MapType::class.java)
-                }
-                if (entry.key == MERGE_MAPS_MAP1) {
-                    ret.mergeMapsMap1 = parseString(entry)
-                }
-                if (entry.key == MERGE_MAPS_MAP2) {
-                    ret.mergeMapsMap2 = parseString(entry)
-                }
-                if (entry.key == MERGE_MAPS_MAP3) {
-                    ret.mergeMapsMap3 = parseString(entry)
-                }
-                if (entry.key == MERGE_MAPS_MAP4) {
-                    ret.mergeMapsMap4 = parseString(entry)
-                }
-                if (entry.key == REMOVE_ALPHA_THRESHHOLD) {
-                    ret.removeAlphaThreshhold = parseInt(entry)
-                }
-                if (entry.key == MULTIPLY_COLOR_MUL_COLOR) {
-                    ret.multiplyColorMulColor = parseColor(entry)
-                }
-                if (entry.key == MULTIPLY_COLOR_ADD_COLOR) {
-                    ret.multiplyColorAddColor = parseColor(entry)
+                i++
+                try {
+                    parseLine(entry, ret)
+                } catch (e: Exception) {
+                    throw IllegalArgumentException("Error parsing line ${i}, key = ${entry.key}, value = ${entry.value}", e)
                 }
             }
             if (ret.outPrefix.isEmpty() && ret.outPostfix.isEmpty()) {
                 throw IllegalArgumentException("$OUT_PREFIX and $OUT_POSTFIX must not be both empty")
             }
             return ret
+        }
+
+        private fun parseLine(entry: MutableMap.MutableEntry<Any, Any>, ret: Settings) {
+            if (entry.key == GUI_BG_COLOR) {
+                ret.guiBgColor = parseColor(entry)
+            }
+            if (entry.key == GUI_SHOW_BOUNDS) {
+                ret.guiShowBounds = parseBool(entry)
+            }
+            if (entry.key == OUT_PREFIX) {
+                ret.outPrefix = parseString(entry)
+            }
+            if (entry.key == OUT_POSTFIX) {
+                ret.outPostfix = parseString(entry)
+            }
+            if (entry.key == OUT_FORMAT) {
+                ret.outFormat = parseString(entry)
+            }
+            if (entry.key == SEAMLESS_DIST) {
+                ret.seamlessDist = parseInt(entry)
+            }
+            if (entry.key == SEAMLESS_ALPHA) {
+                ret.seamlessAlpha = parseBool(entry)
+            }
+            if (entry.key == BLUR_RADIUS) {
+                ret.blurRadius = parseDouble(entry)
+            }
+            if (entry.key == BLUR_RATIO) {
+                ret.blurRatio = parseDouble(entry)
+            }
+            if (entry.key == PIXELATE_SCALE) {
+                ret.pixelateScale = parseDouble(entry)
+            }
+            if (entry.key == PIXELATE_COLORS) {
+                ret.pixelateColors = parseInt(entry)
+            }
+            if (entry.key == PIXELATE_SCALE_TYPE) {
+                ret.pixelateScaleType = parseEnum(entry, ScaleType::class.java)
+            }
+            if (entry.key == PIXELATE_SCALE_COLOR_TOLERANCE) {
+                ret.pixelateScaleColorTolerance = parseInt(entry)
+            }
+            if (entry.key == PIXELATE_IGNORE_BG_COLOR) {
+                ret.pixelateIgnoreBgColor = parseBool(entry)
+            }
+            if (entry.key == PIXELATE_BG_COLOR) {
+                ret.pixelateBgColor = parseColor(entry)
+            }
+            if (entry.key == FILL_BG_ITERATIONS) {
+                ret.fillBgIterations = parseInt(entry)
+            }
+            if (entry.key == FILL_BG_INCLUDE_CORNERS) {
+                ret.fillBgIncludeCorners = parseBool(entry)
+            }
+            if (entry.key == FILL_BG_AVERAGE_FILL) {
+                ret.fillBgAverageFill = parseBool(entry)
+            }
+            if (entry.key == FILL_BG_BG_COLOR) {
+                ret.fillBgBgColor = parseColor(entry)
+            }
+            if (entry.key == MERGE_MAPS_LAYOUT) {
+                ret.mergeMapsLayout = parseEnum(entry, MapType::class.java)
+            }
+            if (entry.key == MERGE_MAPS_MAP1) {
+                ret.mergeMapsMap1 = parseString(entry)
+            }
+            if (entry.key == MERGE_MAPS_MAP2) {
+                ret.mergeMapsMap2 = parseString(entry)
+            }
+            if (entry.key == MERGE_MAPS_MAP3) {
+                ret.mergeMapsMap3 = parseString(entry)
+            }
+            if (entry.key == MERGE_MAPS_MAP4) {
+                ret.mergeMapsMap4 = parseString(entry)
+            }
+            if (entry.key == REMOVE_ALPHA_THRESHHOLD) {
+                ret.removeAlphaThreshhold = parseInt(entry)
+            }
+            if (entry.key == MULTIPLY_COLOR_MUL_COLOR) {
+                ret.multiplyColorMulColor = parseColor(entry)
+            }
+            if (entry.key == MULTIPLY_COLOR_ADD_COLOR) {
+                ret.multiplyColorAddColor = parseColor(entry)
+            }
         }
 
         fun save(s: Settings, file: File) {
@@ -197,8 +207,8 @@ class Settings(
             write(sb, MERGE_MAPS_MAP2, s.mergeMapsMap2)
             write(sb, MERGE_MAPS_MAP3, s.mergeMapsMap3)
             write(sb, MERGE_MAPS_MAP4, s.mergeMapsMap4)
-            write(sb, MULTIPLY_COLOR_MUL_COLOR, s.multiplyColorMulColor)
-            write(sb, MULTIPLY_COLOR_ADD_COLOR, s.multiplyColorAddColor)
+            write(sb, MULTIPLY_COLOR_MUL_COLOR, ColorUtils.toString(s.multiplyColorMulColor))
+            write(sb, MULTIPLY_COLOR_ADD_COLOR, ColorUtils.toString(s.multiplyColorAddColor))
             write(sb, REMOVE_ALPHA_THRESHHOLD, s.removeAlphaThreshhold)
             return sb.toString()
         }
