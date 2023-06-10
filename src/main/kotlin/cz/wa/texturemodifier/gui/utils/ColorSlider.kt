@@ -1,6 +1,5 @@
 package cz.wa.texturemodifier.gui.utils
 
-import cz.wa.texturemodifier.gui.ContentHolder
 import java.awt.Color
 import java.awt.Cursor
 import java.awt.Graphics
@@ -14,14 +13,14 @@ import kotlin.math.roundToInt
 /**
  * Slider for color, currently changes bg color
  */
-class ColorSlider(val contentHolder: ContentHolder) : JPanel(), MouseListener, MouseMotionListener {
+class ColorSlider() : JPanel(), MouseListener, MouseMotionListener {
     var color1: Color = Color.BLACK
     var color2: Color = Color.WHITE
     var valueColor = Color.RED
 
     private var bgImage: BufferedImage = generateBgImage()
-
     private var mouseDown = false
+    private val listeners = HashSet<(Int) -> Unit>()
 
     var value = 0
         set(value) {
@@ -68,6 +67,14 @@ class ColorSlider(val contentHolder: ContentHolder) : JPanel(), MouseListener, M
         paint(graphics)
     }
 
+    fun addListener(l: (Int) -> Unit) {
+        listeners.add(l)
+    }
+
+    fun removeListener(l: (Int) -> Unit) {
+        listeners.remove(l)
+    }
+
     override fun mousePressed(e: MouseEvent) {
         mouseDown = true
         mouseMoved(e)
@@ -75,7 +82,6 @@ class ColorSlider(val contentHolder: ContentHolder) : JPanel(), MouseListener, M
 
     override fun mouseReleased(e: MouseEvent) {
         mouseDown = false
-        contentHolder.settings.guiBgColor = getColorAt(value)
     }
 
     override fun mouseEntered(e: MouseEvent?) {
@@ -94,10 +100,17 @@ class ColorSlider(val contentHolder: ContentHolder) : JPanel(), MouseListener, M
         if (mouseDown) {
             value = (256f * (e.x / width.toFloat())).roundToInt()
             refresh()
+            for (l in listeners) {
+                l.invoke(value)
+            }
         }
     }
 
     override fun mouseDragged(e: MouseEvent) {
         mouseMoved(e)
+    }
+
+    interface ValueListener {
+        fun valueChanged(value: Int)
     }
 }

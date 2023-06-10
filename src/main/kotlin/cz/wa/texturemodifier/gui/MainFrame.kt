@@ -16,6 +16,7 @@ import cz.wa.texturemodifier.gui.utils.ColorSlider
 import cz.wa.texturemodifier.gui.utils.ConfirmFileChooser
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Rectangle
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
@@ -44,6 +45,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     private val propertiesOpenListeners = ArrayList<FileOpenListener>()
 
     val contentHolder: ContentHolder
+    val bgColorSlider = ColorSlider()
 
     init {
         instance = this
@@ -153,9 +155,9 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         menu.add(boundsCb)
 
         // bg color
-        val bgColor = ColorSlider(contentHolder)
-        bgColor.toolTipText = "Change background color"
-        menu.add(bgColor)
+        bgColorSlider.addListener { contentHolder.settings.guiBgColor = Color(it, it, it) }
+        bgColorSlider.toolTipText = "Change background color"
+        menu.add(bgColorSlider)
 
         // Tabs
         layout = BorderLayout()

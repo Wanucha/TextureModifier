@@ -2,6 +2,7 @@ package cz.wa.texturemodifier.gui.tabs
 
 import cz.wa.texturemodifier.command.Command
 import cz.wa.texturemodifier.gui.ContentHolder
+import cz.wa.texturemodifier.gui.MainFrame
 import cz.wa.texturemodifier.gui.texturecanvas.TextureViewer
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import java.awt.BorderLayout
@@ -20,6 +21,7 @@ abstract class AbstractPanel<V : TextureViewer>(val contentHolder: ContentHolder
 
     protected open fun initComponents() {
         layout = BorderLayout()
+        MainFrame.instance!!.bgColorSlider.addListener { canvas.refresh() }
         add(canvas, BorderLayout.CENTER)
         add(toolPanel, BorderLayout.EAST)
     }

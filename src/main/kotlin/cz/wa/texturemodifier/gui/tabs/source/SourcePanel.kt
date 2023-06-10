@@ -18,6 +18,7 @@ class SourcePanel(val contentHolder: ContentHolder) : JPanel() {
 
     init {
         layout = BorderLayout()
+        MainFrame.instance!!.bgColorSlider.addListener { canvas.refresh() }
         add(canvas, BorderLayout.CENTER)
         add(toolPanel, BorderLayout.EAST)
     }
