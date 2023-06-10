@@ -22,17 +22,24 @@ import kotlin.math.roundToInt
 class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
 
     override fun execute(image: BufferedImage): BufferedImage {
-        check(settings.pixelateSizeX >= 1) { "pixelateSizeX must be >= 1" }
-        check(settings.pixelateSizeY >= 1) { "pixelateSizeY must be >= 1" }
-        check(settings.pixelateColors > 1 && settings.pixelateColors <= 256) { "pixelateColors must be > 1 and <= 256" }
-        check(settings.pixelateScaleColorTolerance >= 0 && settings.pixelateScaleColorTolerance < 256) {
+        var sizeX = settings.pixelateSizeX
+        var sizeY = settings.pixelateSizeY
+        if (!settings.pixelateUseSize) {
+            sizeX = (image.width / settings.pixelateScale).roundToInt()
+            sizeY = (image.height / settings.pixelateScale).roundToInt()
+        }
+
+        check(sizeX >= 1) { "pixelateSizeX must be >= 1" }
+        check(sizeY >= 1) { "pixelateSizeY must be >= 1" }
+        check(settings.pixelateColors in 2..256) { "pixelateColors must be > 1 and <= 256" }
+        check(settings.pixelateScaleColorTolerance in 0..255) {
             "pixelateScaleColorTolerance must be >= 0 and < 256"
         }
 
         val inTex = Texture(image)
 
-        val w2 = settings.pixelateSizeX
-        val h2 = settings.pixelateSizeY
+        val w2 = sizeX
+        val h2 = sizeY
         val ret = ImageUtils.createEmptyImage(w2, h2)
         val outTex = Texture(ret)
 

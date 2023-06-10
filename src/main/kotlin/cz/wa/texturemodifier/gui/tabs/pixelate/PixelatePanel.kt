@@ -1,4 +1,4 @@
-package cz.wa.texturemodifier.gui.tabs.blur
+package cz.wa.texturemodifier.gui.tabs.pixelate
 
 import cz.wa.texturemodifier.ScaleType
 import cz.wa.texturemodifier.command.PixelateCommand
@@ -20,14 +20,15 @@ class PixelatePanel(contentHolder: ContentHolder) :
 
     protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierViewer) :
         AbstractToolPanel<ModifierViewer>(contentHolder, canvas, 200, PixelateCommand::class.java) {
-        val scaleTf = JTextField()
-        var sizeXTf = JTextField()
-        var sizeYTf = JTextField()
-        val colorsTf = JTextField()
-        val typeCb = JComboBox<ScaleType>(ScaleType.values())
-        val toleranceTf = JTextField()
-        val ignoreBgCb = JCheckBox("Ignore BG color")
-        val bgColorTf = JTextField("#000000")
+        private val scaleTf = JTextField()
+        private val useSizeCb = JCheckBox("Use fixed size, not scale")
+        private val sizeXTf = JTextField()
+        private val sizeYTf = JTextField()
+        private val colorsTf = JTextField()
+        private val typeCb = JComboBox<ScaleType>(ScaleType.values())
+        private val toleranceTf = JTextField()
+        private val ignoreBgCb = JCheckBox("Ignore BG color")
+        private val bgColorTf = JTextField("#000000")
 
         init {
             // help
@@ -45,6 +46,10 @@ class PixelatePanel(contentHolder: ContentHolder) :
                 sizeYTf.text = (contentHolder.sourceImage!!.height / scale).roundToInt().toString()
             }
             add(bApplyScale)
+
+            // use scale
+            useSizeCb.isSelected = contentHolder.settings.pixelateUseSize
+            add(GuiUtils.createValuePanel(null, useSizeCb))
 
             // size
             sizeXTf.text = contentHolder.settings.pixelateSizeX.toString()
@@ -85,6 +90,7 @@ class PixelatePanel(contentHolder: ContentHolder) :
 
         override fun applySettings() {
             contentHolder.settings.pixelateScale = scaleTf.text.toDouble()
+            contentHolder.settings.pixelateUseSize = useSizeCb.isSelected
             contentHolder.settings.pixelateSizeX = sizeXTf.text.toInt()
             contentHolder.settings.pixelateSizeY = sizeYTf.text.toInt()
             contentHolder.settings.pixelateColors = colorsTf.text.toInt()

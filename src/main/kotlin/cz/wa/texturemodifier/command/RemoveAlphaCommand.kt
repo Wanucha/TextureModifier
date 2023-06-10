@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage
 class RemoveAlphaCommand(settings: Settings) : AbstractCommand(settings) {
 
     override fun execute(image: BufferedImage): BufferedImage {
-        check(settings.removeAlphaThreshhold >= 0 && settings.removeAlphaThreshhold <= 256) { "removeAlphaThreshhold must be 0..256" }
+        check(settings.removeAlphaThreshold in 0..256) { "removeAlphaThreshold must be 0..256" }
 
         val ret = ImageUtils.copyImage(image)
         val tex = Texture(ret)
@@ -28,7 +28,7 @@ class RemoveAlphaCommand(settings: Settings) : AbstractCommand(settings) {
     }
 
     private fun computeAlpha(a: Int): Int {
-        if (a >= settings.removeAlphaThreshhold) {
+        if (a >= settings.removeAlphaThreshold) {
             return 255
         } else {
             return 0
@@ -36,6 +36,6 @@ class RemoveAlphaCommand(settings: Settings) : AbstractCommand(settings) {
     }
 
     override fun getHelp(): String = "Removes alpha and replaces with value 0 or 255\n" +
-            "* hreshhold - alpha >= value will be 255, < will be 0"
+            "* threshold - alpha >= value will be 255, < will be 0"
 
 }

@@ -3,8 +3,13 @@ package cz.wa.texturemodifier.gui
 import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.TextureModifierMain
 import cz.wa.texturemodifier.gui.help.HelpFrame
-import cz.wa.texturemodifier.gui.tabs.blur.*
+import cz.wa.texturemodifier.gui.tabs.blur.BlurPanel
+import cz.wa.texturemodifier.gui.tabs.blur.FillBackgroundPanel
+import cz.wa.texturemodifier.gui.tabs.blur.MergeMapsPanel
+import cz.wa.texturemodifier.gui.tabs.blur.MultiplyColorPanel
+import cz.wa.texturemodifier.gui.tabs.pixelate.PixelatePanel
 import cz.wa.texturemodifier.gui.tabs.propertieseditor.PropertiesEditor
+import cz.wa.texturemodifier.gui.tabs.removealpha.RemoveAlphaPanel
 import cz.wa.texturemodifier.gui.tabs.seamless.SeamlessPanel
 import cz.wa.texturemodifier.gui.tabs.source.SourcePanel
 import cz.wa.texturemodifier.gui.utils.ColorSlider
@@ -42,7 +47,8 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
     init {
         instance = this
-        title = "Texture modifier v${TextureModifierMain.VERSION}"
+        var empty = ""
+        title = "Texture modifier v${TextureModifierMain.VERSION}${empty}"
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         try {
             iconImages = loadIcons()

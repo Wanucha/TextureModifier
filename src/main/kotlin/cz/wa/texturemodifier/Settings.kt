@@ -18,6 +18,7 @@ class Settings(
     var blurRadius: Double = 3.0,
     var blurRatio: Double = 0.5,
     var pixelateScale: Double = 4.0,
+    var pixelateUseSize: Boolean = false,
     var pixelateSizeX: Int = 0,
     var pixelateSizeY: Int = 0,
     var pixelateColors: Int = 12,
@@ -36,7 +37,7 @@ class Settings(
     var mergeMapsMap4: String = "RGB-B",
     var multiplyColorMulColor: Color = Color.WHITE,
     var multiplyColorAddColor: Color = Color.BLACK,
-    var removeAlphaThreshhold: Int = 128,
+    var removeAlphaThreshold: Int = 128,
 ) {
     companion object {
         const val GUI_BG_COLOR = "gui-bg-color"
@@ -49,6 +50,9 @@ class Settings(
         const val BLUR_RADIUS = "blur-radius"
         const val BLUR_RATIO = "blur-ratio"
         const val PIXELATE_SCALE = "pixelate-scale"
+        const val PIXELATE_USE_SIZE = "pixelate-use-size"
+        const val PIXELATE_SIZE_X = "pixelate-size-x"
+        const val PIXELATE_SIZE_Y = "pixelate-size-y"
         const val PIXELATE_COLORS = "pixelate-colors"
         const val PIXELATE_SCALE_TYPE = "pixelate-scale-type"
         const val PIXELATE_SCALE_COLOR_TOLERANCE = "pixelate-scale-color-tolerance"
@@ -65,7 +69,7 @@ class Settings(
         const val MERGE_MAPS_MAP4 = "merge-maps-map4"
         const val MULTIPLY_COLOR_MUL_COLOR = "multiply-color-mul-color"
         const val MULTIPLY_COLOR_ADD_COLOR = "multiply-color-add-color"
-        const val REMOVE_ALPHA_THRESHHOLD = "remove-alpha-threshhold"
+        const val REMOVE_ALPHA_THRESHOLD = "remove-alpha-threshold"
 
         fun parseFile(fileName: String): Settings {
             val ret = parseString(File(fileName).readText())
@@ -123,6 +127,15 @@ class Settings(
             if (entry.key == PIXELATE_SCALE) {
                 ret.pixelateScale = parseDouble(entry)
             }
+            if (entry.key == PIXELATE_USE_SIZE) {
+                ret.pixelateUseSize = parseBool(entry)
+            }
+            if (entry.key == PIXELATE_SIZE_X) {
+                ret.pixelateSizeX = parseInt(entry)
+            }
+            if (entry.key == PIXELATE_SIZE_Y) {
+                ret.pixelateSizeY = parseInt(entry)
+            }
             if (entry.key == PIXELATE_COLORS) {
                 ret.pixelateColors = parseInt(entry)
             }
@@ -165,8 +178,8 @@ class Settings(
             if (entry.key == MERGE_MAPS_MAP4) {
                 ret.mergeMapsMap4 = parseString(entry)
             }
-            if (entry.key == REMOVE_ALPHA_THRESHHOLD) {
-                ret.removeAlphaThreshhold = parseInt(entry)
+            if (entry.key == REMOVE_ALPHA_THRESHOLD) {
+                ret.removeAlphaThreshold = parseInt(entry)
             }
             if (entry.key == MULTIPLY_COLOR_MUL_COLOR) {
                 ret.multiplyColorMulColor = parseColor(entry)
@@ -193,6 +206,9 @@ class Settings(
             write(sb, BLUR_RADIUS, s.blurRadius)
             write(sb, BLUR_RATIO, s.blurRatio)
             write(sb, PIXELATE_SCALE, s.pixelateScale)
+            write(sb, PIXELATE_USE_SIZE, s.pixelateUseSize)
+            write(sb, PIXELATE_SIZE_X, s.pixelateSizeX)
+            write(sb, PIXELATE_SIZE_Y, s.pixelateSizeY)
             write(sb, PIXELATE_COLORS, s.pixelateColors)
             write(sb, PIXELATE_SCALE_TYPE, s.pixelateScaleType)
             write(sb, PIXELATE_SCALE_COLOR_TOLERANCE, s.pixelateScaleColorTolerance)
@@ -209,7 +225,7 @@ class Settings(
             write(sb, MERGE_MAPS_MAP4, s.mergeMapsMap4)
             write(sb, MULTIPLY_COLOR_MUL_COLOR, ColorUtils.toString(s.multiplyColorMulColor))
             write(sb, MULTIPLY_COLOR_ADD_COLOR, ColorUtils.toString(s.multiplyColorAddColor))
-            write(sb, REMOVE_ALPHA_THRESHHOLD, s.removeAlphaThreshhold)
+            write(sb, REMOVE_ALPHA_THRESHOLD, s.removeAlphaThreshold)
             return sb.toString()
         }
 

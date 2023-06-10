@@ -1,4 +1,4 @@
-package cz.wa.texturemodifier.gui.tabs.blur
+package cz.wa.texturemodifier.gui.tabs.removealpha
 
 import cz.wa.texturemodifier.command.RemoveAlphaCommand
 import cz.wa.texturemodifier.gui.ContentHolder
@@ -16,23 +16,23 @@ class RemoveAlphaPanel(contentHolder: ContentHolder) :
     protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) :
         AbstractToolPanel<ModifierAlphaViewer>(contentHolder, canvas, 130, RemoveAlphaCommand::class.java) {
 
-        val threshholdTf = JTextField()
+        private val thresholdTf = JTextField()
 
         init {
             // help
             add(createHelpButton())
 
-            // threshhold
-            threshholdTf.text = contentHolder.settings.removeAlphaThreshhold.toString()
-            threshholdTf.columns = 3
-            add(GuiUtils.createValuePanel("Threshhold", threshholdTf))
+            // threshold
+            thresholdTf.text = contentHolder.settings.removeAlphaThreshold.toString()
+            thresholdTf.columns = 3
+            add(GuiUtils.createValuePanel("Threshold", thresholdTf))
 
             // apply
             add(createApplyButton())
         }
 
         override fun applySettings() {
-            contentHolder.settings.removeAlphaThreshhold = threshholdTf.text.toInt()
+            contentHolder.settings.removeAlphaThreshold = thresholdTf.text.toInt()
         }
     }
 }
