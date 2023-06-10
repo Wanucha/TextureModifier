@@ -33,16 +33,23 @@ class PropertiesEditor(val contentHolder: ContentHolder) : JPanel() {
         val toolPanel = JPanel()
         toolPanel.preferredSize = Dimension(90, 100)
 
+        val helpB = JButton("Help")
+        helpB.addActionListener { showHelp() }
+        toolPanel.add(helpB)
+
         val applyB = JButton("Apply")
-        applyB.addActionListener({ applySettings() })
+        applyB.addActionListener { applySettings() }
+        applyB.toolTipText = "Apply lines from this editor to current settings"
         toolPanel.add(applyB)
 
         val generateB = JButton("Generate")
-        generateB.addActionListener({ generateSettings() })
+        generateB.addActionListener { generateSettings() }
+        generateB.toolTipText = "From current settings generate text properties"
         toolPanel.add(generateB)
 
         val reloadB = JButton("Reload")
-        reloadB.addActionListener({ reloadSettings() })
+        reloadB.addActionListener { reloadSettings() }
+        reloadB.toolTipText = "Reload properties from file if loaded"
         toolPanel.add(reloadB)
 
         textArea.autoscrolls = true
@@ -52,6 +59,17 @@ class PropertiesEditor(val contentHolder: ContentHolder) : JPanel() {
         if (contentHolder.settings.file != null) {
             reloadSettings()
         }
+    }
+
+    private fun showHelp() {
+        JOptionPane.showMessageDialog(this,"This editor can generate and save properties, usage:\n" +
+                "By default it considers startup-loaded properties or default values\n\n" +
+                "How to save current properties:\n" +
+                "1. Modify settings in a tab\n" +
+                "2. Click apply in the modified - now also the properties are updated\n" +
+                "3. Generate properties\n" +
+                "4. Save the properties\n\n" +
+                "If you want the properties load the next time you start the app, provide path to the properties as a program argument")
     }
 
     private fun applySettings() {
