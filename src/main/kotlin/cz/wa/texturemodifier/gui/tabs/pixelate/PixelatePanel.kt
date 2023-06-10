@@ -45,6 +45,7 @@ class PixelatePanel(contentHolder: ContentHolder) :
                 sizeXTf.text = (contentHolder.sourceImage!!.width / scale).roundToInt().toString()
                 sizeYTf.text = (contentHolder.sourceImage!!.height / scale).roundToInt().toString()
             }
+            bApplyScale.toolTipText = "Apply scale to current image size (just fill the next two fields)"
             add(bApplyScale)
 
             // use scale
