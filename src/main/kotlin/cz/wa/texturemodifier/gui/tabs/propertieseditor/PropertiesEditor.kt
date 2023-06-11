@@ -68,6 +68,8 @@ class PropertiesEditor(val contentHolder: ContentHolder) : JPanel() {
                 "1. Modify settings in a tab\n" +
                 "2. Click apply in the modified - now also the properties are updated\n" +
                 "3. Generate properties\n" +
+                "\t- You can modify the settings\n" +
+                "\t- Click apply to save the change\n" +
                 "4. Save the properties\n\n" +
                 "If you want the properties load the next time you start the app, provide path to the properties as a program argument")
     }

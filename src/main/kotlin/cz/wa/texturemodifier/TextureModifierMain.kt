@@ -7,7 +7,10 @@ class TextureModifierMain {
 
     companion object {
         const val VERSION = "0.2.1"
+
+        const val COMMAND_PREFIX = "--"
         val IMAGE_EXTS = arrayOf("png", "jpg", "jpeg", "gif", "bmp")
+
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -19,14 +22,26 @@ class TextureModifierMain {
                     if (settingsFile.isNotEmpty()) {
                         settings = Settings.parseFile(settingsFile)
                     }
-                    files = parseFiles(args)
+                    files = parseImageFiles(args)
+                    val commands = parseCommands(args)
+
+                    if (commands.isNotEmpty()) {
+                        // has commands, run them
+                        if (settingsFile.isEmpty()) {
+                            println("Error running commands: Commands found but no settings specified")
+                        } else {
+                            println("Commands found (${commands.size}), running commands")
+                            CommandLauncher(settings, files, commands).execute()
+                        }
+                        return
+                    }
                 }
             } catch (e: Throwable) {
                 println(printUsage())
                 println()
                 println("Error parsing arguments:")
                 printMessages(e)
-                return
+                throw e
             }
             MainFrame(settings, files)
         }
@@ -53,8 +68,12 @@ class TextureModifierMain {
             }
         }
 
-        private fun parseFiles(args: Array<String>): List<String> {
-            return args.filter { IMAGE_EXTS.contains(File(it).extension) }
+        private fun parseCommands(args: Array<String>): List<String> {
+            return args.filter { it.startsWith(COMMAND_PREFIX) }
+        }
+
+        private fun parseImageFiles(args: Array<String>): List<String> {
+            return args.filter { !it.startsWith(COMMAND_PREFIX) && IMAGE_EXTS.contains(File(it).extension) }
         }
 
         fun printTitle(): String {
@@ -71,13 +90,7 @@ class TextureModifierMain {
                     "If a command is specified, processes the input files and saves them\n" +
                     "There can be multiple commands, even one command multiple times\n" +
                     "Command list:\n" +
-                    "--seamless\n" +
-                    "--blur\n" +
-                    "--pixelate\n" +
-                    "--fill_bg\n" +
-                    "--merge_maps\n" +
-                    "--multiply_color\n" +
-                    "--remove_alpha\n"
+                    "${CommandLauncher.ALL_COMMANDS.joinToString("\n")}"
         }
     }
 }

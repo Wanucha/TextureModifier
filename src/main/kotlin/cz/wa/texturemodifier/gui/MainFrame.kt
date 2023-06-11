@@ -61,7 +61,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         contentHolder = if (files is MutableList) {
             ContentHolder(settings, files)
         } else {
-            ContentHolder(settings, ArrayList<String>(files))
+            ContentHolder(settings, ArrayList(files))
         }
 
         // allow drop files

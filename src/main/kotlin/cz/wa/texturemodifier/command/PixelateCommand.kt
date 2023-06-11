@@ -120,7 +120,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             "* size XY - final resolution\n" +
             "* colors per channel - color reduction, 10 means each channel can have only 10 different values (spaced equally)\n" +
             "* filter type - scaling pixel filter\n" +
-            "\t- NEAREST - takes nearest pixel\n" +
+            "\t- NEAREST - takes nearest pixel (NEAREST without ignoring color is fastest)\n" +
             "\t- MOST_COLOR - take colors from all pixels, that the current one is generated from and use the most frequent color\n" +
             "* scale color tolerance - when using MOST_COLOR, colors within this range will be considered same, the result is average from these\n" +
             "* ignore BG color - when finding new color, this color will be ignored by all filters\n" +
