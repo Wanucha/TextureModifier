@@ -1,9 +1,12 @@
 package cz.wa.texturemodifier
 
+import cz.wa.texturemodifier.command.*
 import org.apache.commons.io.filefilter.WildcardFileFilter
+import java.awt.image.BufferedImage
 import java.io.File
 import java.io.FilenameFilter
 import java.nio.file.Paths
+import javax.imageio.ImageIO
 
 
 /**
@@ -15,6 +18,8 @@ class CommandLauncher(
     private val commands: List<String>
 ) {
 
+    private val stats = SaveStats()
+
     fun execute() {
         if (!validateInput()) {
             throw IllegalArgumentException("Error validating input")
@@ -25,7 +30,42 @@ class CommandLauncher(
 
         for ((i, imageFile) in imageFiles.withIndex()) {
             println("${i + 1}/${imageFiles.size} ${imageFile.path}")
+            try {
+                processFile(imageFile)
+            } catch (e: Exception) {
+                stats.errors++
+                println("Failed to process file")
+                e.printStackTrace()
+            }
         }
+
+        println()
+        println("Total saved files: ${stats.savedTotal}")
+        println("Overwritten files: ${stats.overwritten}")
+        println("Skipped files: ${stats.skipped}")
+        println("Errors: ${stats.errors}")
+    }
+
+    private fun processFile(imageFile: File) {
+        var img = ImageIO.read(imageFile)
+        for (command in commands) {
+            img = applyCommand(img, command)
+        }
+        SaveCommand(settings, stats, imageFile).execute(img)
+    }
+
+    private fun applyCommand(img: BufferedImage, command: String): BufferedImage {
+        val cmd = when (command) {
+            SEAMLESS_CMD -> SeamlessCommand(settings)
+            BLUR_CMD -> BlurCommand(settings)
+            PIXELATE_CMD -> PixelateCommand(settings)
+            FILL_BG_CMD -> FillBackgroundCommand(settings)
+            MERGE_MAPS_CMD -> MergeMapCommand(settings)
+            MULTIPLY_COLOR_CMD -> MultiplyColorCommand(settings)
+            REMOVE_ALPHA_CMD -> RemoveAlphaCommand(settings)
+            else -> throw IllegalArgumentException("Unknown command $command")
+        }
+        return cmd.execute(img)
     }
 
     private fun validateInput(): Boolean {

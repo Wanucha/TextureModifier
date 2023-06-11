@@ -1,14 +1,60 @@
 package cz.wa.texturemodifier.command
 
+import cz.wa.texturemodifier.OverwriteType
 import cz.wa.texturemodifier.Settings
 import java.awt.image.BufferedImage
+import java.io.File
+import javax.imageio.ImageIO
 
 /**
- * Saves output image to a file
+ * Saves output image to a file.
+ * Generates new name and saves the file using settings. If no format specified, uses original format.
  */
-class SaveCommand(settings: Settings, val origName: String) : AbstractCommand(settings) {
+class SaveCommand(settings: Settings, private val stats: SaveStats, private val origFile: File) : AbstractCommand(settings) {
     override fun execute(image: BufferedImage): BufferedImage {
-        TODO("Not yet implemented")
+        var newName = getFileName()
+        var newFile = File(newName)
+
+        // check overwrite
+        var existed = false
+        if (newFile.isFile) {
+            if (settings.overwriteType == OverwriteType.OVERWRITE) {
+                existed = true
+                println("Overwriting file: $newName")
+            } else {
+                println("File exists, skipped: $newName")
+                stats.skipped++
+                return image
+            }
+        } else {
+            println("Saving to: $newName")
+        }
+
+        // ensure directory
+        val directory = newFile.parentFile
+        if (!directory.isDirectory) {
+            directory.mkdirs()
+        }
+
+        // save
+        ImageIO.write(image, newFile.extension, newFile)
+        if (!newFile.isFile) {
+            println("Error, failed to save: $newName")
+        } else {
+            stats.savedTotal++
+            if (existed) {
+                stats.overwritten++
+            }
+        }
+        return image
+    }
+
+    private fun getFileName(): String {
+        val dir = origFile.parentFile
+        val fileName = origFile.nameWithoutExtension
+        val ext = if (settings.outFormat.isNullOrBlank()) origFile.extension else settings.outFormat
+
+        return "${dir.path}/${settings.outPrefix}${fileName}${settings.outPostfix}.${ext}"
     }
 
     override fun getHelp(): String {

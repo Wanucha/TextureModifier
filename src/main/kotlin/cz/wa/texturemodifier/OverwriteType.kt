@@ -1,6 +1,6 @@
 package cz.wa.texturemodifier
 
-enum class OverrideType {
+enum class OverwriteType {
     IGNORE,
-    OVERRIDE,
+    OVERWRITE,
 }
