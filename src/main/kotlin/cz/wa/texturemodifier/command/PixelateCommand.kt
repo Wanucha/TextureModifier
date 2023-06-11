@@ -2,9 +2,13 @@ package cz.wa.texturemodifier.command
 
 import cz.wa.texturemodifier.ScaleType
 import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SmoothType
 import cz.wa.texturemodifier.gui.utils.ImageUtils
+import cz.wa.texturemodifier.image.ColorAF
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
+import cz.wa.texturemodifier.math.Vec2f
+import cz.wa.texturemodifier.math.Vec2i
 import java.awt.image.BufferedImage
 import kotlin.math.max
 import kotlin.math.min
@@ -37,21 +41,61 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
         }
         check(settings.pixelateBlendSmooth in 0.0..1.0) {"pixelateBlendSmooth must be 0..1"}
 
+        if (image.width == sizeX && image.height == sizeY) {
+            // same size, just copy image
+            return ImageUtils.copyImage(image)
+        }
+
         val inTex = Texture(image)
 
-        val w2 = sizeX
-        val h2 = sizeY
-        val ret = ImageUtils.createEmptyImage(w2, h2)
+        val ret = ImageUtils.createEmptyImage(sizeX, sizeY)
         val outTex = Texture(ret)
 
-        val rx = image.width / w2.toDouble()
-        val ry = image.height / h2.toDouble()
+        val rx = image.width / sizeX.toFloat()
+        val ry = image.height / sizeY.toFloat()
 
-        for (y in 0 until h2) {
-            for (x in 0 until w2) {
-                val px = IntRange((rx * x).roundToInt(), (rx * (x + 1)).roundToInt() - 1)
-                val py = IntRange((ry * y).roundToInt(), (ry * (y + 1)).roundToInt() - 1)
-                processPixel(outTex, x, y, inTex, px, py)
+        if (settings.pixelateBlendSmooth < 1) {
+            // pixelate
+            for (y in 0 until sizeX) {
+                for (x in 0 until sizeY) {
+                    val px = IntRange((rx * x).roundToInt(), (rx * (x + 1)).roundToInt() - 1)
+                    val py = IntRange((ry * y).roundToInt(), (ry * (y + 1)).roundToInt() - 1)
+                    processPixel(outTex, x, y, inTex, px, py)
+                }
+            }
+        }
+
+        if (settings.pixelateBlendSmooth > 0) {
+            // smooth
+            var smoothTex = inTex
+
+            if (settings.pixelateSmoothType == SmoothType.ANISO || settings.pixelateSmoothType == SmoothType.ANISO_BILINEAR) {
+                // create smooth texture
+                var anisoSize = findAnisoSize(image.width, image.height, sizeX, sizeY)
+                smoothTex = Texture(ImageUtils.createEmptyImage(anisoSize.x, anisoSize.y))
+                val rxA = image.width / anisoSize.x
+                val ryA = image.height / anisoSize.y
+                for (y in 0 until smoothTex.height) {
+                    for (x in 0 until smoothTex.width) {
+                        val px = IntRange(x * rxA, (x + 1) * rxA)
+                        val py = IntRange(y * ryA, (y + 1) * ryA)
+                        averagePixel(smoothTex, x, y, inTex, px, py)
+                    }
+                }
+            }
+
+            // apply to output
+            if ((smoothTex.width != outTex.width) && (smoothTex.height != outTex.height) &&
+                (settings.pixelateSmoothType == SmoothType.BILINEAR || settings.pixelateSmoothType == SmoothType.ANISO_BILINEAR)) {
+                // bilinear filter
+                smoothTex = Texture(ImageUtils.getFilteredImage(smoothTex.img, sizeX, sizeY))
+            }
+            val blend = settings.pixelateBlendSmooth.toFloat()
+            for (y in 0 until sizeX) {
+                for (x in 0 until sizeY) {
+                    val c = ColorAF(outTex.getPoint(x, y)).lerp(ColorAF(smoothTex.getPoint(x, y)), blend)
+                    outTex.setPoint(x, y, c.rgba)
+                }
             }
         }
 
@@ -74,6 +118,15 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             "\t - ANISO - before filtering, scales down the map and averages color\n" +
             "\t - ANISO_BILINEAR - combines both (smoothest)"
 
+    /**
+     * Process pixel when pixelating
+     * @param outTex output texture
+     * @param x x position in outTex
+     * @param y y position in outTex
+     * @param inTex input texture
+     * @param px x range of pixels in inTex
+     * @param py y range of pixels in inTex
+     */
     private fun processPixel(outTex: Texture, x: Int, y: Int, inTex: Texture, px: IntRange, py: IntRange) {
         val c: Int
         when (settings.pixelateScaleType) {
@@ -112,7 +165,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
         // get the most
         var maxI = 0
         var maxC = 0
-        for (i in 0 until counts.size) {
+        for (i in counts.indices) {
             val c = counts[i]
             if (c > maxC) {
                 maxC = c
@@ -127,7 +180,63 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
         return unindexColor(maxI)
     }
 
-    private fun middle(r: IntRange) = (r.first + r.endInclusive) / 2
+    /**
+     * Find size by dividing original size by 2, the result is >= new size
+     */
+    private fun findAnisoSize(width: Int, height: Int, newWidth: Int, newHeight: Int): Vec2i {
+        val x = findAnisoSize(width, newWidth)
+        val y = findAnisoSize(height, newHeight)
+        return Vec2i(x, y)
+    }
+
+    private fun findAnisoSize(size: Int, newSize: Int): Int {
+        var last = size
+        while (true) {
+            val next = last / 2
+            if (next < newSize) {
+                return last
+            }
+            last = next
+        }
+    }
+
+    private fun averagePixel(outTex: Texture, x: Int, y: Int, inTex: Texture, px: IntRange, py: IntRange) {
+        var r = 0.0
+        var g = 0.0
+        var b = 0.0
+        var a = 0
+
+        var ca = 0.0
+        var count = 0
+
+        for (iy in py) {
+            for (ix in px) {
+                val ix = ix % inTex.width
+                val iy = iy % inTex.height
+                val c = inTex.getPoint(ix, iy)
+                val alpha = ColorUtils.getAlpha(c)
+                val da = alpha / 256.0
+
+                r += ColorUtils.getRed(c) * da
+                g += ColorUtils.getGreen(c) * da
+                b += ColorUtils.getBlue(c) * da
+                a += alpha
+
+                ca += da
+                count++
+            }
+        }
+
+        val newR = (r / ca).roundToInt()
+        val newG = (g / ca).roundToInt()
+        val newB = (b / ca).roundToInt()
+        val alpha = (ca * 256 / count).roundToInt()
+        outTex.setPoint(x, y, ColorUtils.fromRGBA(newR, newG, newB, alpha))
+    }
+
+    private fun middle(r: IntRange) = (r.first + r.last) / 2
+
+    private fun middle(r: Vec2f) = ((r.x + r.y) / 2f).roundToInt()
 
     private fun roundColor(c: Int): Int {
         val r = roundChannel(ColorUtils.getRed(c))

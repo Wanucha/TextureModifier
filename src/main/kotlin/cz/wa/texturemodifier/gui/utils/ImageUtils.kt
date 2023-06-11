@@ -1,8 +1,11 @@
 package cz.wa.texturemodifier.gui.utils
 
+import java.awt.geom.AffineTransform
+import java.awt.image.AffineTransformOp
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferByte
 import java.awt.image.DataBufferInt
+
 
 class ImageUtils {
     companion object {
@@ -29,6 +32,13 @@ class ImageUtils {
             } else {
                 return ImageUtils.convertToIntBuffer(img)
             }
+        }
+
+        fun getFilteredImage(img: BufferedImage, sizeX: Int, sizeY: Int): BufferedImage {
+            val scaledImage = BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_ARGB)
+            val at = AffineTransform.getScaleInstance(sizeX / img.width.toDouble(), sizeY / img.height.toDouble())
+            val ato = AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR)
+            return ato.filter(img, scaledImage)
         }
 
         private fun convertToIntBuffer(img: BufferedImage): BufferedImage {

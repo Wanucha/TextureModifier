@@ -33,7 +33,6 @@ class ColorF(val r: Float, val g: Float, val b: Float) {
 
     fun toColor() = Color(rgb)
 
-
     companion object {
         val FUCHSIA = ColorF(255, 0, 255)
         val WHITE = ColorF(255, 255, 255)
