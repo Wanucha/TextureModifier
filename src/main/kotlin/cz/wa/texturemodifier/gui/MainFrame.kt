@@ -216,11 +216,11 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         propertiesOpenListeners.add(l)
     }
 
-    fun openImage() {
+    private fun openImage() {
         if (imageOpenChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            GuiUtils.runCatch(this, Runnable {
+            GuiUtils.runCatch(this) {
                 openImage(imageOpenChooser.selectedFile)
-            })
+            }
         }
     }
 
@@ -232,79 +232,86 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         contentHolder.files[0] = file.absolutePath
         imageSaveChooser.selectedFile = file
         tabs.selectedComponent.paint(tabs.selectedComponent.graphics)
-        SwingUtilities.invokeLater(Runnable {
+        SwingUtilities.invokeLater {
             for (l in imageOpenListeners) {
                 l.fileOpened(file)
             }
-        })
+        }
     }
 
-    fun quickOpenImage() {
+    private fun quickOpenImage() {
         quickOpenMenu.removeAll()
         val files =
             contentHolder.sourceFile.parentFile.listFiles { f -> TextureModifierMain.IMAGE_EXTS.any { f.name.endsWith(".${it}") } }
         for (file in files!!) {
             val item = JMenuItem(file.name)
-            item.addActionListener({
+            item.addActionListener {
                 openImage(file)
-            })
+            }
             quickOpenMenu.add(item)
         }
         val mPos = mousePosition
         quickOpenMenu.show(this, mPos.x, mPos.y)
     }
 
-    fun saveImage() {
+    private fun saveImage() {
         if (contentHolder.outputImage != null) {
             if (imageSaveChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                val file = imageSaveChooser.selectedFile
+                var file = imageSaveChooser.selectedFile
+                if (file.extension.isBlank()) {
+                    file = File(file.path + '.' + contentHolder.sourceFile.extension)
+                }
+
                 if (!TextureModifierMain.IMAGE_EXTS.contains(file.extension)) {
                     JOptionPane.showMessageDialog(this, "Unknown image extension: ${file.extension}")
                     return
                 }
-                GuiUtils.runCatch(this, Runnable {
+                GuiUtils.runCatch(this) {
                     ImageIO.write(contentHolder.outputImage, file.extension, file)
                     if (!file.isFile) {
                         JOptionPane.showMessageDialog(this@MainFrame, "File not saved: ${file.absolutePath}")
                     }
-                })
+                }
             }
         }
     }
 
-    fun reloadImage() {
+    private fun reloadImage() {
         openImage(File(contentHolder.files[0]))
     }
 
-    fun revertImage() {
+    private fun revertImage() {
         contentHolder.outputImage = contentHolder.sourceImage
         imageRevertListeners.forEach { it.fileOpened(File(contentHolder.files[0])) }
     }
 
-    fun openProperties() {
+    private fun openProperties() {
         if (propsOpenChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            GuiUtils.runCatch(this, Runnable {
+            GuiUtils.runCatch(this) {
                 val file = propsOpenChooser.selectedFile
                 contentHolder.settings = Settings.parseFile(file.absolutePath)
                 propsLabel.text = "= ${contentHolder.settings.file?.name}"
-                SwingUtilities.invokeLater(Runnable {
+                SwingUtilities.invokeLater {
                     for (l in propertiesOpenListeners) {
                         l.fileOpened(file)
                     }
-                })
-            })
+                }
+            }
         }
     }
 
-    fun saveProperties() {
+    private fun saveProperties() {
         if (propsSaveChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-            val file = propsSaveChooser.selectedFile
-            GuiUtils.runCatch(this, Runnable {
+            var file = propsSaveChooser.selectedFile
+            if (file.extension.isBlank()) {
+                file = File(file.path + ".properties")
+            }
+            GuiUtils.runCatch(this) {
                 Settings.save(contentHolder.settings, file);
                 if (!file.isFile) {
                     JOptionPane.showMessageDialog(this@MainFrame, "File not saved: ${file.absolutePath}")
                 }
-            })
+            }
         }
     }
 
@@ -336,9 +343,9 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
                 t.getTransferData(DataFlavor.javaFileListFlavor) as List<File>
             for (file in files) {
                 if (TextureModifierMain.IMAGE_EXTS.contains(file.extension)) {
-                    GuiUtils.runCatch(MainFrame.instance!!, Runnable {
-                        MainFrame.instance!!.openImage(file)
-                    })
+                    GuiUtils.runCatch(instance!!) {
+                        instance!!.openImage(file)
+                    }
                     return true
                 }
             }
