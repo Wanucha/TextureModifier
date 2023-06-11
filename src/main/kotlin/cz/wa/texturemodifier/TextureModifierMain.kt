@@ -66,7 +66,18 @@ class TextureModifierMain {
         fun printUsage(): String {
             return "Usage:\n" +
                     "file path as an argument - open the file at start (can be image or properties)\n" +
-                    "TODO implement commands for batching"
+                    "\tfile in a directory can be specified with * or ?, example 'img/*.png'\n" +
+                    "If no command specified, starts GUI\n" +
+                    "If a command is specified, processes the input files and saves them\n" +
+                    "There can be multiple commands, even one command multiple times\n" +
+                    "Command list:\n" +
+                    "--seamless\n" +
+                    "--blur\n" +
+                    "--pixelate\n" +
+                    "--fill_bg\n" +
+                    "--merge_maps\n" +
+                    "--multiply_color\n" +
+                    "--remove_alpha\n"
         }
     }
 }

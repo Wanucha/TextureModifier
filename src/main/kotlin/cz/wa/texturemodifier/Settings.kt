@@ -13,6 +13,7 @@ class Settings(
     var outPrefix: String = "",
     var outPostfix: String = "_",
     var outFormat: String = "png",
+    var overrideType: OverrideType = OverrideType.IGNORE,
     var seamlessDist: Int = 8,
     var seamlessAlpha: Boolean = true,
     var blurRadius: Double = 3.0,
@@ -47,6 +48,7 @@ class Settings(
         private const val OUT_PREFIX = "out-prefix"
         private const val OUT_POSTFIX = "out-postfix"
         private const val OUT_FORMAT = "out-format"
+        private const val OVERRIDE_TYPE = "override-type"
         private const val SEAMLESS_DIST = "seamless-dist"
         private const val SEAMLESS_ALPHA = "seamless-alpha"
         private const val BLUR_RADIUS = "blur-radius"
@@ -115,6 +117,9 @@ class Settings(
             }
             if (entry.key == OUT_FORMAT) {
                 ret.outFormat = parseString(entry)
+            }
+            if (entry.key == OVERRIDE_TYPE) {
+                ret.overrideType = parseEnum(entry, OverrideType::class.java)
             }
             if (entry.key == SEAMLESS_DIST) {
                 ret.seamlessDist = parseInt(entry)
@@ -211,6 +216,7 @@ class Settings(
             write(sb, OUT_PREFIX, s.outPrefix)
             write(sb, OUT_POSTFIX, s.outPostfix)
             write(sb, OUT_FORMAT, s.outFormat)
+            write(sb, OVERRIDE_TYPE, s.overrideType)
             write(sb, SEAMLESS_DIST, s.seamlessDist)
             write(sb, SEAMLESS_ALPHA, s.seamlessAlpha)
             write(sb, BLUR_RADIUS, s.blurRadius)
