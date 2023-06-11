@@ -4,9 +4,9 @@ import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.TextureModifierMain
 import cz.wa.texturemodifier.gui.help.HelpFrame
 import cz.wa.texturemodifier.gui.tabs.blur.BlurPanel
-import cz.wa.texturemodifier.gui.tabs.blur.FillBackgroundPanel
-import cz.wa.texturemodifier.gui.tabs.blur.MergeMapsPanel
-import cz.wa.texturemodifier.gui.tabs.blur.MultiplyColorPanel
+import cz.wa.texturemodifier.gui.tabs.fillbackground.FillBackgroundPanel
+import cz.wa.texturemodifier.gui.tabs.mergemaps.MergeMapsPanel
+import cz.wa.texturemodifier.gui.tabs.multiplycolor.MultiplyColorPanel
 import cz.wa.texturemodifier.gui.tabs.pixelate.PixelatePanel
 import cz.wa.texturemodifier.gui.tabs.propertieseditor.PropertiesEditor
 import cz.wa.texturemodifier.gui.tabs.removealpha.RemoveAlphaPanel
@@ -49,7 +49,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
     init {
         instance = this
-        var empty = ""
+        val empty = ""
         title = "Texture modifier v${TextureModifierMain.VERSION}${empty}"
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         try {
@@ -58,19 +58,19 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
             e.printStackTrace()
         }
 
-        if (files is MutableList) {
-            contentHolder = ContentHolder(settings, files)
+        contentHolder = if (files is MutableList) {
+            ContentHolder(settings, files)
         } else {
-            contentHolder = ContentHolder(settings, ArrayList<String>(files))
+            ContentHolder(settings, ArrayList<String>(files))
         }
 
         // allow drop files
         transferHandler = FileTransferHandler()
 
         initComponents()
-        val screenSize = Toolkit.getDefaultToolkit().getScreenSize()
-        val initW = 800
-        val initH = 500
+        val screenSize = Toolkit.getDefaultToolkit().screenSize
+        val initW = 900
+        val initH = 750
         bounds = Rectangle((screenSize.width - initW) / 2, (screenSize.height - initH) / 2, initW, initH)
         isVisible = true
     }
@@ -87,18 +87,18 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
             ?: contentHolder.sourceFile else contentHolder.sourceFile
 
         val openImage = JMenuItem("Open")
-        openImage.addActionListener({ openImage() })
+        openImage.addActionListener { openImage() }
         openImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(openImage)
         imageOpenChooser.fileFilter = imagesFilter;
 
         val quickOpenImage = JMenuItem("Open in directory")
-        quickOpenImage.addActionListener({ quickOpenImage() })
+        quickOpenImage.addActionListener { quickOpenImage() }
         quickOpenImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(quickOpenImage)
 
         val saveImage = JMenuItem("Save as")
-        saveImage.addActionListener({ saveImage() })
+        saveImage.addActionListener { saveImage() }
         saveImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(saveImage)
         imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Png", "png"))
@@ -108,12 +108,12 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Bmp", "bmp"))
 
         val reloadImage = JMenuItem("Reload")
-        reloadImage.addActionListener({ reloadImage() })
+        reloadImage.addActionListener { reloadImage() }
         reloadImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(reloadImage)
 
         val revertImage = JMenuItem("Revert")
-        revertImage.addActionListener({ revertImage() })
+        revertImage.addActionListener { revertImage() }
         revertImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(revertImage)
 
@@ -122,13 +122,13 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         menu.add(propMenu);
 
         val openProp = JMenuItem("Open")
-        openProp.addActionListener({ openProperties() })
+        openProp.addActionListener { openProperties() }
         openProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(openProp)
         propsOpenChooser.fileFilter = FileNameExtensionFilter("Properties", "properties");
 
         val saveProp = JMenuItem("Save as")
-        saveProp.addActionListener({ saveProperties() })
+        saveProp.addActionListener { saveProperties() }
         saveProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(saveProp)
         propsSaveChooser.fileFilter = FileNameExtensionFilter("Properties", "properties");
@@ -176,7 +176,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         // select each tab
         tabs.selectedIndex = tabs.tabCount - 1
         showPrevTab()
-        SwingUtilities.invokeLater({ initComponentsLater(imageFile) })
+        SwingUtilities.invokeLater { initComponentsLater(imageFile) }
     }
 
     private fun initComponentsLater(imageFile: File) {
@@ -324,10 +324,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
     private class FileTransferHandler : TransferHandler() {
         override fun canImport(support: TransferHandler.TransferSupport): Boolean {
-            if (!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                return false
-            }
-            return true
+            return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
         }
 
         override fun importData(support: TransferSupport): Boolean {

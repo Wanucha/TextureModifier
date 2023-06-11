@@ -24,8 +24,8 @@ class SourcePanel(val contentHolder: ContentHolder) : JPanel() {
     }
 
     class ToolPanel(val contentHolder: ContentHolder, val canvas: SourceViewer) : JPanel() {
-        val labelW = JLabel();
-        val labelH = JLabel();
+        private val labelW = JLabel();
+        private val labelH = JLabel();
 
         init {
             maximumSize = Dimension(200, 4096)
@@ -42,6 +42,7 @@ class SourcePanel(val contentHolder: ContentHolder) : JPanel() {
             b1.addActionListener{
                 applyModified()
             }
+            b1.toolTipText = "Takes last modified image as new source"
             add(b1)
 
             updateSize(File(""))

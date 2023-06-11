@@ -35,6 +35,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
         check(settings.pixelateScaleColorTolerance in 0..255) {
             "pixelateScaleColorTolerance must be >= 0 and < 256"
         }
+        check(settings.pixelateBlendSmooth in 0.0..1.0) {"pixelateBlendSmooth must be 0..1"}
 
         val inTex = Texture(image)
 
@@ -66,7 +67,12 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             "\t- MOST_COLOR - take colors from all pixels, that the current one is generated from and use the most frequent color\n" +
             "* scale color tolerance - when using MOST_COLOR, colors within this range will be considered same, the result is average from these\n" +
             "* ignore BG color - when finding new color, this color will be ignored by all filters\n" +
-            "* BG color - specify the ignored color\n"
+            "* BG color - specify the ignored color\n" +
+            "* Smooth blend ratio - 0 means pixelated, 1 means smooth, 0.5 means blend between pixelated and smooth\n" +
+            "* Smooth filter type:\n" +
+            "\t - BILINEAR - only bilinear filter\n" +
+            "\t - ANISO - before filtering, scales down the map and averages color\n" +
+            "\t - ANISO_BILINEAR - combines both (smoothest)"
 
     private fun processPixel(outTex: Texture, x: Int, y: Int, inTex: Texture, px: IntRange, py: IntRange) {
         val c: Int

@@ -1,4 +1,4 @@
-package cz.wa.texturemodifier.gui.tabs.blur
+package cz.wa.texturemodifier.gui.tabs.mergemaps
 
 import cz.wa.texturemodifier.MapType
 import cz.wa.texturemodifier.command.MergeMapCommand
@@ -9,7 +9,7 @@ import cz.wa.texturemodifier.gui.utils.GuiUtils
 import javax.swing.JComboBox
 import javax.swing.JTextField
 
-class MergeMapsPanel(contentHolder: ContentHolder) :
+open class MergeMapsPanel(contentHolder: ContentHolder) :
     AbstractPanel<ModifierAlphaViewer>(contentHolder, ModifierAlphaViewer(contentHolder)) {
 
     override fun createPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) = ToolPanel(contentHolder, canvas)
@@ -17,11 +17,11 @@ class MergeMapsPanel(contentHolder: ContentHolder) :
     protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) :
         AbstractToolPanel<ModifierAlphaViewer>(contentHolder, canvas, 240, MergeMapCommand::class.java) {
 
-        val layoutCb = JComboBox<MapType>(MapType.values())
-        val map1Tf = JTextField()
-        val map2Tf = JTextField()
-        val map3Tf = JTextField()
-        val map4Tf = JTextField()
+        private val layoutCb = JComboBox<MapType>(MapType.values())
+        private val map1Tf = JTextField()
+        private val map2Tf = JTextField()
+        private val map3Tf = JTextField()
+        private val map4Tf = JTextField()
 
         init {
             // apply

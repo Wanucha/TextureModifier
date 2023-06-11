@@ -38,7 +38,7 @@ class TextureModifierMain {
                     if (ret.isEmpty()) {
                         ret = arg
                     } else {
-                        println("Multiple properties, ignored: " + arg)
+                        println("Multiple properties, ignored: $arg")
                     }
                 }
             }
@@ -54,7 +54,7 @@ class TextureModifierMain {
         }
 
         private fun parseFiles(args: Array<String>): List<String> {
-            return args.filter { TextureModifierMain.IMAGE_EXTS.contains(File(it).extension) }
+            return args.filter { IMAGE_EXTS.contains(File(it).extension) }
         }
 
         fun printTitle(): String {

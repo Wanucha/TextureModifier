@@ -85,9 +85,9 @@ class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
         val counts = HashMap<Int, Int>(colors.size)
         for (c in colors) {
             if (counts.containsKey(c)) {
-                counts.put(c, counts.getValue(c) + 1)
+                counts[c] = counts.getValue(c) + 1
             } else {
-                counts.put(c, 1)
+                counts[c] = 1
             }
         }
         var max = 0

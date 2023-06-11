@@ -64,7 +64,7 @@ class BlurCommand(settings: Settings) : AbstractCommand(settings) {
         var b = 0f
 
         val d = core.size / 2
-        for (i in 0 until core.size) {
+        for (i in core.indices) {
             val sx = if(dirX)  MathUtils.mod(x + i - d, source.width) else x
             val sy = if(!dirX)  MathUtils.mod(y + i - d, source.height) else y
             val c = source.pixels[sx][sy]

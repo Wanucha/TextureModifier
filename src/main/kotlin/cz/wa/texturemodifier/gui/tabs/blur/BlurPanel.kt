@@ -9,7 +9,7 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 
-class BlurPanel(contentHolder: ContentHolder) :
+open class BlurPanel(contentHolder: ContentHolder) :
     AbstractPanel<ModifierViewer>(contentHolder, ModifierViewer(contentHolder)) {
 
     override fun createPanel(contentHolder: ContentHolder, canvas: ModifierViewer) = ToolPanel(contentHolder, canvas)
@@ -17,8 +17,8 @@ class BlurPanel(contentHolder: ContentHolder) :
     protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierViewer) :
         AbstractToolPanel<ModifierViewer>(contentHolder, canvas, 150, BlurCommand::class.java) {
 
-        val radiusTf = JTextField()
-        val ratioTf = JTextField()
+        private val radiusTf = JTextField()
+        private val ratioTf = JTextField()
 
         init {
             // apply

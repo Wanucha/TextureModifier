@@ -93,8 +93,8 @@ class PropertiesEditor(val contentHolder: ContentHolder) : JPanel() {
     }
 
     fun reload(file: File) {
-        GuiUtils.runCatch(this, Runnable {
+        GuiUtils.runCatch(this) {
             textArea.text = file.readText(Charsets.ISO_8859_1)
-        })
+        }
     }
 }

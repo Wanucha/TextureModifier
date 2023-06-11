@@ -1,4 +1,4 @@
-package cz.wa.texturemodifier.gui.tabs.blur
+package cz.wa.texturemodifier.gui.tabs.fillbackground
 
 import cz.wa.texturemodifier.command.FillBackgroundCommand
 import cz.wa.texturemodifier.gui.ContentHolder
@@ -9,7 +9,7 @@ import cz.wa.texturemodifier.math.ColorUtils
 import javax.swing.JCheckBox
 import javax.swing.JTextField
 
-class FillBackgroundPanel(contentHolder: ContentHolder) :
+open class FillBackgroundPanel(contentHolder: ContentHolder) :
     AbstractPanel<ModifierViewer>(contentHolder, ModifierViewer(contentHolder)) {
 
     override fun createPanel(contentHolder: ContentHolder, canvas: ModifierViewer) =
@@ -18,10 +18,10 @@ class FillBackgroundPanel(contentHolder: ContentHolder) :
     protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierViewer) :
         AbstractToolPanel<ModifierViewer>(contentHolder, canvas, 200, FillBackgroundCommand::class.java) {
 
-        val iterationsTf = JTextField()
-        val includeCornersCb = JCheckBox("Fill color include corner pixels")
-        val averageFillCb = JCheckBox("Fill color average near pixels")
-        val bgColorTf = JTextField("#000000")
+        private val iterationsTf = JTextField()
+        private val includeCornersCb = JCheckBox("Fill color include corner pixels")
+        private val averageFillCb = JCheckBox("Fill color average near pixels")
+        private val bgColorTf = JTextField("#000000")
 
         init {
             // help

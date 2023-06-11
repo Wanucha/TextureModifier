@@ -26,6 +26,8 @@ class Settings(
     var pixelateScaleColorTolerance: Int = 5,
     var pixelateIgnoreBgColor: Boolean = false,
     var pixelateBgColor: Color = Color.BLACK,
+    var pixelateBlendSmooth: Double = 0.0,
+    var pixelateSmoothType: SmoothType = SmoothType.ANISO_BILINEAR,
     var fillBgIterations: Int = 1,
     var fillBgIncludeCorners: Boolean = false,
     var fillBgAverageFill: Boolean = true,
@@ -40,36 +42,38 @@ class Settings(
     var removeAlphaThreshold: Int = 128,
 ) {
     companion object {
-        const val GUI_BG_COLOR = "gui-bg-color"
-        const val GUI_SHOW_BOUNDS = "gui-show_bounds"
-        const val OUT_PREFIX = "out-prefix"
-        const val OUT_POSTFIX = "out-postfix"
-        const val OUT_FORMAT = "out-format"
-        const val SEAMLESS_DIST = "seamless-dist"
-        const val SEAMLESS_ALPHA = "seamless-alpha"
-        const val BLUR_RADIUS = "blur-radius"
-        const val BLUR_RATIO = "blur-ratio"
-        const val PIXELATE_SCALE = "pixelate-scale"
-        const val PIXELATE_USE_SIZE = "pixelate-use-size"
-        const val PIXELATE_SIZE_X = "pixelate-size-x"
-        const val PIXELATE_SIZE_Y = "pixelate-size-y"
-        const val PIXELATE_COLORS = "pixelate-colors"
-        const val PIXELATE_SCALE_TYPE = "pixelate-scale-type"
-        const val PIXELATE_SCALE_COLOR_TOLERANCE = "pixelate-scale-color-tolerance"
-        const val PIXELATE_IGNORE_BG_COLOR = "pixelate-ignore-bg-color"
-        const val PIXELATE_BG_COLOR = "pixelate-bg-color"
-        const val FILL_BG_ITERATIONS = "fillbg-iterations"
-        const val FILL_BG_INCLUDE_CORNERS = "fillbg-include-corners"
-        const val FILL_BG_AVERAGE_FILL = "fillbg-average-fill"
-        const val FILL_BG_BG_COLOR = "fillbg-bg-color"
-        const val MERGE_MAPS_LAYOUT = "merge-maps-layout"
-        const val MERGE_MAPS_MAP1 = "merge-maps-map1"
-        const val MERGE_MAPS_MAP2 = "merge-maps-map2"
-        const val MERGE_MAPS_MAP3 = "merge-maps-map3"
-        const val MERGE_MAPS_MAP4 = "merge-maps-map4"
-        const val MULTIPLY_COLOR_MUL_COLOR = "multiply-color-mul-color"
-        const val MULTIPLY_COLOR_ADD_COLOR = "multiply-color-add-color"
-        const val REMOVE_ALPHA_THRESHOLD = "remove-alpha-threshold"
+        private const val GUI_BG_COLOR = "gui-bg-color"
+        private const val GUI_SHOW_BOUNDS = "gui-show_bounds"
+        private const val OUT_PREFIX = "out-prefix"
+        private const val OUT_POSTFIX = "out-postfix"
+        private const val OUT_FORMAT = "out-format"
+        private const val SEAMLESS_DIST = "seamless-dist"
+        private const val SEAMLESS_ALPHA = "seamless-alpha"
+        private const val BLUR_RADIUS = "blur-radius"
+        private const val BLUR_RATIO = "blur-ratio"
+        private const val PIXELATE_SCALE = "pixelate-scale"
+        private const val PIXELATE_USE_SIZE = "pixelate-use-size"
+        private const val PIXELATE_SIZE_X = "pixelate-size-x"
+        private const val PIXELATE_SIZE_Y = "pixelate-size-y"
+        private const val PIXELATE_COLORS = "pixelate-colors"
+        private const val PIXELATE_SCALE_TYPE = "pixelate-scale-type"
+        private const val PIXELATE_SCALE_COLOR_TOLERANCE = "pixelate-scale-color-tolerance"
+        private const val PIXELATE_IGNORE_BG_COLOR = "pixelate-ignore-bg-color"
+        private const val PIXELATE_BG_COLOR = "pixelate-bg-color"
+        private const val PIXELATE_BLEND_SMOOTH = "pixelate-blend-smooth"
+        private const val PIXELATE_SMOOTH_TYPE = "pixelate-smooth-type"
+        private const val FILL_BG_ITERATIONS = "fillbg-iterations"
+        private const val FILL_BG_INCLUDE_CORNERS = "fillbg-include-corners"
+        private const val FILL_BG_AVERAGE_FILL = "fillbg-average-fill"
+        private const val FILL_BG_BG_COLOR = "fillbg-bg-color"
+        private const val MERGE_MAPS_LAYOUT = "merge-maps-layout"
+        private const val MERGE_MAPS_MAP1 = "merge-maps-map1"
+        private const val MERGE_MAPS_MAP2 = "merge-maps-map2"
+        private const val MERGE_MAPS_MAP3 = "merge-maps-map3"
+        private const val MERGE_MAPS_MAP4 = "merge-maps-map4"
+        private const val MULTIPLY_COLOR_MUL_COLOR = "multiply-color-mul-color"
+        private const val MULTIPLY_COLOR_ADD_COLOR = "multiply-color-add-color"
+        private const val REMOVE_ALPHA_THRESHOLD = "remove-alpha-threshold"
 
         fun parseFile(fileName: String): Settings {
             val ret = parseString(File(fileName).readText())
@@ -81,7 +85,7 @@ class Settings(
             val p = Properties()
             p.load(ByteArrayInputStream(text.toByteArray(Charsets.UTF_8)))
             val ret = Settings()
-            var i = 0;
+            var i = 0
             for (entry in p) {
                 i++
                 try {
@@ -151,6 +155,12 @@ class Settings(
             if (entry.key == PIXELATE_BG_COLOR) {
                 ret.pixelateBgColor = parseColor(entry)
             }
+            if (entry.key == PIXELATE_BLEND_SMOOTH) {
+                ret.pixelateBlendSmooth = parseDouble(entry)
+            }
+            if (entry.key == PIXELATE_SMOOTH_TYPE) {
+                ret.pixelateSmoothType = parseEnum(entry, SmoothType::class.java)
+            }
             if (entry.key == FILL_BG_ITERATIONS) {
                 ret.fillBgIterations = parseInt(entry)
             }
@@ -214,6 +224,8 @@ class Settings(
             write(sb, PIXELATE_SCALE_COLOR_TOLERANCE, s.pixelateScaleColorTolerance)
             write(sb, PIXELATE_IGNORE_BG_COLOR, s.pixelateIgnoreBgColor)
             write(sb, PIXELATE_BG_COLOR, ColorUtils.toString(s.pixelateBgColor))
+            write(sb, PIXELATE_BLEND_SMOOTH, s.pixelateBlendSmooth)
+            write(sb, PIXELATE_SMOOTH_TYPE, s.pixelateSmoothType)
             write(sb, FILL_BG_ITERATIONS, s.fillBgIterations)
             write(sb, FILL_BG_INCLUDE_CORNERS, s.fillBgIncludeCorners)
             write(sb, FILL_BG_AVERAGE_FILL, s.fillBgAverageFill)
@@ -229,7 +241,7 @@ class Settings(
             return sb.toString()
         }
 
-        fun write(sb: StringBuilder, key: String, value: Any) {
+        private fun write(sb: StringBuilder, key: String, value: Any) {
             sb.append(key).append("=").append(value).append("\n")
         }
 
@@ -268,7 +280,7 @@ class Settings(
         }
 
         private fun <E: Enum<E>> parseEnum(entry: MutableMap.MutableEntry<Any, Any>, enumClass: Class<E>): E {
-            return java.lang.Enum.valueOf(enumClass, entry.value.toString());
+            return java.lang.Enum.valueOf(enumClass, entry.value.toString())
         }
     }
 }

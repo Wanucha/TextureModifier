@@ -87,8 +87,7 @@ class MergeMapCommand(settings: Settings) : AbstractCommand(settings) {
         val g = ArrayList<Int>(4)
         val b = ArrayList<Int>(4)
         val a = ArrayList<Int>(4)
-        var i = 0
-        for (color in colors) {
+        for ((i, color) in colors.withIndex()) {
             if (maps[i].output.r) {
                 r.add(ColorUtils.getRed(color))
             }
@@ -101,16 +100,15 @@ class MergeMapCommand(settings: Settings) : AbstractCommand(settings) {
             if (maps[i].output.a) {
                 a.add(ColorUtils.getAlpha(color))
             }
-            i++
         }
         return ColorUtils.fromRGBA(averageColor(r), averageColor(g), averageColor(b), averageColor(a))
     }
 
     private fun averageColor(c: ArrayList<Int>): Int {
-        if (c.isEmpty()) {
-            return 0
+        return if (c.isEmpty()) {
+            0
         } else {
-            return c.average().roundToInt()
+            c.average().roundToInt()
         }
     }
 
@@ -134,16 +132,22 @@ class MergeMapCommand(settings: Settings) : AbstractCommand(settings) {
         var b = false
         var a = false
         for (c in str) {
-            if (c == 'r' || c == 'R') {
-                r = true
-            } else if (c == 'g' || c == 'G') {
-                g = true
-            } else if (c == 'b' || c == 'B') {
-                b = true
-            } else if (c == 'a' || c == 'A') {
-                a = true
-            } else {
-                throw java.lang.IllegalArgumentException("Unexpected character '$c' in $str")
+            when (c) {
+                'r', 'R' -> {
+                    r = true
+                }
+                'g', 'G' -> {
+                    g = true
+                }
+                'b', 'B' -> {
+                    b = true
+                }
+                'a', 'A' -> {
+                    a = true
+                }
+                else -> {
+                    throw java.lang.IllegalArgumentException("Unexpected character '$c' in $str")
+                }
             }
         }
         return MapChannels(r, g, b, a)

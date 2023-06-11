@@ -7,7 +7,7 @@ import cz.wa.texturemodifier.gui.tabs.ModifierAlphaViewer
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import javax.swing.JTextField
 
-class RemoveAlphaPanel(contentHolder: ContentHolder) :
+open class RemoveAlphaPanel(contentHolder: ContentHolder) :
     AbstractPanel<ModifierAlphaViewer>(contentHolder, ModifierAlphaViewer(contentHolder)) {
 
     override fun createPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) =

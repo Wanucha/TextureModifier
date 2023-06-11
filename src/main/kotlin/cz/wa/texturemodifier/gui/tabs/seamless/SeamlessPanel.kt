@@ -10,7 +10,7 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 
-class SeamlessPanel(contentHolder: ContentHolder) :
+open class SeamlessPanel(contentHolder: ContentHolder) :
     AbstractPanel<ModifierViewer>(contentHolder, ModifierViewer(contentHolder)) {
 
     override fun createPanel(contentHolder: ContentHolder, canvas: ModifierViewer) = ToolPanel(contentHolder, canvas)

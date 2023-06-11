@@ -18,7 +18,7 @@ class RemoveAlphaCommand(settings: Settings) : AbstractCommand(settings) {
             for (x in 0 until ret.width) {
                 var c = tex.getPoint(x, y)
                 val a = ColorUtils.getAlpha(c)
-                if (a > 0 && a < 255) {
+                if (a in 1..254) {
                     c = ColorUtils.setAlpha(c, computeAlpha(a))
                     tex.setPoint(x, y, c)
                 }
