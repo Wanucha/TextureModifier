@@ -34,10 +34,10 @@ class ImageUtils {
             }
         }
 
-        fun getFilteredImage(img: BufferedImage, sizeX: Int, sizeY: Int): BufferedImage {
+        fun getFilteredImage(img: BufferedImage, sizeX: Int, sizeY: Int, filter: FilterType): BufferedImage {
             val scaledImage = BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_ARGB)
             val at = AffineTransform.getScaleInstance(sizeX / img.width.toDouble(), sizeY / img.height.toDouble())
-            val ato = AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR)
+            val ato = AffineTransformOp(at, filter.value)
             return ato.filter(img, scaledImage)
         }
 

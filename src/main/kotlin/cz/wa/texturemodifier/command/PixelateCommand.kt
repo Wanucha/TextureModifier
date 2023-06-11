@@ -3,6 +3,7 @@ package cz.wa.texturemodifier.command
 import cz.wa.texturemodifier.ScaleType
 import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.SmoothType
+import cz.wa.texturemodifier.gui.utils.FilterType
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.ColorAF
 import cz.wa.texturemodifier.image.Texture
@@ -48,21 +49,35 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
 
         val inTex = Texture(image)
 
-        val ret = ImageUtils.createEmptyImage(sizeX, sizeY)
-        val outTex = Texture(ret)
+        val ret: BufferedImage
+        val outTex: Texture
 
         val rx = image.width / sizeX.toFloat()
         val ry = image.height / sizeY.toFloat()
 
         if (settings.pixelateBlendSmooth < 1) {
             // pixelate
-            for (y in 0 until sizeX) {
-                for (x in 0 until sizeY) {
-                    val px = IntRange((rx * x).roundToInt(), (rx * (x + 1)).roundToInt() - 1)
-                    val py = IntRange((ry * y).roundToInt(), (ry * (y + 1)).roundToInt() - 1)
-                    processPixel(outTex, x, y, inTex, px, py)
+
+            if (settings.pixelateScaleType == ScaleType.NEAREST && !settings.pixelateIgnoreBgColor) {
+                // simple nearest filter
+                ret = ImageUtils.getFilteredImage(image, sizeX, sizeY, FilterType.NEAREST)
+                outTex = Texture(ret)
+            } else {
+                // some more complex filter
+                ret = ImageUtils.createEmptyImage(sizeX, sizeY);
+                outTex = Texture(ret)
+                for (y in 0 until sizeX) {
+                    for (x in 0 until sizeY) {
+                        val px = IntRange((rx * x).roundToInt(), (rx * (x + 1)).roundToInt() - 1)
+                        val py = IntRange((ry * y).roundToInt(), (ry * (y + 1)).roundToInt() - 1)
+                        processPixel(outTex, x, y, inTex, px, py)
+                    }
                 }
             }
+        } else {
+            // empty image
+            ret = ImageUtils.createEmptyImage(sizeX, sizeY)
+            outTex = Texture(ret)
         }
 
         if (settings.pixelateBlendSmooth > 0) {
@@ -85,11 +100,9 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             }
 
             // apply to output
-            if ((smoothTex.width != outTex.width) && (smoothTex.height != outTex.height) &&
-                (settings.pixelateSmoothType == SmoothType.BILINEAR || settings.pixelateSmoothType == SmoothType.ANISO_BILINEAR)) {
-                // bilinear filter
-                smoothTex = Texture(ImageUtils.getFilteredImage(smoothTex.img, sizeX, sizeY))
-            }
+            val bilinear = ((smoothTex.width != outTex.width) && (smoothTex.height != outTex.height) &&
+                (settings.pixelateSmoothType == SmoothType.BILINEAR || settings.pixelateSmoothType == SmoothType.ANISO_BILINEAR));
+            smoothTex = Texture(ImageUtils.getFilteredImage(smoothTex.img, sizeX, sizeY, if (bilinear) FilterType.BILINEAR else FilterType.NEAREST))
             val blend = settings.pixelateBlendSmooth.toFloat()
             for (y in 0 until sizeX) {
                 for (x in 0 until sizeY) {
