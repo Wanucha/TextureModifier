@@ -1,5 +1,6 @@
 # Texture modifier
 * Forum: https://discord.gg/FuWxWYqcX4
+* GitHub: https://github.com/Wanucha/TextureModifier
 * Applies various transformations to input image
   * Can be used to pixelate images
   * Merge multiple maps into one
