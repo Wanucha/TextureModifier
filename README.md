@@ -1,5 +1,10 @@
 # Texture modifier
+* Forum: https://discord.gg/FuWxWYqcX4
 * Applies various transformations to input image
+  * Can be used to pixelate images
+  * Merge multiple maps into one
+  * Blur image
+  * Much more...
 * Can be launched with GUI or from command line for batching
 ## GUI
 * Run without arguments
