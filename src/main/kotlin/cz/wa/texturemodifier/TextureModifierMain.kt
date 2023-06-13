@@ -6,11 +6,11 @@ import java.io.File
 class TextureModifierMain {
 
     companion object {
-        const val VERSION = "0.2.1"
+        const val VERSION = "0.3.0"
 
-        const val COMMAND_PREFIX = "--"
         val IMAGE_EXTS = arrayOf("png", "jpg", "jpeg", "gif", "bmp")
 
+        private const val COMMAND_PREFIX = "--"
 
         @JvmStatic
         fun main(args: Array<String>) {
