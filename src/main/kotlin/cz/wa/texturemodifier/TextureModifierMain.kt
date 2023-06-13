@@ -14,6 +14,7 @@ class TextureModifierMain {
 
         @JvmStatic
         fun main(args: Array<String>) {
+            println(printTitle())
             var settings = Settings()
             var files = emptyList<String>()
             try {
@@ -79,6 +80,7 @@ class TextureModifierMain {
         fun printTitle(): String {
             return "Texture modifier v$VERSION\n" +
                     "Created by Ondřej Milenovský\n" +
+                    "https://github.com/Wanucha/TextureModifier\n" +
                     "----------------------------\n\n"
         }
 
