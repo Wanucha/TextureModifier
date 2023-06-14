@@ -11,6 +11,9 @@
 * Run without arguments
 * You can add properties file or image file as arguments, they will be opened on start
   * If you provide multiple files, the first one will be opened
+### Known bugs
+* Sometimes menu in GUI is hidden behind image view - click on properties tab, then it's always visible
+* Does not handle jpg well (can mess up colors or throw errors) - use png
 ## Command line
 * Run with arguments
   * Order of arguments does not matter (except command order)
