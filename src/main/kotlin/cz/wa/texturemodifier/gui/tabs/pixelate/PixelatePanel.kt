@@ -57,6 +57,7 @@ open class PixelatePanel(contentHolder: ContentHolder) :
 
             // use scale
             useSizeCb.isSelected = contentHolder.settings.pixelateUseSize
+            useSizeCb.addChangeListener {useSizeChanged()}
             p1.add(GuiUtils.createValuePanel(null, useSizeCb))
 
             // size
@@ -127,6 +128,13 @@ open class PixelatePanel(contentHolder: ContentHolder) :
 
             // apply
             add(createApplyButton())
+        }
+
+        private fun useSizeChanged() {
+            val value = useSizeCb.isSelected
+            scaleTf.isEnabled = !value
+            sizeXTf.isEnabled = value
+            sizeYTf.isEnabled = value
         }
 
         override fun applySettings() {
