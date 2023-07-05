@@ -7,10 +7,7 @@ import cz.wa.texturemodifier.gui.utils.GuiUtils
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.io.File
-import javax.swing.JButton
-import javax.swing.JOptionPane
-import javax.swing.JPanel
-import javax.swing.JTextArea
+import javax.swing.*
 
 /**
  * Displays modification (command) of tile set
@@ -79,6 +76,9 @@ class PropertiesEditor(val contentHolder: ContentHolder) : JPanel() {
             JOptionPane.showMessageDialog(this,"No properties defined")
         } else {
             contentHolder.settings = Settings.parseString(textArea.text)
+            SwingUtilities.invokeLater {
+                contentHolder.callSettingsListeners()
+            }
         }
     }
 

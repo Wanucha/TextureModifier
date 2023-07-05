@@ -29,7 +29,6 @@ open class BlurPanel(contentHolder: ContentHolder) :
 
             p1.add(JLabel("Radius"))
 
-            radiusTf.text = contentHolder.settings.blurRadius.toString()
             radiusTf.columns = 6
             p1.add(radiusTf)
 
@@ -40,7 +39,6 @@ open class BlurPanel(contentHolder: ContentHolder) :
 
             p2.add(JLabel("Ratio"))
 
-            ratioTf.text = contentHolder.settings.blurRatio.toString()
             ratioTf.columns = 6
             p2.add(ratioTf)
 
@@ -48,6 +46,13 @@ open class BlurPanel(contentHolder: ContentHolder) :
 
             // apply
             add(createApplyButton())
+
+            showSettings()
+        }
+
+        override fun showSettings() {
+            radiusTf.text = contentHolder.settings.blurRadius.toString()
+            ratioTf.text = contentHolder.settings.blurRatio.toString()
         }
 
         override fun applySettings() {

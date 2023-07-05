@@ -18,8 +18,8 @@ open class SeamlessPanel(contentHolder: ContentHolder) :
     protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierViewer) :
         AbstractToolPanel<ModifierViewer>(contentHolder, canvas, 150, SeamlessCommand::class.java) {
 
-        val distTf = JTextField()
-        val alphaCb = JCheckBox("Alpha blending")
+        private val distTf = JTextField()
+        private val alphaCb = JCheckBox("Alpha blending")
 
         init {
             // help
@@ -30,18 +30,23 @@ open class SeamlessPanel(contentHolder: ContentHolder) :
 
             p1.add(JLabel("Distance PX"))
 
-            distTf.text = contentHolder.settings.seamlessDist.toString()
             distTf.columns = 4
             p1.add(distTf)
 
             add(p1)
 
             // alpha
-            alphaCb.isSelected = contentHolder.settings.seamlessAlpha
             add(alphaCb)
 
             // apply
             add(createApplyButton())
+
+            showSettings()
+        }
+
+        override fun showSettings() {
+            distTf.text = contentHolder.settings.seamlessDist.toString()
+            alphaCb.isSelected = contentHolder.settings.seamlessAlpha
         }
 
         override fun applySettings() {

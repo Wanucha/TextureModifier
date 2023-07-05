@@ -17,7 +17,7 @@ open class MergeMapsPanel(contentHolder: ContentHolder) :
     protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) :
         AbstractToolPanel<ModifierAlphaViewer>(contentHolder, canvas, 240, MergeMapCommand::class.java) {
 
-        private val layoutCb = JComboBox<MapType>(MapType.values())
+        private val layoutCb = JComboBox(MapType.values())
         private val map1Tf = JTextField()
         private val map2Tf = JTextField()
         private val map3Tf = JTextField()
@@ -29,28 +29,33 @@ open class MergeMapsPanel(contentHolder: ContentHolder) :
 
             // type
             layoutCb.isEditable = false
-            layoutCb.selectedItem = contentHolder.settings.mergeMapsLayout
             add(GuiUtils.createValuePanel("Input maps layout", layoutCb))
 
             // maps
-            map1Tf.text = contentHolder.settings.mergeMapsMap1
             map1Tf.columns = 9
             add(GuiUtils.createValuePanel("Map 1 (upper left)", map1Tf))
 
-            map2Tf.text = contentHolder.settings.mergeMapsMap2
             map2Tf.columns = 9
             add(GuiUtils.createValuePanel("Map 2 (ur/ll)", map2Tf))
 
-            map3Tf.text = contentHolder.settings.mergeMapsMap3
             map3Tf.columns = 9
             add(GuiUtils.createValuePanel("Map 3 (lower left)", map3Tf))
 
-            map4Tf.text = contentHolder.settings.mergeMapsMap4
             map4Tf.columns = 9
             add(GuiUtils.createValuePanel("Map 4 (lower right)", map4Tf))
 
             // apply
             add(createApplyButton())
+
+            showSettings()
+        }
+
+        override fun showSettings() {
+            layoutCb.selectedItem = contentHolder.settings.mergeMapsLayout
+            map1Tf.text = contentHolder.settings.mergeMapsMap1
+            map2Tf.text = contentHolder.settings.mergeMapsMap2
+            map3Tf.text = contentHolder.settings.mergeMapsMap3
+            map4Tf.text = contentHolder.settings.mergeMapsMap4
         }
 
         override fun applySettings() {

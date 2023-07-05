@@ -23,12 +23,17 @@ open class RemoveAlphaPanel(contentHolder: ContentHolder) :
             add(createHelpButton())
 
             // threshold
-            thresholdTf.text = contentHolder.settings.removeAlphaThreshold.toString()
             thresholdTf.columns = 3
             add(GuiUtils.createValuePanel("Threshold", thresholdTf))
 
             // apply
             add(createApplyButton())
+
+            showSettings()
+        }
+
+        override fun showSettings() {
+            thresholdTf.text = contentHolder.settings.removeAlphaThreshold.toString()
         }
 
         override fun applySettings() {

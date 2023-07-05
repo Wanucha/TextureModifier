@@ -37,6 +37,7 @@ abstract class AbstractPanel<V : TextureViewer>(val contentHolder: ContentHolder
         init {
             maximumSize = Dimension(width, 4096)
             preferredSize = maximumSize
+            contentHolder.addSettingsListener { showSettings() }
         }
 
         protected open fun apply() {
@@ -44,6 +45,8 @@ abstract class AbstractPanel<V : TextureViewer>(val contentHolder: ContentHolder
             contentHolder.outputImage = createCommand().execute(contentHolder.sourceImage!!)
             canvas.refresh()
         }
+
+        protected abstract fun showSettings()
 
         protected abstract fun applySettings()
 

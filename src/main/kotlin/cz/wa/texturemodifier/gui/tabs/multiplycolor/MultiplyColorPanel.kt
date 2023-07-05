@@ -24,16 +24,21 @@ open class MultiplyColorPanel(contentHolder: ContentHolder) :
             add(createEmptyPanel(40))
 
             // multiply
-            mulColorTf.text = ColorUtils.toString(contentHolder.settings.multiplyColorMulColor)
             mulColorTf.columns = 7
             add(GuiUtils.createValuePanel("Multiply color", mulColorTf))
 
             // add
-            addColorTf.text = ColorUtils.toString(contentHolder.settings.multiplyColorAddColor)
             addColorTf.columns = 7
             add(GuiUtils.createValuePanel("Add color", addColorTf))
             // apply
             add(createApplyButton())
+
+            showSettings()
+        }
+
+        override fun showSettings() {
+            mulColorTf.text = ColorUtils.toString(contentHolder.settings.multiplyColorMulColor)
+            addColorTf.text = ColorUtils.toString(contentHolder.settings.multiplyColorAddColor)
         }
 
         override fun applySettings() {

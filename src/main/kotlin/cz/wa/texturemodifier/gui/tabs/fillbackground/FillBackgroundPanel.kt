@@ -29,25 +29,30 @@ open class FillBackgroundPanel(contentHolder: ContentHolder) :
             add(createEmptyPanel(40))
 
             // scale
-            iterationsTf.text = contentHolder.settings.fillBgIterations.toString()
             iterationsTf.columns = 2
             add(GuiUtils.createValuePanel("Iterations", iterationsTf))
 
             // include corners
-            includeCornersCb.isSelected = contentHolder.settings.fillBgIncludeCorners
             add(GuiUtils.createValuePanel(null, includeCornersCb))
 
             // average fill
-            averageFillCb.isSelected = contentHolder.settings.fillBgAverageFill
             add(GuiUtils.createValuePanel(null, averageFillCb))
 
             // bg color
-            bgColorTf.text = ColorUtils.toString(contentHolder.settings.fillBgBgColor)
             bgColorTf.columns = 7
             add(GuiUtils.createValuePanel("BG color", bgColorTf))
 
             // apply
             add(createApplyButton())
+
+            showSettings()
+        }
+
+        override fun showSettings() {
+            iterationsTf.text = contentHolder.settings.fillBgIterations.toString()
+            includeCornersCb.isSelected = contentHolder.settings.fillBgIncludeCorners
+            averageFillCb.isSelected = contentHolder.settings.fillBgAverageFill
+            bgColorTf.text = ColorUtils.toString(contentHolder.settings.fillBgBgColor)
         }
 
         override fun applySettings() {

@@ -6,7 +6,10 @@ import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 
-class ContentHolder(var settings: Settings, var files: MutableList<String>) {
+class ContentHolder(
+    var settings: Settings,
+    var files: MutableList<String>
+) {
 
     var sourceImage: BufferedImage? = null
     set(value) {
@@ -24,6 +27,22 @@ class ContentHolder(var settings: Settings, var files: MutableList<String>) {
                 File(files[0])
             }
 
+
+    private val settingsListeners = HashSet<(Settings) -> Unit>()
+
+    fun addSettingsListener(l: (Settings) -> Unit) {
+        settingsListeners.add(l)
+    }
+
+    fun removeSettingsListener(l: (Settings) -> Unit) {
+        settingsListeners.remove(l)
+    }
+
+    fun callSettingsListeners() {
+        for (l in settingsListeners) {
+            l.invoke(settings)
+        }
+    }
 
     init {
         if (files.isNotEmpty()) {

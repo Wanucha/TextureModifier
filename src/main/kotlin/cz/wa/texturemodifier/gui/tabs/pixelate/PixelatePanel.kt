@@ -43,7 +43,6 @@ open class PixelatePanel(contentHolder: ContentHolder) :
             p1.preferredSize = Dimension(200, 200)
 
             // scale
-            scaleTf.text = contentHolder.settings.pixelateScale.toString()
             scaleTf.columns = 4
             p1.add(GuiUtils.createValuePanel("Scale down", scaleTf))
             val bApplyScale = JButton("Use")
@@ -56,16 +55,13 @@ open class PixelatePanel(contentHolder: ContentHolder) :
             p1.add(bApplyScale)
 
             // use scale
-            useSizeCb.isSelected = contentHolder.settings.pixelateUseSize
             useSizeCb.addChangeListener {useSizeChanged()}
             p1.add(GuiUtils.createValuePanel(null, useSizeCb))
 
             // size
-            sizeXTf.text = contentHolder.settings.pixelateSizeX.toString()
             sizeXTf.columns = 4
             p1.add(GuiUtils.createValuePanel("Size X", sizeXTf))
 
-            sizeYTf.text = contentHolder.settings.pixelateSizeY.toString()
             sizeYTf.columns = 4
             p1.add(GuiUtils.createValuePanel("Size Y", sizeYTf))
 
@@ -77,7 +73,6 @@ open class PixelatePanel(contentHolder: ContentHolder) :
             p2.preferredSize = Dimension(200, 60)
 
             // colors
-            colorsTf.text = contentHolder.settings.pixelateColors.toString()
             colorsTf.columns = 3
             p2.add(GuiUtils.createValuePanel("Colors per channel", colorsTf))
 
@@ -90,20 +85,16 @@ open class PixelatePanel(contentHolder: ContentHolder) :
 
             // scale type
             typeCb.isEditable = false
-            typeCb.selectedItem = contentHolder.settings.pixelateScaleType
             p3.add(GuiUtils.createValuePanel("Scale filter", typeCb))
 
             // tolerance
-            toleranceTf.text = contentHolder.settings.pixelateScaleColorTolerance.toString()
             toleranceTf.columns = 3
             p3.add(GuiUtils.createValuePanel("Scale color tolerance", toleranceTf))
 
             // ignore bg color
-            ignoreBgCb.isSelected = contentHolder.settings.pixelateIgnoreBgColor
             p3.add(GuiUtils.createValuePanel(null, ignoreBgCb))
 
             // bg color
-            bgColorTf.text = ColorUtils.toString(contentHolder.settings.pixelateBgColor)
             bgColorTf.columns = 7
             p3.add(GuiUtils.createValuePanel("BG color", bgColorTf))
 
@@ -116,18 +107,18 @@ open class PixelatePanel(contentHolder: ContentHolder) :
 
             // smooth blend
             blendSmoothTf.columns = 4
-            blendSmoothTf.text = contentHolder.settings.pixelateBlendSmooth.toString()
             p4.add(GuiUtils.createValuePanel("Smooth blend ratio", blendSmoothTf))
 
             // smooth type
             smoothTypeCb.isEditable = false
-            smoothTypeCb.selectedItem = contentHolder.settings.pixelateSmoothType
             p4.add(GuiUtils.createValuePanel("Smooth filter", smoothTypeCb))
 
             add(p4)
 
             // apply
             add(createApplyButton())
+
+            showSettings()
         }
 
         private fun useSizeChanged() {
@@ -135,6 +126,20 @@ open class PixelatePanel(contentHolder: ContentHolder) :
             scaleTf.isEnabled = !value
             sizeXTf.isEnabled = value
             sizeYTf.isEnabled = value
+        }
+
+        override fun showSettings() {
+            scaleTf.text = contentHolder.settings.pixelateScale.toString()
+            useSizeCb.isSelected = contentHolder.settings.pixelateUseSize
+            sizeXTf.text = contentHolder.settings.pixelateSizeX.toString()
+            sizeYTf.text = contentHolder.settings.pixelateSizeY.toString()
+            colorsTf.text = contentHolder.settings.pixelateColors.toString()
+            typeCb.selectedItem = contentHolder.settings.pixelateScaleType
+            toleranceTf.text = contentHolder.settings.pixelateScaleColorTolerance.toString()
+            ignoreBgCb.isSelected = contentHolder.settings.pixelateIgnoreBgColor
+            bgColorTf.text = ColorUtils.toString(contentHolder.settings.pixelateBgColor)
+            blendSmoothTf.text = contentHolder.settings.pixelateBlendSmooth.toString()
+            smoothTypeCb.selectedItem = contentHolder.settings.pixelateSmoothType
         }
 
         override fun applySettings() {

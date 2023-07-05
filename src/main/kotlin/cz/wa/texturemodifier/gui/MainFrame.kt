@@ -295,6 +295,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
                     for (l in propertiesOpenListeners) {
                         l.fileOpened(file)
                     }
+                    contentHolder.callSettingsListeners()
                 }
             }
         }
