@@ -7,7 +7,7 @@ import java.util.*
 import javax.swing.*
 
 object GuiUtils {
-    fun showError(parent: Component, content: Any) {
+    private fun showError(parent: Component, content: Any) {
         JOptionPane.showMessageDialog(parent, content, "Error", JOptionPane.ERROR_MESSAGE)
     }
 

@@ -228,7 +228,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
                 val iy = iy % inTex.height
                 val c = inTex.getPoint(ix, iy)
                 val alpha = ColorUtils.getAlpha(c)
-                val da = alpha / 256.0
+                val da = alpha / 255.0
 
                 r += ColorUtils.getRed(c) * da
                 g += ColorUtils.getGreen(c) * da
@@ -240,11 +240,15 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             }
         }
 
-        val newR = (r / ca).roundToInt()
-        val newG = (g / ca).roundToInt()
-        val newB = (b / ca).roundToInt()
-        val alpha = (ca * 256 / count).roundToInt()
-        outTex.setPoint(x, y, ColorUtils.fromRGBA(newR, newG, newB, alpha))
+        var color = 0;
+        if (ca > 0) {
+            val newR = (r / ca).roundToInt()
+            val newG = (g / ca).roundToInt()
+            val newB = (b / ca).roundToInt()
+            val alpha = (ca * 255 / count).roundToInt()
+            color = ColorUtils.fromRGBA(newR, newG, newB, alpha)
+        }
+        outTex.setPoint(x, y, color)
     }
 
     private fun middle(r: IntRange) = (r.first + r.last) / 2

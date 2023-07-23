@@ -6,7 +6,7 @@ import java.io.File
 class TextureModifierMain {
 
     companion object {
-        const val VERSION = "0.3.1"
+        const val VERSION = "0.3.2"
 
         val IMAGE_EXTS = arrayOf("png", "jpg", "jpeg", "gif", "bmp")
 
