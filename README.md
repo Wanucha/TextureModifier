@@ -11,6 +11,9 @@
 * Run without arguments
 * You can add properties file or image file as arguments, they will be opened on start
   * If you provide multiple files, the first one will be opened
+* Examples:
+  * java -jar TextureModifier.jar settings.properties _(open properties on start)_
+  * java -jar TextureModifier.jar settings.properties textures/image.png _(open properties and image on start)_
 ### Known bugs
 * Sometimes menu in GUI is hidden behind image view - click on properties tab, then it's always visible
 * Does not handle jpg well (can mess up colors or throw errors) - use png
@@ -55,5 +58,5 @@
   * Here you have option to run commands with different properties - run the jar multiple times
   * Add pause to the end, so you will see the result
 * Examples:
-  * java -jar TextureModifier.jar settings.properties --blur C:/maps/*.png "images/normals/normal map?.png"
-  * java -jar TextureModifier.jar settings.properties --blur --pixelate --seamless --blur images/*.png
+  * java -jar TextureModifier.jar settings.properties --blur C:/maps/*.png "images/normals/normal map?.png" _(blur all the provided pngs)_
+  * java -jar TextureModifier.jar settings.properties --blur --pixelate --seamless --blur images/*.png _(take all pngs in folder 'images' and apply in order: blur, pixelate, seamless, blur again)_
