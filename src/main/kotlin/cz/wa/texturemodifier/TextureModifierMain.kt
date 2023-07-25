@@ -10,6 +10,7 @@ class TextureModifierMain {
 
         val IMAGE_OPEN_EXTS = arrayOf("png", "jpg", "jpeg", "gif", "bmp")
         val IMAGE_SAVE_EXTS = arrayOf("png", "gif", "bmp")
+        val IMAGE_JPG_EXTS = arrayOf("jpg", "jpeg")
 
         private const val COMMAND_PREFIX = "--"
 

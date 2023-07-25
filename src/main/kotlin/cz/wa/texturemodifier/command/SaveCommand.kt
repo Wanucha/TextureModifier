@@ -61,7 +61,7 @@ class SaveCommand(settings: Settings, private val stats: SaveStats, private val 
         val dir = origFile.parentFile
         val fileName = origFile.nameWithoutExtension
         var ext = if (settings.outFormat.isNullOrBlank()) origFile.extension else settings.outFormat
-        if (ext.lowercase() in JPG_EXTS) {
+        if (ext.lowercase() in TextureModifierMain.IMAGE_JPG_EXTS) {
            ext = "png"
         }
 
@@ -70,9 +70,5 @@ class SaveCommand(settings: Settings, private val stats: SaveStats, private val 
 
     override fun getHelp(): String {
         return "Saves the file, uses settings for final filename, takes care of overriding"
-    }
-
-    companion object {
-        val JPG_EXTS = arrayOf("jpg", "jpeg")
     }
 }

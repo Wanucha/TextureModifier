@@ -228,13 +228,20 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
             contentHolder.files.add("");
         }
         contentHolder.files[0] = file.absolutePath
-        imageSaveChooser.selectedFile = file
+        imageSaveChooser.selectedFile = replaceJpgByPng(file)
         tabs.selectedComponent.paint(tabs.selectedComponent.graphics)
         SwingUtilities.invokeLater {
             for (l in imageOpenListeners) {
                 l.fileOpened(file)
             }
         }
+    }
+
+    private fun replaceJpgByPng(file: File): File {
+        if (TextureModifierMain.IMAGE_JPG_EXTS.contains(file.extension.lowercase())) {
+            return File(file.path.substringBeforeLast('.') + ".png")
+        }
+        return file;
     }
 
     private fun quickOpenImage() {
