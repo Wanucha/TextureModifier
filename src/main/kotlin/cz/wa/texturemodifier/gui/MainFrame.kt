@@ -38,7 +38,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     private val propsSaveChooser = ConfirmFileChooser()
     private val imageOpenChooser = JFileChooser()
     private val imageSaveChooser = ConfirmFileChooser()
-    private val imagesFilter = FileNameExtensionFilter("Images (PNG, JPG, GIF, BMP)", *TextureModifierMain.IMAGE_EXTS)
+    private val imagesFilter = FileNameExtensionFilter("Images (PNG, JPG, GIF, BMP)", *TextureModifierMain.IMAGE_OPEN_EXTS)
 
     private val imageOpenListeners = ArrayList<FileOpenListener>()
     private val imageRevertListeners = ArrayList<FileOpenListener>()
@@ -102,8 +102,6 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         saveImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(saveImage)
         imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Png", "png"))
-        imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Jpg", "jpg"))
-        imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Jpeg", "jpeg"))
         imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Gif", "gif"))
         imageSaveChooser.addChoosableFileFilter(FileNameExtensionFilter("Bmp", "bmp"))
 
@@ -242,7 +240,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     private fun quickOpenImage() {
         quickOpenMenu.removeAll()
         val files =
-            contentHolder.sourceFile.parentFile.listFiles { f -> TextureModifierMain.IMAGE_EXTS.any { f.name.endsWith(".${it}") } }
+            contentHolder.sourceFile.parentFile.listFiles { f -> TextureModifierMain.IMAGE_OPEN_EXTS.any { f.extension.lowercase() == it } }
         for (file in files!!) {
             val item = JMenuItem(file.name)
             item.addActionListener {
@@ -262,8 +260,9 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
                     file = File(file.path + '.' + contentHolder.sourceFile.extension)
                 }
 
-                if (!TextureModifierMain.IMAGE_EXTS.contains(file.extension)) {
-                    JOptionPane.showMessageDialog(this, "Unknown image extension: ${file.extension}")
+                if (!TextureModifierMain.IMAGE_SAVE_EXTS.contains(file.extension.lowercase())) {
+                    JOptionPane.showMessageDialog(this, "Unknown image extension: '${file.extension}'\n" +
+                            "Supported save formats: ${TextureModifierMain.IMAGE_SAVE_EXTS.joinToString(", ")}")
                     return
                 }
                 GuiUtils.runCatch(this) {
@@ -343,7 +342,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
             val files =
                 t.getTransferData(DataFlavor.javaFileListFlavor) as List<File>
             for (file in files) {
-                if (TextureModifierMain.IMAGE_EXTS.contains(file.extension)) {
+                if (TextureModifierMain.IMAGE_OPEN_EXTS.contains(file.extension.lowercase())) {
                     GuiUtils.runCatch(instance!!) {
                         instance!!.openImage(file)
                     }

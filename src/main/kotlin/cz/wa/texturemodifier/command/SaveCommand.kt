@@ -2,6 +2,7 @@ package cz.wa.texturemodifier.command
 
 import cz.wa.texturemodifier.OverwriteType
 import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.TextureModifierMain
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
@@ -14,6 +15,13 @@ class SaveCommand(settings: Settings, private val stats: SaveStats, private val 
     override fun execute(image: BufferedImage): BufferedImage {
         var newName = getFileName()
         var newFile = File(newName)
+
+        if (!TextureModifierMain.IMAGE_SAVE_EXTS.contains(newFile.extension.lowercase())) {
+            println("Unknown image extension: '${newFile.extension}', " +
+                    "Supported save formats: ${TextureModifierMain.IMAGE_SAVE_EXTS.joinToString(", ")}")
+            stats.errors++
+            return image;
+        }
 
         // check overwrite
         var existed = false
@@ -52,12 +60,19 @@ class SaveCommand(settings: Settings, private val stats: SaveStats, private val 
     private fun getFileName(): String {
         val dir = origFile.parentFile
         val fileName = origFile.nameWithoutExtension
-        val ext = if (settings.outFormat.isNullOrBlank()) origFile.extension else settings.outFormat
+        var ext = if (settings.outFormat.isNullOrBlank()) origFile.extension else settings.outFormat
+        if (ext.lowercase() in JPG_EXTS) {
+           ext = "png"
+        }
 
         return "${dir.path}/${settings.outPrefix}${fileName}${settings.outPostfix}.${ext}"
     }
 
     override fun getHelp(): String {
         return "Saves the file, uses settings for final filename, takes care of overriding"
+    }
+
+    companion object {
+        val JPG_EXTS = arrayOf("jpg", "jpeg")
     }
 }
