@@ -23,7 +23,7 @@ class ImageUtils {
         }
 
         fun getImageArray(img: BufferedImage): IntArray {
-            return (img.getRaster().getDataBuffer() as DataBufferInt).data
+            return (img.raster.dataBuffer as DataBufferInt).data
         }
 
         fun getImageWithIntBuffer(img: BufferedImage) : BufferedImage {
@@ -51,7 +51,7 @@ class ImageUtils {
             val data = (img.raster.dataBuffer as DataBufferByte).data
 
             val length = img.width * img.height
-            if (length * 4 == data.size && img.type != BufferedImage.TYPE_BYTE_INDEXED) {
+            if (length * 4 == data.size && img.type != BufferedImage.TYPE_BYTE_INDEXED && img.type != BufferedImage.TYPE_4BYTE_ABGR) {
                 for (i in 0 until length) {
                     val i2 = i * 4
                     outData[i] =
