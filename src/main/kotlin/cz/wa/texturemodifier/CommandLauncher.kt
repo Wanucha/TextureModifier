@@ -1,6 +1,7 @@
 package cz.wa.texturemodifier
 
 import cz.wa.texturemodifier.command.*
+import cz.wa.texturemodifier.gui.utils.ImageUtils
 import org.apache.commons.io.filefilter.WildcardFileFilter
 import java.awt.image.BufferedImage
 import java.io.File
@@ -48,6 +49,7 @@ class CommandLauncher(
 
     private fun processFile(imageFile: File) {
         var img = ImageIO.read(imageFile)
+        img = ImageUtils.getImageWithIntBuffer(img)
         for (command in commands) {
             img = applyCommand(img, command)
         }

@@ -44,6 +44,15 @@ class ContentHolder(
         }
     }
 
+    fun getSourceImageIntBuffer(): BufferedImage {
+        if (sourceImage == null) {
+            throw IllegalStateException("No source image")
+        } else {
+            sourceImage = ImageUtils.getImageWithIntBuffer(sourceImage!!)
+            return sourceImage!!
+        }
+    }
+
     init {
         if (files.isNotEmpty()) {
             val file = File(files[0])

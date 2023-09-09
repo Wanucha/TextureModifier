@@ -42,7 +42,7 @@ abstract class AbstractPanel<V : TextureViewer>(val contentHolder: ContentHolder
 
         protected open fun apply() {
             applySettings()
-            contentHolder.outputImage = createCommand().execute(contentHolder.sourceImage!!)
+            contentHolder.outputImage = createCommand().execute(contentHolder.getSourceImageIntBuffer()!!)
             canvas.refresh()
         }
 
