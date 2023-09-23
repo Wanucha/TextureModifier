@@ -7,7 +7,7 @@ import cz.wa.texturemodifier.gui.texturecanvas.TextureViewer
 /**
  * Displays modified image
  */
-class ModifierViewer(contentHolder: ContentHolder) : TextureViewer(contentHolder) {
+open class ModifierViewer(contentHolder: ContentHolder) : TextureViewer(contentHolder) {
     init {
         imageSource = ImageSource.OUTPUT
         val l = createImageListener()

@@ -16,6 +16,7 @@ class Settings(
     var overwriteType: OverwriteType = OverwriteType.IGNORE,
     var seamlessDist: Int = 8,
     var seamlessAlpha: Boolean = true,
+    var seamlessOverlap: Boolean = false,
     var blurRadius: Double = 3.0,
     var blurRatio: Double = 0.5,
     var pixelateScale: Double = 4.0,
@@ -51,6 +52,7 @@ class Settings(
         private const val OVERWRITE_TYPE = "overwrite-type"
         private const val SEAMLESS_DIST = "seamless-dist"
         private const val SEAMLESS_ALPHA = "seamless-alpha"
+        private const val SEAMLESS_OVERLAP = "seamless-overlap"
         private const val BLUR_RADIUS = "blur-radius"
         private const val BLUR_RATIO = "blur-ratio"
         private const val PIXELATE_SCALE = "pixelate-scale"
@@ -126,6 +128,9 @@ class Settings(
             }
             if (entry.key == SEAMLESS_ALPHA) {
                 ret.seamlessAlpha = parseBool(entry)
+            }
+            if (entry.key == SEAMLESS_OVERLAP) {
+                ret.seamlessOverlap = parseBool(entry)
             }
             if (entry.key == BLUR_RADIUS) {
                 ret.blurRadius = parseDouble(entry)
@@ -219,6 +224,7 @@ class Settings(
             write(sb, OVERWRITE_TYPE, s.overwriteType)
             write(sb, SEAMLESS_DIST, s.seamlessDist)
             write(sb, SEAMLESS_ALPHA, s.seamlessAlpha)
+            write(sb, SEAMLESS_OVERLAP, s.seamlessOverlap)
             write(sb, BLUR_RADIUS, s.blurRadius)
             write(sb, BLUR_RATIO, s.blurRatio)
             write(sb, PIXELATE_SCALE, s.pixelateScale)

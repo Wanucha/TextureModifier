@@ -12,48 +12,102 @@ import kotlin.random.Random
  */
 class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
     override fun execute(image: BufferedImage): BufferedImage {
-        if (settings.seamlessDist <= 0) {
-            throw IllegalArgumentException("seamlessDist must be > 0")
-        }
 
         val d = settings.seamlessDist
         val w = image.width
         val h = image.height
+
+        if (d <= 0) {
+            throw IllegalArgumentException("seamlessDist must be > 0")
+        }
+        if (settings.seamlessOverlap && (d * 2 > w || d * 2 > h)) {
+            throw IllegalArgumentException("For overlap, seamlessDist must be <= half image width or height")
+        }
+
+        var src = Texture(image)
+        
+        val ret = if (settings.seamlessOverlap) {
+            applySeamlessOverlap(image, src)
+        } else {
+            applySeamlessMirror(image, src)
+        }
+        return ret.img
+    }
+
+    private fun applySeamlessOverlap(image: BufferedImage, src: Texture): Texture {
+        val d = settings.seamlessDist
+        val w = image.width
+        val h = image.height
+
         val wd = w - d
         val hd = h - d
 
-        var src = Texture(image)
+        val ret = Texture(ImageUtils.createEmptyImage(wd, hd))
+
+        for (y in 0 until hd) {
+            for (x in 0 until wd) {
+                var c = src.getPoint(x, y)
+                if (x < d) {
+                    // left
+                    c = ColorUtils.lerp(src.getPoint(wd + x, y), c, (x + 1) / (d + 1).toDouble() / 2 + 0.5)
+                } else if (x >= wd - d) {
+                    // right
+                    c = ColorUtils.lerp(c, src.getPoint(x - wd + d, y), (x - wd + d + 1) / (d + 1).toDouble() / 2)
+                }
+                if (y < d) {
+                    // up
+                    c = ColorUtils.lerp(src.getPoint(x, hd + y), c, (y + 1) / (d + 1).toDouble() / 2 + 0.5)
+                } else if (y >= hd - d) {
+                    // down
+                    c = ColorUtils.lerp(c, src.getPoint(x, y - hd + d), (y - hd + d + 1) / (d + 1).toDouble() / 2)
+                }
+                ret.setPoint(x, y, c)
+            }
+        }
+
+        return ret
+    }
+
+    private fun applySeamlessMirror(image: BufferedImage, src: Texture): Texture {
+        val d = settings.seamlessDist
+        val w = image.width
+        val h = image.height
+
+        val wd = w - d
+        val hd = h - d
+
+        var src1 = src
         var ret = Texture(ImageUtils.copyImage(image))
 
         // left
         for (y in 0 until h) {
             for (x in 0 until d) {
-                processEdge(src, x, y, ret, w - x - 1, y, x, d)
+                processEdge(src1, x, y, ret, w - x - 1, y, x, d)
             }
         }
         // right
         for (y in 0 until h) {
             for (x in wd until w) {
-                processEdge(src, x, y, ret, w - x - 1, y, d - x + wd - 1, d)
+                processEdge(src1, x, y, ret, w - x - 1, y, d - x + wd - 1, d)
             }
         }
 
-        src = ret
-        ret = Texture(ImageUtils.copyImage(src.img))
+        src1 = ret
+        ret = Texture(ImageUtils.copyImage(src1.img))
 
         // top
         for (y in 0 until d) {
             for (x in 0 until w) {
-                processEdge(src, x, y, ret, x, h - y - 1, y, d)
+                processEdge(src1, x, y, ret, x, h - y - 1, y, d)
             }
         }
         // bottom
         for (y in hd until h) {
             for (x in 0 until w) {
-                processEdge(src, x, y, ret, x, h - y - 1, d - y + hd - 1, d)
+                processEdge(src1, x, y, ret, x, h - y - 1, d - y + hd - 1, d)
             }
         }
-        return ret.img
+        return ret
     }
 
     override fun getHelp(): String = "Generates seamless texture by repeating a part of it on the opposite edge.\n" +

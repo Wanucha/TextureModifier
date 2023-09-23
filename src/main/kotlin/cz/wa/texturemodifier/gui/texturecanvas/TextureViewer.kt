@@ -73,7 +73,7 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
         }
     }
 
-    private fun drawBounds(g: Graphics) {
+    protected open fun drawBounds(g: Graphics) {
         val c = contentHolder.settings.guiBgColor
         g.color = Color((c.red + 128) % 256, (c.green + 128) % 256, (c.blue + 128) % 256)
         val image = getImage()!!
