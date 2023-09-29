@@ -49,17 +49,15 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
                 var c = src.getPoint(x, y)
                 if (x < d) {
                     // left
-                    c = ColorUtils.lerp(src.getPoint(wd + x, y), c, (x + 1) / (d + 1).toDouble() / 2 + 0.5)
-                } else if (x >= wd - d) {
-                    // right
-                    c = ColorUtils.lerp(c, src.getPoint(x - wd + d, y), (x - wd + d + 1) / (d + 1).toDouble() / 2)
-                }
-                if (y < d) {
+                    c = ColorUtils.lerp(src.getPoint(wd + x, y), c, (x) / (d).toDouble())
+                    if (y < d) {
+                        // corner
+                        val c2 = ColorUtils.lerp(src.getPoint(wd + x, hd + y), src.getPoint(x, hd + y), (x) / (d).toDouble())
+                        c = ColorUtils.lerp(c2, c, (y) / (d).toDouble())
+                    }
+                } else if (y < d) {
                     // up
-                    c = ColorUtils.lerp(src.getPoint(x, hd + y), c, (y + 1) / (d + 1).toDouble() / 2 + 0.5)
-                } else if (y >= hd - d) {
-                    // down
-                    c = ColorUtils.lerp(c, src.getPoint(x, y - hd + d), (y - hd + d + 1) / (d + 1).toDouble() / 2)
+                    c = ColorUtils.lerp(src.getPoint(x, hd + y), c, (y) / (d).toDouble())
                 }
                 ret.setPoint(x, y, c)
             }
