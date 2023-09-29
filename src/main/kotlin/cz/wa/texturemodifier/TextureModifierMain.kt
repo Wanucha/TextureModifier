@@ -6,7 +6,7 @@ import java.io.File
 class TextureModifierMain {
 
     companion object {
-        const val VERSION = "0.3.5"
+        const val VERSION = "0.3.6a"
 
         val IMAGE_OPEN_EXTS = arrayOf("png", "jpg", "jpeg", "gif", "bmp")
         val IMAGE_SAVE_EXTS = arrayOf("png", "gif", "bmp")
@@ -94,7 +94,7 @@ class TextureModifierMain {
                     "If a command is specified, processes the input files and saves them\n" +
                     "There can be multiple commands, even one command multiple times\n" +
                     "Command list:\n" +
-                    "${CommandLauncher.ALL_COMMANDS.joinToString("\n")}"
+                    CommandLauncher.ALL_COMMANDS.joinToString("\n")
         }
     }
 }

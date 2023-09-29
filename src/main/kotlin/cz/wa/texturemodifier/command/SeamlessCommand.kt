@@ -20,8 +20,11 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
         if (d <= 0) {
             throw IllegalArgumentException("seamlessDist must be > 0")
         }
+        if (d > w || d > h) {
+            throw IllegalArgumentException("For seamlessDist must be <= image width or height")
+        }
         if (settings.seamlessOverlap && (d * 2 > w || d * 2 > h)) {
-            throw IllegalArgumentException("For overlap, seamlessDist must be <= half image width or height")
+            throw IllegalArgumentException("For seamlessOverlap seamlessDist must be <= half of image width or height")
         }
 
         var src = Texture(image)
