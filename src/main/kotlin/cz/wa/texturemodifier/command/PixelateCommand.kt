@@ -34,14 +34,17 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             sizeY = (image.height / settings.pixelateScale).roundToInt()
         }
 
-        check(sizeX >= 1) { "pixelateSizeX must be >= 1" }
-        check(sizeY >= 1) { "pixelateSizeY must be >= 1" }
-        check(settings.pixelateColors in 2..256) { "pixelateColors must be > 1 and <= 256" }
-        check(settings.pixelateScaleColorTolerance in 0..255) {
-            "pixelateScaleColorTolerance must be >= 0 and < 256"
-        }
-        check(settings.pixelateBlendSmooth in 0.0..1.0) {"pixelateBlendSmooth must be 0..1"}
+        validateSettings(image, sizeX, sizeY)
 
+        var img = image
+        if (settings.pixelateMiddleUse) {
+            img = doMiddleStep(img, sizeX, sizeY)
+        }
+
+        return pixelateImage(img, sizeX, sizeY)
+    }
+
+    private fun pixelateImage(image: BufferedImage, sizeX: Int, sizeY: Int): BufferedImage {
         if (image.width == sizeX && image.height == sizeY) {
             // same size, just copy image
             return ImageUtils.copyImage(image)
@@ -132,6 +135,17 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             "\t - BILINEAR - only bilinear filter\n" +
             "\t - ANISO - before filtering, scales down the map and averages color\n" +
             "\t - ANISO_BILINEAR - combines both (smoothest)"
+
+    private fun validateSettings(image: BufferedImage, sizeX: Int, sizeY: Int) {
+        check(sizeX >= 1) { "pixelateSizeX must be >= 1" }
+        check(sizeY >= 1) { "pixelateSizeY must be >= 1" }
+        check(settings.pixelateColors in 2..256) { "pixelateColors must be > 1 and <= 256" }
+        check(settings.pixelateScaleColorTolerance in 0..255) {
+            "pixelateScaleColorTolerance must be >= 0 and < 256"
+        }
+        check(settings.pixelateBlendSmooth in 0.0..1.0) {"pixelateBlendSmooth must be 0..1"}
+        check(settings.pixelateMiddleScale > 0.0) {"pixelateMiddleScale must be > 0"}
+    }
 
     /**
      * Process pixel when pixelating
@@ -288,6 +302,18 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             }
         }
         return ret
+    }
+
+    private fun doMiddleStep(img: BufferedImage, sizeX: Int, sizeY: Int): BufferedImage {
+        val smoothBlend = settings.pixelateBlendSmooth
+        try {
+            settings.pixelateBlendSmooth = 1.0
+            val sx = (sizeX * settings.pixelateMiddleScale).roundToInt()
+            val sy = (sizeY * settings.pixelateMiddleScale).roundToInt()
+            return pixelateImage(img, sx, sy)
+        } finally {
+            settings.pixelateBlendSmooth = smoothBlend
+        }
     }
 
     private fun getColorRange(c: Int, tol: Int): IntRange {
