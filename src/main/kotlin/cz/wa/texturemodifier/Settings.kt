@@ -241,6 +241,8 @@ class Settings(
             write(sb, PIXELATE_USE_SIZE, s.pixelateUseSize)
             write(sb, PIXELATE_SIZE_X, s.pixelateSizeX)
             write(sb, PIXELATE_SIZE_Y, s.pixelateSizeY)
+            write(sb, PIXELATE_MIDDLE_USE, s.pixelateMiddleUse)
+            write(sb, PIXELATE_MIDDLE_SCALE, s.pixelateMiddleScale)
             write(sb, PIXELATE_COLORS, s.pixelateColors)
             write(sb, PIXELATE_SCALE_TYPE, s.pixelateScaleType)
             write(sb, PIXELATE_SCALE_COLOR_TOLERANCE, s.pixelateScaleColorTolerance)

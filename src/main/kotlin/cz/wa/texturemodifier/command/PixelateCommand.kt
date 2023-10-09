@@ -118,6 +118,8 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
     override fun getHelp(): String = "Reduce resolution and number of colors\n" +
             "* scale down - only modifies final resolution when used\n" +
             "* size XY - final resolution\n" +
+            "* use middle step - first scale the image with smoothing before pixelating\n" +
+            "* middle step scale - scale of middle step image relative to target image\n" +
             "* colors per channel - color reduction, 10 means each channel can have only 10 different values (spaced equally)\n" +
             "* filter type - scaling pixel filter\n" +
             "\t- NEAREST - takes nearest pixel (NEAREST without ignoring color is fastest)\n" +

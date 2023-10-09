@@ -85,6 +85,7 @@ open class PixelatePanel(contentHolder: ContentHolder) :
             pm.preferredSize = Dimension(200, 100)
 
             middleUseCb.addChangeListener {onMiddleUseChanged()}
+            middleUseCb.toolTipText = "First scale the image with smoothing to defined scale of target image, then pixelate from this image"
             pm.add(middleUseCb)
 
             middleScaleTf.columns = 3
