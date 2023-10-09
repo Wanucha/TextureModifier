@@ -8,6 +8,7 @@ import cz.wa.texturemodifier.gui.tabs.AbstractPanel
 import cz.wa.texturemodifier.gui.tabs.ModifierViewer
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import cz.wa.texturemodifier.math.ColorUtils
+import java.awt.Component
 import java.awt.Dimension
 import java.awt.FlowLayout
 import javax.swing.*
@@ -24,6 +25,8 @@ open class PixelatePanel(contentHolder: ContentHolder) :
         private val useSizeCb = JCheckBox("Use fixed size, not scale")
         private val sizeXTf = JTextField()
         private val sizeYTf = JTextField()
+        private val middleUseCb = JCheckBox("Use middle step")
+        private val middleScaleTf = JTextField()
         private val colorsTf = JTextField()
         private val typeCb = JComboBox(ScaleType.values())
         private val toleranceTf = JTextField()
@@ -31,6 +34,9 @@ open class PixelatePanel(contentHolder: ContentHolder) :
         private val bgColorTf = JTextField("#000000")
         private val blendSmoothTf = JTextField()
         private val smoothTypeCb = JComboBox(SmoothType.values())
+
+        private val panelType = JPanel(FlowLayout())
+        private val colorComponents = mutableListOf<Component>()
 
         init {
             // help
@@ -55,7 +61,7 @@ open class PixelatePanel(contentHolder: ContentHolder) :
             p1.add(bApplyScale)
 
             // use scale
-            useSizeCb.addChangeListener {useSizeChanged()}
+            useSizeCb.addChangeListener {onUseSizeChanged()}
             p1.add(GuiUtils.createValuePanel(null, useSizeCb))
 
             // size
@@ -72,48 +78,73 @@ open class PixelatePanel(contentHolder: ContentHolder) :
             p2.maximumSize = Dimension(200, 100)
             p2.preferredSize = Dimension(200, 60)
 
+            // middle step
+            val pm = JPanel(FlowLayout())
+            pm.border = BorderFactory.createTitledBorder("Middle step")
+            pm.maximumSize = Dimension(200, 150)
+            pm.preferredSize = Dimension(200, 100)
+
+            middleUseCb.addChangeListener {onMiddleUseChanged()}
+            pm.add(middleUseCb)
+
+            middleScaleTf.columns = 3
+            pm.add(GuiUtils.createValuePanel("Scale of target", middleScaleTf))
+
+            add(pm)
+
             // colors
             colorsTf.columns = 3
             p2.add(GuiUtils.createValuePanel("Colors per channel", colorsTf))
 
             add(p2)
 
-            val p3 = JPanel(FlowLayout())
-            p3.border = BorderFactory.createTitledBorder("Pixelate")
-            p3.maximumSize = Dimension(200, 200)
-            p3.preferredSize = Dimension(200, 170)
+            panelType.border = BorderFactory.createTitledBorder("Pixelate")
+            panelType.maximumSize = Dimension(200, 200)
+            panelType.minimumSize = Dimension(200, 40)
+            panelType.preferredSize = Dimension(200, 170)
 
             // scale type
             typeCb.isEditable = false
-            p3.add(GuiUtils.createValuePanel("Scale filter", typeCb))
+            panelType.add(GuiUtils.createValuePanel("Scale filter", typeCb))
+            typeCb.addActionListener {onTypeChanged()}
 
             // tolerance
             toleranceTf.columns = 3
-            p3.add(GuiUtils.createValuePanel("Scale color tolerance", toleranceTf))
+            GuiUtils.createValuePanel("Scale color tolerance", toleranceTf).let {
+                panelType.add(it)
+                colorComponents.add(it)
+            }
 
             // ignore bg color
-            p3.add(GuiUtils.createValuePanel(null, ignoreBgCb))
+            GuiUtils.createValuePanel(null, ignoreBgCb).let {
+                panelType.add(it)
+                colorComponents.add(it)
+            }
 
             // bg color
             bgColorTf.columns = 7
-            p3.add(GuiUtils.createValuePanel("BG color", bgColorTf))
+            GuiUtils.createValuePanel("BG color", bgColorTf).let {
+                panelType.add(it)
+                colorComponents.add(it)
 
-            add(p3)
+            }
 
-            val p4 = JPanel(FlowLayout())
-            p4.border = BorderFactory.createTitledBorder("Smooth")
-            p4.maximumSize = Dimension(200, 150)
-            p4.preferredSize = Dimension(200, 100)
+            add(panelType)
+
+            val p5 = JPanel(FlowLayout())
+            p5.border = BorderFactory.createTitledBorder("Smooth")
+            p5.maximumSize = Dimension(200, 150)
+            p5.preferredSize = Dimension(200, 100)
 
             // smooth blend
             blendSmoothTf.columns = 4
-            p4.add(GuiUtils.createValuePanel("Smooth blend ratio", blendSmoothTf))
+            p5.add(GuiUtils.createValuePanel("Smooth blend ratio", blendSmoothTf))
 
             // smooth type
             smoothTypeCb.isEditable = false
-            p4.add(GuiUtils.createValuePanel("Smooth filter", smoothTypeCb))
+            p5.add(GuiUtils.createValuePanel("Smooth filter", smoothTypeCb))
 
-            add(p4)
+            add(p5)
 
             // apply
             add(createApplyButton())
@@ -121,7 +152,17 @@ open class PixelatePanel(contentHolder: ContentHolder) :
             showSettings()
         }
 
-        private fun useSizeChanged() {
+        private fun onMiddleUseChanged() {
+            middleScaleTf.isEnabled = middleUseCb.isSelected
+        }
+
+        private fun onTypeChanged() {
+            val showColor = typeCb.selectedItem == ScaleType.MOST_COLOR
+            colorComponents.forEach { it.isVisible = showColor }
+            panelType.preferredSize = Dimension(190, if (showColor) 170 else 60)
+        }
+
+        private fun onUseSizeChanged() {
             val value = useSizeCb.isSelected
             scaleTf.isEnabled = !value
             sizeXTf.isEnabled = value
@@ -129,31 +170,39 @@ open class PixelatePanel(contentHolder: ContentHolder) :
         }
 
         override fun showSettings() {
-            scaleTf.text = contentHolder.settings.pixelateScale.toString()
-            useSizeCb.isSelected = contentHolder.settings.pixelateUseSize
-            sizeXTf.text = contentHolder.settings.pixelateSizeX.toString()
-            sizeYTf.text = contentHolder.settings.pixelateSizeY.toString()
-            colorsTf.text = contentHolder.settings.pixelateColors.toString()
-            typeCb.selectedItem = contentHolder.settings.pixelateScaleType
-            toleranceTf.text = contentHolder.settings.pixelateScaleColorTolerance.toString()
-            ignoreBgCb.isSelected = contentHolder.settings.pixelateIgnoreBgColor
-            bgColorTf.text = ColorUtils.toString(contentHolder.settings.pixelateBgColor)
-            blendSmoothTf.text = contentHolder.settings.pixelateBlendSmooth.toString()
-            smoothTypeCb.selectedItem = contentHolder.settings.pixelateSmoothType
+            with (contentHolder.settings) {
+                scaleTf.text = pixelateScale.toString()
+                useSizeCb.isSelected = pixelateUseSize
+                sizeXTf.text = pixelateSizeX.toString()
+                sizeYTf.text = pixelateSizeY.toString()
+                middleUseCb.isSelected = pixelateMiddleUse
+                middleScaleTf.text = pixelateMiddleScale.toString()
+                colorsTf.text = pixelateColors.toString()
+                typeCb.selectedItem = pixelateScaleType
+                toleranceTf.text = pixelateScaleColorTolerance.toString()
+                ignoreBgCb.isSelected = pixelateIgnoreBgColor
+                bgColorTf.text = ColorUtils.toString(pixelateBgColor)
+                blendSmoothTf.text = pixelateBlendSmooth.toString()
+                smoothTypeCb.selectedItem = pixelateSmoothType
+            }
         }
 
         override fun applySettings() {
-            contentHolder.settings.pixelateScale = scaleTf.text.toDouble()
-            contentHolder.settings.pixelateUseSize = useSizeCb.isSelected
-            contentHolder.settings.pixelateSizeX = sizeXTf.text.toInt()
-            contentHolder.settings.pixelateSizeY = sizeYTf.text.toInt()
-            contentHolder.settings.pixelateColors = colorsTf.text.toInt()
-            contentHolder.settings.pixelateScaleType = typeCb.selectedItem as ScaleType
-            contentHolder.settings.pixelateScaleColorTolerance = toleranceTf.text.toInt()
-            contentHolder.settings.pixelateIgnoreBgColor = ignoreBgCb.isSelected
-            contentHolder.settings.pixelateBgColor = ColorUtils.parse(bgColorTf.text)
-            contentHolder.settings.pixelateBlendSmooth = blendSmoothTf.text.toDouble()
-            contentHolder.settings.pixelateSmoothType = smoothTypeCb.selectedItem as SmoothType
+            with (contentHolder.settings) {
+                pixelateScale = scaleTf.text.toDouble()
+                pixelateUseSize = useSizeCb.isSelected
+                pixelateSizeX = sizeXTf.text.toInt()
+                pixelateSizeY = sizeYTf.text.toInt()
+                pixelateMiddleUse = middleUseCb.isSelected
+                pixelateMiddleScale = middleScaleTf.text.toDouble()
+                pixelateColors = colorsTf.text.toInt()
+                pixelateScaleType = typeCb.selectedItem as ScaleType
+                pixelateScaleColorTolerance = toleranceTf.text.toInt()
+                pixelateIgnoreBgColor = ignoreBgCb.isSelected
+                pixelateBgColor = ColorUtils.parse(bgColorTf.text)
+                pixelateBlendSmooth = blendSmoothTf.text.toDouble()
+                pixelateSmoothType = smoothTypeCb.selectedItem as SmoothType
+            }
         }
     }
 }

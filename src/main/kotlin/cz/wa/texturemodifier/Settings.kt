@@ -23,7 +23,9 @@ class Settings(
     var pixelateUseSize: Boolean = false,
     var pixelateSizeX: Int = 0,
     var pixelateSizeY: Int = 0,
-    var pixelateColors: Int = 12,
+    var pixelateColors: Int = 256,
+    var pixelateMiddleUse: Boolean = false,
+    var pixelateMiddleScale: Double = 2.0,
     var pixelateScaleType: ScaleType = ScaleType.NEAREST,
     var pixelateScaleColorTolerance: Int = 5,
     var pixelateIgnoreBgColor: Boolean = false,
@@ -60,6 +62,8 @@ class Settings(
         private const val PIXELATE_SIZE_X = "pixelate-size-x"
         private const val PIXELATE_SIZE_Y = "pixelate-size-y"
         private const val PIXELATE_COLORS = "pixelate-colors"
+        private const val PIXELATE_MIDDLE_USE = "pixelate-middle-use"
+        private const val PIXELATE_MIDDLE_SCALE = "pixelate-middle-scale"
         private const val PIXELATE_SCALE_TYPE = "pixelate-scale-type"
         private const val PIXELATE_SCALE_COLOR_TOLERANCE = "pixelate-scale-color-tolerance"
         private const val PIXELATE_IGNORE_BG_COLOR = "pixelate-ignore-bg-color"
@@ -152,6 +156,12 @@ class Settings(
             }
             if (entry.key == PIXELATE_COLORS) {
                 ret.pixelateColors = parseInt(entry)
+            }
+            if (entry.key == PIXELATE_MIDDLE_USE) {
+                ret.pixelateMiddleUse = parseBool(entry)
+            }
+            if (entry.key == PIXELATE_MIDDLE_SCALE) {
+                ret.pixelateMiddleScale = parseDouble(entry)
             }
             if (entry.key == PIXELATE_SCALE_TYPE) {
                 ret.pixelateScaleType = parseEnum(entry, ScaleType::class.java)
