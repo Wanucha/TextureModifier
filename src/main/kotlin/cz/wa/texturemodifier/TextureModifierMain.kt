@@ -17,13 +17,13 @@ class TextureModifierMain {
         @JvmStatic
         fun main(args: Array<String>) {
             println(printTitle())
-            var settings = Settings()
+            var settings = SettingsOld()
             var files = emptyList<String>()
             try {
                 if (args.isNotEmpty()) {
                     val settingsFile = findProperties(args)
                     if (settingsFile.isNotEmpty()) {
-                        settings = Settings.parseFile(settingsFile)
+                        settings = SettingsOld.parseFile(settingsFile)
                     }
                     files = parseImageFiles(args)
                     val commands = parseCommands(args)

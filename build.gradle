@@ -15,6 +15,7 @@ repositories {
 dependencies {
     implementation 'commons-io:commons-io:2.13.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.3")
 
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 }

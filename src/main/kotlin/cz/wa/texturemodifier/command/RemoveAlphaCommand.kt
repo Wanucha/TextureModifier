@@ -1,12 +1,12 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SettingsOld
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
 import java.awt.image.BufferedImage
 
-class RemoveAlphaCommand(settings: Settings) : AbstractCommand(settings) {
+class RemoveAlphaCommand(settings: SettingsOld) : AbstractCommand(settings) {
 
     override fun execute(image: BufferedImage): BufferedImage {
         check(settings.removeAlphaThreshold in 0..256) { "removeAlphaThreshold must be 0..256" }

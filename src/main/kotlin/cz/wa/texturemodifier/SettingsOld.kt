@@ -6,7 +6,7 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.util.*
 
-class Settings(
+class SettingsOld(
     var file: File? = null,
     var guiBgColor: Color = Color.BLACK,
     var guiShowBounds: Boolean = true,
@@ -83,16 +83,16 @@ class Settings(
         private const val MULTIPLY_COLOR_ADD_COLOR = "multiply-color-add-color"
         private const val REMOVE_ALPHA_THRESHOLD = "remove-alpha-threshold"
 
-        fun parseFile(fileName: String): Settings {
+        fun parseFile(fileName: String): SettingsOld {
             val ret = parseString(File(fileName).readText())
             ret.file = File(fileName)
             return ret
         }
 
-        fun parseString(text: String): Settings {
+        fun parseString(text: String): SettingsOld {
             val p = Properties()
             p.load(ByteArrayInputStream(text.toByteArray(Charsets.UTF_8)))
-            val ret = Settings()
+            val ret = SettingsOld()
             var i = 0
             for (entry in p) {
                 i++
@@ -108,7 +108,7 @@ class Settings(
             return ret
         }
 
-        private fun parseLine(entry: MutableMap.MutableEntry<Any, Any>, ret: Settings) {
+        private fun parseLine(entry: MutableMap.MutableEntry<Any, Any>, ret: SettingsOld) {
             if (entry.key == GUI_BG_COLOR) {
                 ret.guiBgColor = parseColor(entry)
             }
@@ -219,11 +219,11 @@ class Settings(
             }
         }
 
-        fun save(s: Settings, file: File) {
+        fun save(s: SettingsOld, file: File) {
             file.writeText(generateText(s))
         }
 
-        fun generateText(s: Settings): String {
+        fun generateText(s: SettingsOld): String {
             val sb = StringBuilder()
 
             write(sb, GUI_BG_COLOR, ColorUtils.toString(s.guiBgColor))

@@ -14,7 +14,7 @@ import javax.imageio.ImageIO
  * Runs the commands
  */
 class CommandLauncher(
-    private val settings: Settings,
+    private val settings: SettingsOld,
     private val files: List<String>,
     private val commands: List<String>
 ) {

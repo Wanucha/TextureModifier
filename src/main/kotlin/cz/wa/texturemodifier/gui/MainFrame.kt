@@ -1,6 +1,6 @@
 package cz.wa.texturemodifier.gui
 
-import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SettingsOld
 import cz.wa.texturemodifier.TextureModifierMain
 import cz.wa.texturemodifier.gui.help.HelpFrame
 import cz.wa.texturemodifier.gui.tabs.blur.BlurPanel
@@ -15,6 +15,7 @@ import cz.wa.texturemodifier.gui.tabs.source.SourcePanel
 import cz.wa.texturemodifier.gui.utils.ColorSlider
 import cz.wa.texturemodifier.gui.utils.ConfirmFileChooser
 import cz.wa.texturemodifier.gui.utils.GuiUtils
+import cz.wa.texturemodifier.settings.io.SettingsIO
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Rectangle
@@ -28,12 +29,14 @@ import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
 
 
-class MainFrame(settings: Settings, files: List<String>) : JFrame() {
+class MainFrame(settings: SettingsOld, files: List<String>) : JFrame() {
     private val tabs: JTabbedPane = JTabbedPane()
     private val menu: JMenuBar = JMenuBar()
     private val help: HelpFrame = HelpFrame()
     private val quickOpenMenu = JPopupMenu()
     private val propsLabel = JMenuItem("= ")
+    private val yamlOpenChooser = JFileChooser()
+    private val yamlSaveChooser = ConfirmFileChooser()
     private val propsOpenChooser = JFileChooser()
     private val propsSaveChooser = ConfirmFileChooser()
     private val imageOpenChooser = JFileChooser()
@@ -77,6 +80,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
     private fun initComponents() {
         // Menu
+        /////////
         jMenuBar = menu
 
         // image
@@ -115,19 +119,29 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         revertImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(revertImage)
 
-        // properties
-        val propMenu = JMenu("Properties");
+        // settings
+        val propMenu = JMenu("Settings");
         menu.add(propMenu);
 
-        val openProp = JMenuItem("Open")
+        val openYaml = JMenuItem("Open yaml")
+        openYaml.addActionListener { openYaml() }
+        openYaml.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK)
+        propMenu.add(openYaml)
+        yamlOpenChooser.fileFilter = FileNameExtensionFilter("Yaml", "yaml", "yml");
+
+        val saveYaml = JMenuItem("Save as yaml")
+        saveYaml.addActionListener { saveYaml() }
+        saveYaml.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK)
+        propMenu.add(saveYaml)
+        yamlSaveChooser.fileFilter = FileNameExtensionFilter("Yaml", "yaml", "yml");
+
+        val openProp = JMenuItem("Open (old)")
         openProp.addActionListener { openProperties() }
-        openProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(openProp)
         propsOpenChooser.fileFilter = FileNameExtensionFilter("Properties", "properties");
 
-        val saveProp = JMenuItem("Save as")
+        val saveProp = JMenuItem("Save as (old)")
         saveProp.addActionListener { saveProperties() }
-        saveProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(saveProp)
         propsSaveChooser.fileFilter = FileNameExtensionFilter("Properties", "properties");
 
@@ -158,6 +172,8 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         menu.add(bgColorSlider)
 
         // Tabs
+        ///////////////
+
         layout = BorderLayout()
         add(tabs, BorderLayout.CENTER)
 
@@ -180,6 +196,8 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     private fun initComponentsLater(imageFile: File) {
         imageOpenChooser.currentDirectory = imageFile
         imageSaveChooser.currentDirectory = imageFile
+        yamlOpenChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile
+        yamlSaveChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile
         propsOpenChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile
         propsSaveChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile
     }
@@ -291,11 +309,36 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         imageRevertListeners.forEach { it.fileOpened(File(contentHolder.files[0])) }
     }
 
+    private fun openYaml() {
+        if (yamlOpenChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            GuiUtils.runCatch(this) {
+                val file = yamlOpenChooser.selectedFile
+                val settings = SettingsIO.load(file)
+                println(settings)
+            }
+        }
+    }
+
+    private fun saveYaml() {
+        if (yamlSaveChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            var file = yamlSaveChooser.selectedFile
+            if (file.extension.isBlank()) {
+                file = File(file.path + ".yaml")
+            }
+            GuiUtils.runCatch(this) {
+                // TODO save
+                if (!file.isFile) {
+                    JOptionPane.showMessageDialog(this@MainFrame, "File not saved: ${file.absolutePath}")
+                }
+            }
+        }
+    }
+
     private fun openProperties() {
         if (propsOpenChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             GuiUtils.runCatch(this) {
                 val file = propsOpenChooser.selectedFile
-                contentHolder.settings = Settings.parseFile(file.absolutePath)
+                contentHolder.settings = SettingsOld.parseFile(file.absolutePath)
                 propsLabel.text = "= ${contentHolder.settings.file?.name}"
                 SwingUtilities.invokeLater {
                     for (l in propertiesOpenListeners) {
@@ -314,7 +357,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
                 file = File(file.path + ".properties")
             }
             GuiUtils.runCatch(this) {
-                Settings.save(contentHolder.settings, file);
+                SettingsOld.save(contentHolder.settings, file);
                 if (!file.isFile) {
                     JOptionPane.showMessageDialog(this@MainFrame, "File not saved: ${file.absolutePath}")
                 }

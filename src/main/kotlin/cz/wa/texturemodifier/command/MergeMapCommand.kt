@@ -1,7 +1,7 @@
 package cz.wa.texturemodifier.command
 
 import cz.wa.texturemodifier.MapType
-import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SettingsOld
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
@@ -17,7 +17,7 @@ import kotlin.math.roundToInt
  * That means average values RGB from left and convert to R.
  * Then take G from right and convert to alpha and blue (same value for both).
  */
-class MergeMapCommand(settings: Settings) : AbstractCommand(settings) {
+class MergeMapCommand(settings: SettingsOld) : AbstractCommand(settings) {
 
     override fun execute(image: BufferedImage): BufferedImage {
         val maps = ArrayList<MapConvert>(4)

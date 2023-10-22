@@ -1,6 +1,6 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SettingsOld
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
@@ -10,7 +10,7 @@ import kotlin.random.Random
 /**
  * Copies side pixels to oposite edge with ratio.
  */
-class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
+class SeamlessCommand(settings: SettingsOld) : AbstractCommand(settings) {
     override fun execute(image: BufferedImage): BufferedImage {
 
         val d = settings.seamlessDist

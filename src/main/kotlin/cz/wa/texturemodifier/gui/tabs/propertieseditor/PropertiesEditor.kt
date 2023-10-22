@@ -1,6 +1,6 @@
 package cz.wa.texturemodifier.gui.tabs.propertieseditor
 
-import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SettingsOld
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.MainFrame
 import cz.wa.texturemodifier.gui.utils.GuiUtils
@@ -75,7 +75,7 @@ class PropertiesEditor(val contentHolder: ContentHolder) : JPanel() {
         if (textArea.text.isBlank()) {
             JOptionPane.showMessageDialog(this,"No properties defined")
         } else {
-            contentHolder.settings = Settings.parseString(textArea.text)
+            contentHolder.settings = SettingsOld.parseString(textArea.text)
             SwingUtilities.invokeLater {
                 contentHolder.callSettingsListeners()
             }
@@ -83,7 +83,7 @@ class PropertiesEditor(val contentHolder: ContentHolder) : JPanel() {
     }
 
     private fun generateSettings() {
-        textArea.text = Settings.generateText(contentHolder.settings)
+        textArea.text = SettingsOld.generateText(contentHolder.settings)
     }
 
     private fun reloadSettings() {

@@ -1,6 +1,6 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SettingsOld
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage
 /**
  * Fills background with color computed from neighbouring pixels.
  */
-class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
+class FillBackgroundCommand(settings: SettingsOld) : AbstractCommand(settings) {
 
     private var bgColor: Int = 0;
 

@@ -1,6 +1,6 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SettingsOld
 import cz.wa.texturemodifier.gui.utils.MathUtils
 import cz.wa.texturemodifier.image.ColorF
 import cz.wa.texturemodifier.image.Texture
@@ -11,7 +11,7 @@ import kotlin.math.roundToInt
 /**
  * Blurs image and merges with original. Takes texture as a tile.
  */
-class BlurCommand(settings: Settings) : AbstractCommand(settings) {
+class BlurCommand(settings: SettingsOld) : AbstractCommand(settings) {
 
 
     override fun execute(image: BufferedImage): BufferedImage {

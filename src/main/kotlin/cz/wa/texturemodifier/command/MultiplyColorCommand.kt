@@ -1,6 +1,6 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SettingsOld
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
@@ -11,7 +11,7 @@ import kotlin.math.roundToInt
 /**
  * Multiplies by a color, then adds different color.
  */
-class MultiplyColorCommand(settings: Settings) : AbstractCommand(settings) {
+class MultiplyColorCommand(settings: SettingsOld) : AbstractCommand(settings) {
 
     override fun execute(image: BufferedImage): BufferedImage {
         val ret = ImageUtils.copyImage(image)

@@ -1,7 +1,7 @@
 package cz.wa.texturemodifier.command
 
 import cz.wa.texturemodifier.OverwriteType
-import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SettingsOld
 import cz.wa.texturemodifier.TextureModifierMain
 import java.awt.image.BufferedImage
 import java.io.File
@@ -11,7 +11,7 @@ import javax.imageio.ImageIO
  * Saves output image to a file.
  * Generates new name and saves the file using settings. If no format specified, uses original format.
  */
-class SaveCommand(settings: Settings, private val stats: SaveStats, private val origFile: File) : AbstractCommand(settings) {
+class SaveCommand(settings: SettingsOld, private val stats: SaveStats, private val origFile: File) : AbstractCommand(settings) {
     override fun execute(image: BufferedImage): BufferedImage {
         var newName = getFileName()
         var newFile = File(newName)

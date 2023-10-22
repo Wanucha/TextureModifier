@@ -1,13 +1,13 @@
 package cz.wa.texturemodifier.gui
 
-import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SettingsOld
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 
 class ContentHolder(
-    var settings: Settings,
+    var settings: SettingsOld,
     var files: MutableList<String>
 ) {
 
@@ -28,13 +28,13 @@ class ContentHolder(
             }
 
 
-    private val settingsListeners = HashSet<(Settings) -> Unit>()
+    private val settingsListeners = HashSet<(SettingsOld) -> Unit>()
 
-    fun addSettingsListener(l: (Settings) -> Unit) {
+    fun addSettingsListener(l: (SettingsOld) -> Unit) {
         settingsListeners.add(l)
     }
 
-    fun removeSettingsListener(l: (Settings) -> Unit) {
+    fun removeSettingsListener(l: (SettingsOld) -> Unit) {
         settingsListeners.remove(l)
     }
 

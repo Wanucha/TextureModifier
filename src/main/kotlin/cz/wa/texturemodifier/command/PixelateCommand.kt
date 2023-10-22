@@ -1,7 +1,7 @@
 package cz.wa.texturemodifier.command
 
 import cz.wa.texturemodifier.ScaleType
-import cz.wa.texturemodifier.Settings
+import cz.wa.texturemodifier.SettingsOld
 import cz.wa.texturemodifier.SmoothType
 import cz.wa.texturemodifier.gui.utils.FilterType
 import cz.wa.texturemodifier.gui.utils.ImageUtils
@@ -24,7 +24,7 @@ import kotlin.math.roundToInt
  * ignore bg color - when reducing pixels, will never choose bg color unless it fills whole rect
  * bg color - color when ignoring bg
  */
-class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
+class PixelateCommand(settings: SettingsOld) : AbstractCommand(settings) {
 
     override fun execute(image: BufferedImage): BufferedImage {
         var sizeX = settings.pixelateSizeX
