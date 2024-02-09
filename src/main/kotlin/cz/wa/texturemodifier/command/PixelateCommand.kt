@@ -107,8 +107,8 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
                 (settings.pixelateSmoothType == SmoothType.BILINEAR || settings.pixelateSmoothType == SmoothType.ANISO_BILINEAR));
             smoothTex = Texture(ImageUtils.getFilteredImage(smoothTex.img, sizeX, sizeY, if (bilinear) FilterType.BILINEAR else FilterType.NEAREST))
             val blend = settings.pixelateBlendSmooth.toFloat()
-            for (y in 0 until sizeX) {
-                for (x in 0 until sizeY) {
+            for (y in 0 until sizeY) {
+                for (x in 0 until sizeX) {
                     val c = ColorAF(outTex.getPoint(x, y)).lerp(ColorAF(smoothTex.getPoint(x, y)), blend)
                     outTex.setPoint(x, y, c.rgba)
                 }
