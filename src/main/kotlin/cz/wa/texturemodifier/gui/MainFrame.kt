@@ -124,13 +124,13 @@ class MainFrame(settings: Settings, settingsFile: File?, files: List<String>) : 
         openProp.addActionListener { openSettings() }
         openProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(openProp)
-        propsOpenChooser.fileFilter = FileNameExtensionFilter("Settings", "yml", "yaml")
+        propsOpenChooser.fileFilter = FileNameExtensionFilter("Settings (.yml, .yaml, .properties)", "yml", "yaml", "properties")
 
         val saveProp = JMenuItem("Save as")
         saveProp.addActionListener { saveSettings() }
         saveProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(saveProp)
-        propsSaveChooser.fileFilter = FileNameExtensionFilter("Settings", "yml", "yaml")
+        propsSaveChooser.fileFilter = FileNameExtensionFilter("Settings (.yml, .yaml)", "yml", "yaml")
 
         // props label
         propsLabel.isEnabled = false
