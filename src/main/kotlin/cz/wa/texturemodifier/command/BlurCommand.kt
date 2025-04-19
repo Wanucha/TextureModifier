@@ -1,10 +1,10 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.utils.MathUtils
 import cz.wa.texturemodifier.image.ColorF
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.image.TextureF
+import cz.wa.texturemodifier.settings.Settings
 import java.awt.image.BufferedImage
 import kotlin.math.roundToInt
 

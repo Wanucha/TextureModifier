@@ -1,11 +1,11 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.MapType
-import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
 import cz.wa.texturemodifier.math.Vec2i
+import cz.wa.texturemodifier.settings.MapType
+import cz.wa.texturemodifier.settings.Settings
 import java.awt.image.BufferedImage
 import kotlin.math.roundToInt
 
@@ -82,7 +82,7 @@ class MergeMapCommand(settings: Settings) : AbstractCommand(settings) {
         outTex.setPoint(x, y, mergeColors(output, maps))
     }
 
-    private fun mergeColors(colors: ArrayList<Int>, maps: ArrayList<MergeMapCommand.MapConvert>): Int {
+    private fun mergeColors(colors: ArrayList<Int>, maps: ArrayList<MapConvert>): Int {
         val r = ArrayList<Int>(4)
         val g = ArrayList<Int>(4)
         val b = ArrayList<Int>(4)

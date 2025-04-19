@@ -1,11 +1,11 @@
 package cz.wa.texturemodifier.gui.tabs.mergemaps
 
-import cz.wa.texturemodifier.MapType
 import cz.wa.texturemodifier.command.MergeMapCommand
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.tabs.AbstractPanel
 import cz.wa.texturemodifier.gui.tabs.ModifierAlphaViewer
 import cz.wa.texturemodifier.gui.utils.GuiUtils
+import cz.wa.texturemodifier.settings.MapType
 import javax.swing.JComboBox
 import javax.swing.JTextField
 

@@ -1,6 +1,5 @@
 package cz.wa.texturemodifier.gui
 
-import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.TextureModifierMain
 import cz.wa.texturemodifier.gui.help.HelpFrame
 import cz.wa.texturemodifier.gui.tabs.blur.BlurPanel
@@ -15,6 +14,7 @@ import cz.wa.texturemodifier.gui.tabs.source.SourcePanel
 import cz.wa.texturemodifier.gui.utils.ColorSlider
 import cz.wa.texturemodifier.gui.utils.ConfirmFileChooser
 import cz.wa.texturemodifier.gui.utils.GuiUtils
+import cz.wa.texturemodifier.settings.Settings
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Rectangle
@@ -51,7 +51,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         instance = this
         val empty = ""
         title = "Texture modifier v${TextureModifierMain.VERSION}${empty}"
-        defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+        defaultCloseOperation = EXIT_ON_CLOSE
         try {
             iconImages = loadIcons()
         } catch (e: Exception) {
@@ -90,7 +90,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         openImage.addActionListener { openImage() }
         openImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(openImage)
-        imageOpenChooser.fileFilter = imagesFilter;
+        imageOpenChooser.fileFilter = imagesFilter
 
         val quickOpenImage = JMenuItem("Open in directory")
         quickOpenImage.addActionListener { quickOpenImage() }
@@ -116,20 +116,20 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         imageMenu.add(revertImage)
 
         // properties
-        val propMenu = JMenu("Properties");
-        menu.add(propMenu);
+        val propMenu = JMenu("Properties")
+        menu.add(propMenu)
 
         val openProp = JMenuItem("Open")
         openProp.addActionListener { openProperties() }
         openProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(openProp)
-        propsOpenChooser.fileFilter = FileNameExtensionFilter("Properties", "properties");
+        propsOpenChooser.fileFilter = FileNameExtensionFilter("Properties", "properties")
 
         val saveProp = JMenuItem("Save as")
         saveProp.addActionListener { saveProperties() }
         saveProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(saveProp)
-        propsSaveChooser.fileFilter = FileNameExtensionFilter("Properties", "properties");
+        propsSaveChooser.fileFilter = FileNameExtensionFilter("Properties", "properties")
 
         // props label
         propsLabel.isEnabled = false
@@ -225,7 +225,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     private fun openImage(file: File) {
         contentHolder.sourceImage = ImageIO.read(file)
         if (contentHolder.files.isEmpty()) {
-            contentHolder.files.add("");
+            contentHolder.files.add("")
         }
         contentHolder.files[0] = file.absolutePath
         imageSaveChooser.selectedFile = replaceJpgByPng(file)
@@ -241,7 +241,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         if (TextureModifierMain.IMAGE_JPG_EXTS.contains(file.extension.lowercase())) {
             return File(file.path.substringBeforeLast('.') + ".png")
         }
-        return file;
+        return file
     }
 
     private fun quickOpenImage() {
@@ -314,7 +314,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
                 file = File(file.path + ".properties")
             }
             GuiUtils.runCatch(this) {
-                Settings.save(contentHolder.settings, file);
+                Settings.save(contentHolder.settings, file)
                 if (!file.isFile) {
                     JOptionPane.showMessageDialog(this@MainFrame, "File not saved: ${file.absolutePath}")
                 }
@@ -337,7 +337,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
     }
 
     private class FileTransferHandler : TransferHandler() {
-        override fun canImport(support: TransferHandler.TransferSupport): Boolean {
+        override fun canImport(support: TransferSupport): Boolean {
             return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
         }
 

@@ -1,8 +1,8 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.OverwriteType
-import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.TextureModifierMain
+import cz.wa.texturemodifier.settings.OverwriteType
+import cz.wa.texturemodifier.settings.Settings
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
@@ -13,14 +13,14 @@ import javax.imageio.ImageIO
  */
 class SaveCommand(settings: Settings, private val stats: SaveStats, private val origFile: File) : AbstractCommand(settings) {
     override fun execute(image: BufferedImage): BufferedImage {
-        var newName = getFileName()
-        var newFile = File(newName)
+        val newName = getFileName()
+        val newFile = File(newName)
 
         if (!TextureModifierMain.IMAGE_SAVE_EXTS.contains(newFile.extension.lowercase())) {
             println("Unknown image extension: '${newFile.extension}', " +
                     "Supported save formats: ${TextureModifierMain.IMAGE_SAVE_EXTS.joinToString(", ")}")
             stats.errors++
-            return image;
+            return image
         }
 
         // check overwrite

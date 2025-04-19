@@ -1,8 +1,5 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.ScaleType
-import cz.wa.texturemodifier.Settings
-import cz.wa.texturemodifier.SmoothType
 import cz.wa.texturemodifier.gui.utils.FilterType
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.ColorAF
@@ -10,6 +7,9 @@ import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
 import cz.wa.texturemodifier.math.Vec2f
 import cz.wa.texturemodifier.math.Vec2i
+import cz.wa.texturemodifier.settings.ScaleType
+import cz.wa.texturemodifier.settings.Settings
+import cz.wa.texturemodifier.settings.SmoothType
 import java.awt.image.BufferedImage
 import kotlin.math.max
 import kotlin.math.min
@@ -34,7 +34,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             sizeY = (image.height / settings.pixelateScale).roundToInt()
         }
 
-        validateSettings(image, sizeX, sizeY)
+        validateSettings(sizeX, sizeY)
 
         var img = image
         if (settings.pixelateMiddleUse) {
@@ -67,7 +67,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
                 outTex = Texture(ret)
             } else {
                 // some more complex filter
-                ret = ImageUtils.createEmptyImage(sizeX, sizeY);
+                ret = ImageUtils.createEmptyImage(sizeX, sizeY)
                 outTex = Texture(ret)
                 for (y in 0 until sizeX) {
                     for (x in 0 until sizeY) {
@@ -89,7 +89,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
 
             if (settings.pixelateSmoothType == SmoothType.ANISO || settings.pixelateSmoothType == SmoothType.ANISO_BILINEAR) {
                 // create smooth texture
-                var anisoSize = findAnisoSize(image.width, image.height, sizeX, sizeY)
+                val anisoSize = findAnisoSize(image.width, image.height, sizeX, sizeY)
                 smoothTex = Texture(ImageUtils.createEmptyImage(anisoSize.x, anisoSize.y))
                 val rxA = image.width / anisoSize.x
                 val ryA = image.height / anisoSize.y
@@ -104,7 +104,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
 
             // apply to output
             val bilinear = ((smoothTex.width != outTex.width) && (smoothTex.height != outTex.height) &&
-                (settings.pixelateSmoothType == SmoothType.BILINEAR || settings.pixelateSmoothType == SmoothType.ANISO_BILINEAR));
+                (settings.pixelateSmoothType == SmoothType.BILINEAR || settings.pixelateSmoothType == SmoothType.ANISO_BILINEAR))
             smoothTex = Texture(ImageUtils.getFilteredImage(smoothTex.img, sizeX, sizeY, if (bilinear) FilterType.BILINEAR else FilterType.NEAREST))
             val blend = settings.pixelateBlendSmooth.toFloat()
             for (y in 0 until sizeY) {
@@ -136,7 +136,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             "\t - ANISO - before filtering, scales down the map and averages color\n" +
             "\t - ANISO_BILINEAR - combines both (smoothest)"
 
-    private fun validateSettings(image: BufferedImage, sizeX: Int, sizeY: Int) {
+    private fun validateSettings(sizeX: Int, sizeY: Int) {
         check(sizeX >= 1) { "pixelateSizeX must be >= 1" }
         check(sizeY >= 1) { "pixelateSizeY must be >= 1" }
         check(settings.pixelateColors in 2..256) { "pixelateColors must be > 1 and <= 256" }
@@ -158,17 +158,18 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
      */
     private fun processPixel(outTex: Texture, x: Int, y: Int, inTex: Texture, px: IntRange, py: IntRange) {
         val c: Int
-        when (settings.pixelateScaleType) {
+        c = when (settings.pixelateScaleType) {
             ScaleType.NEAREST -> {
                 if (!settings.pixelateIgnoreBgColor) {
-                    c = roundColor(inTex.getPoint(middle(px), middle(py)))
+                    roundColor(inTex.getPoint(middle(px), middle(py)))
                 } else {
                     // TODO find first not BG
-                    c = roundColor(inTex.getPoint(middle(px), middle(py)))
+                    roundColor(inTex.getPoint(middle(px), middle(py)))
                 }
             }
+
             ScaleType.MOST_COLOR -> {
-                c = findMostColor(inTex, px, py)
+                findMostColor(inTex, px, py)
             }
         }
         outTex.setPoint(x, y, c)
@@ -256,7 +257,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             }
         }
 
-        var color = 0;
+        var color = 0
         if (ca > 0) {
             val newR = (r / ca).roundToInt()
             val newG = (g / ca).roundToInt()

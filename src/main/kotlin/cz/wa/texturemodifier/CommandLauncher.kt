@@ -2,6 +2,7 @@ package cz.wa.texturemodifier
 
 import cz.wa.texturemodifier.command.*
 import cz.wa.texturemodifier.gui.utils.ImageUtils
+import cz.wa.texturemodifier.settings.Settings
 import org.apache.commons.io.filefilter.WildcardFileFilter
 import java.awt.image.BufferedImage
 import java.io.File

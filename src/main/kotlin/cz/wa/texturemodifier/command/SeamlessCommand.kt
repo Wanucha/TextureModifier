@@ -1,9 +1,9 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
+import cz.wa.texturemodifier.settings.Settings
 import java.awt.image.BufferedImage
 import kotlin.random.Random
 
@@ -27,7 +27,7 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
             throw IllegalArgumentException("For seamlessOverlap seamlessDist must be <= half of image width or height")
         }
 
-        var src = Texture(image)
+        val src = Texture(image)
         
         val ret = if (settings.seamlessOverlap) {
             applySeamlessOverlap(image, src)

@@ -1,13 +1,13 @@
 package cz.wa.texturemodifier.gui.tabs.pixelate
 
-import cz.wa.texturemodifier.ScaleType
-import cz.wa.texturemodifier.SmoothType
 import cz.wa.texturemodifier.command.PixelateCommand
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.tabs.AbstractPanel
 import cz.wa.texturemodifier.gui.tabs.ModifierViewer
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import cz.wa.texturemodifier.math.ColorUtils
+import cz.wa.texturemodifier.settings.ScaleType
+import cz.wa.texturemodifier.settings.SmoothType
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.FlowLayout

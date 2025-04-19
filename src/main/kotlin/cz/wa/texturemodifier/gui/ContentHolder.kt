@@ -1,7 +1,7 @@
 package cz.wa.texturemodifier.gui
 
-import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.utils.ImageUtils
+import cz.wa.texturemodifier.settings.Settings
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
@@ -60,6 +60,7 @@ class ContentHolder(
                 sourceImage = ImageIO.read(file)
             } catch (e: Throwable) {
                 println("Failed to read image ${file.absoluteFile}")
+                e.printStackTrace()
             }
         }
         if (sourceImage == null) {

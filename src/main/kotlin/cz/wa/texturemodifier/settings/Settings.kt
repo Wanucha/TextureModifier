@@ -1,4 +1,4 @@
-package cz.wa.texturemodifier
+package cz.wa.texturemodifier.settings
 
 import cz.wa.texturemodifier.math.ColorUtils
 import java.awt.Color

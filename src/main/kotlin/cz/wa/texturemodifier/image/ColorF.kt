@@ -15,13 +15,12 @@ class ColorF(val r: Float, val g: Float, val b: Float) {
 
     /** Paints the color onto existing with alpha (0..1) */
     fun add(c: ColorF, a: Double): ColorF {
-        if (a >= 1) {
-            return c
+        return if (a >= 1) {
+            c
         } else if (a <= 0) {
-            return this
+            this
         } else {
-            val d = 1 - a
-            return lerp(c, a.toFloat())
+            lerp(c, a.toFloat())
         }
     }
 

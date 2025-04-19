@@ -37,8 +37,8 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
     protected var currMousePos = Vec2i.NEGATIVE
 
     // settings
-    protected var infoBgColor = Color.GRAY
-    protected var infoTextColor = Color.BLACK
+    protected var infoBgColor: Color = Color.GRAY
+    protected var infoTextColor: Color = Color.BLACK
     protected var infoGap = 2
     protected var infoFontSize = 12
     protected var infoFont = Font("Courier new", Font.PLAIN, infoFontSize)
@@ -274,7 +274,7 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
     }
 
     override fun mouseWheelMoved(e: MouseWheelEvent) {
-        val rotated = e!!.wheelRotation
+        val rotated = e.wheelRotation
         if (rotated > 0) {
             zoom /= zoomSpeed
             refresh()
@@ -289,14 +289,14 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
     }
 
     override fun keyPressed(e: KeyEvent) {
-        GuiUtils.runCatch(this, Runnable {
+        GuiUtils.runCatch(this) {
             if (e.keyCode == KeyEvent.VK_HOME) {
                 zoom = 1.0
                 posX = 0.0
                 posY = 0.0
                 refresh()
             }
-        })
+        }
     }
 
     override fun keyReleased(e: KeyEvent) {

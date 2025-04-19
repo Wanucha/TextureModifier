@@ -1,6 +1,7 @@
 package cz.wa.texturemodifier
 
 import cz.wa.texturemodifier.gui.MainFrame
+import cz.wa.texturemodifier.settings.Settings
 import java.io.File
 
 class TextureModifierMain {

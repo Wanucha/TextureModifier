@@ -42,7 +42,7 @@ abstract class AbstractPanel<V : TextureViewer>(val contentHolder: ContentHolder
 
         protected open fun apply() {
             applySettings()
-            contentHolder.outputImage = createCommand().execute(contentHolder.getSourceImageIntBuffer()!!)
+            contentHolder.outputImage = createCommand().execute(contentHolder.getSourceImageIntBuffer())
             canvas.refresh()
         }
 
@@ -56,17 +56,17 @@ abstract class AbstractPanel<V : TextureViewer>(val contentHolder: ContentHolder
             try {
                 return createCommand().getHelp()
             } catch (e: Exception) {
-                e.printStackTrace();
-                return e.message.orEmpty();
+                e.printStackTrace()
+                return e.message.orEmpty()
             }
         }
 
         protected fun createApplyButton(): JButton {
             val ret = JButton("Apply")
             ret.addActionListener {
-                GuiUtils.runCatch(this, Runnable {
+                GuiUtils.runCatch(this) {
                     apply()
-                })
+                }
             }
             return ret
         }
@@ -74,11 +74,11 @@ abstract class AbstractPanel<V : TextureViewer>(val contentHolder: ContentHolder
         protected fun createHelpButton(): JButton {
             val ret = JButton("Help")
             ret.addActionListener {
-                GuiUtils.runCatch(this, Runnable {
+                GuiUtils.runCatch(this) {
                     JOptionPane.showMessageDialog(
                         this, getHelp()
                     )
-                })
+                }
             }
             return ret
         }

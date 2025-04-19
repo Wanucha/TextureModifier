@@ -27,11 +27,11 @@ class ImageUtils {
         }
 
         fun getImageWithIntBuffer(img: BufferedImage) : BufferedImage {
-            try {
+            return try {
                 if (img.raster.dataBuffer is DataBufferInt) {
-                    return img
+                    img
                 } else {
-                    return convertToIntBuffer(img)
+                    convertToIntBuffer(img)
                 }
             } catch (e: Exception) {
                 throw RuntimeException("Failed to convert image buffer, try saving the image in different program.", e)

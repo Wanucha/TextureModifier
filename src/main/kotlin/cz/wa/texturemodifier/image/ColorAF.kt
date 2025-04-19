@@ -15,17 +15,16 @@ class ColorAF(val r: Float, val g: Float, val b: Float, val a: Float) {
 
     /** Paints the color onto existing with alpha (0..1) */
     fun add(c: ColorAF, a: Double): ColorAF {
-        if (a >= 1) {
-            return c
+        return if (a >= 1) {
+            c
         } else if (a <= 0) {
-            return this
+            this
         } else {
-            val d = 1 - a
-            return lerp(c, a.toFloat())
+            lerp(c, a.toFloat())
         }
     }
 
-    /** Linear interpolation without alpha ckeck */
+    /** Linear interpolation without alpha check */
     fun lerp(c: ColorAF, x: Float): ColorAF {
         val d = 1 - x
         return ColorAF(r * d + c.r * x, g * d + c.g * x, b * d + c.b * x, a * d + c.a * x)

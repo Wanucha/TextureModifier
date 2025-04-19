@@ -1,9 +1,9 @@
 package cz.wa.texturemodifier.gui.tabs.propertieseditor
 
-import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.MainFrame
 import cz.wa.texturemodifier.gui.utils.GuiUtils
+import cz.wa.texturemodifier.settings.Settings
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.io.File

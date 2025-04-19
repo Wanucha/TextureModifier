@@ -1,6 +1,7 @@
 package cz.wa.texturemodifier.math
 
 import java.awt.Color
+import java.util.Locale.getDefault
 import kotlin.math.roundToInt
 
 object ColorUtils {
@@ -48,15 +49,15 @@ object ColorUtils {
 
     fun toStringWithAlpha(c: Int): String {
         return ("#${getRed(c).toString(16).padStart(2, '0')}" +
-                "${getGreen(c).toString(16).padStart(2, '0')}" +
-                "${getBlue(c).toString(16).padStart(2, '0')}" +
-                "${getAlpha(c).toString(16).padStart(2, '0')}").toUpperCase()
+                getGreen(c).toString(16).padStart(2, '0') +
+                getBlue(c).toString(16).padStart(2, '0') +
+                getAlpha(c).toString(16).padStart(2, '0')).uppercase(getDefault())
     }
 
     fun toString(c: Color): String {
         return ("#${c.red.toString(16).padStart(2, '0')}" +
-                "${c.green.toString(16).padStart(2, '0')}" +
-                "${c.blue.toString(16).padStart(2, '0')}").toUpperCase()
+                c.green.toString(16).padStart(2, '0') +
+                c.blue.toString(16).padStart(2, '0')).uppercase(getDefault())
     }
 
     fun averageColor(colors: ArrayList<Int>): Int {
@@ -64,14 +65,14 @@ object ColorUtils {
         var g = 0
         var b = 0
         for (c in colors) {
-            r += ColorUtils.getRed(c)
-            g += ColorUtils.getGreen(c)
-            b += ColorUtils.getBlue(c)
+            r += getRed(c)
+            g += getGreen(c)
+            b += getBlue(c)
         }
         val count = colors.size.toDouble()
         r = (r / count).roundToInt()
         g = (g / count).roundToInt()
         b = (b / count).roundToInt()
-        return ColorUtils.fromRGB(r, g, b)
+        return fromRGB(r, g, b)
     }
 }

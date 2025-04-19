@@ -16,7 +16,7 @@ import kotlin.math.roundToInt
 class ColorSlider() : JPanel(), MouseListener, MouseMotionListener {
     var color1: Color = Color.BLACK
     var color2: Color = Color.WHITE
-    var valueColor = Color.RED
+    var valueColor: Color = Color.RED
 
     private var bgImage: BufferedImage = generateBgImage()
     private var mouseDown = false
