@@ -93,7 +93,7 @@ class CommandLauncher(
             }
         }
 
-        return ret;
+        return ret
     }
 
     private fun listFiles(ret: ArrayList<File>, file: String) {
