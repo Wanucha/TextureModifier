@@ -13,7 +13,7 @@ import kotlin.random.Random
 class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
     override fun execute(image: BufferedImage): BufferedImage {
 
-        val d = settings.seamlessDist
+        val d = settings.seamless.distance
         val w = image.width
         val h = image.height
 
@@ -23,13 +23,13 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
         if (d > w || d > h) {
             throw IllegalArgumentException("For seamlessDist must be <= image width or height")
         }
-        if (settings.seamlessOverlap && (d * 2 > w || d * 2 > h)) {
+        if (settings.seamless.overlap && (d * 2 > w || d * 2 > h)) {
             throw IllegalArgumentException("For seamlessOverlap seamlessDist must be <= half of image width or height")
         }
 
         val src = Texture(image)
         
-        val ret = if (settings.seamlessOverlap) {
+        val ret = if (settings.seamless.overlap) {
             applySeamlessOverlap(image, src)
         } else {
             applySeamlessMirror(image, src)
@@ -38,7 +38,7 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
     }
 
     private fun applySeamlessOverlap(image: BufferedImage, src: Texture): Texture {
-        val d = settings.seamlessDist
+        val d = settings.seamless.distance
         val w = image.width
         val h = image.height
 
@@ -70,7 +70,7 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
     }
 
     private fun applySeamlessMirror(image: BufferedImage, src: Texture): Texture {
-        val d = settings.seamlessDist
+        val d = settings.seamless.distance
         val w = image.width
         val h = image.height
 
@@ -126,7 +126,7 @@ class SeamlessCommand(settings: Settings) : AbstractCommand(settings) {
         max: Int
     ) {
         val r = getRatio(curr, max)
-        if (!settings.seamlessAlpha) {
+        if (!settings.seamless.alpha) {
             if (Random.nextDouble() <= r) {
                 val c = src.getPoint(x2, y2)
                 ret.setPoint(x, y, c)

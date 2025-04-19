@@ -28,12 +28,12 @@ open class PixelatePanel(contentHolder: ContentHolder) :
         private val middleUseCb = JCheckBox("Use middle step")
         private val middleScaleTf = JTextField()
         private val colorsTf = JTextField()
-        private val typeCb = JComboBox(ScaleType.values())
+        private val typeCb = JComboBox(ScaleType.entries.toTypedArray())
         private val toleranceTf = JTextField()
         private val ignoreBgCb = JCheckBox("Ignore BG color")
         private val bgColorTf = JTextField("#000000")
         private val blendSmoothTf = JTextField()
-        private val smoothTypeCb = JComboBox(SmoothType.values())
+        private val smoothTypeCb = JComboBox(SmoothType.entries.toTypedArray())
 
         private val panelType = JPanel(FlowLayout())
         private val colorComponents = mutableListOf<Component>()
@@ -171,38 +171,38 @@ open class PixelatePanel(contentHolder: ContentHolder) :
         }
 
         override fun showSettings() {
-            with (contentHolder.settings) {
-                scaleTf.text = pixelateScale.toString()
-                useSizeCb.isSelected = pixelateUseSize
-                sizeXTf.text = pixelateSizeX.toString()
-                sizeYTf.text = pixelateSizeY.toString()
-                middleUseCb.isSelected = pixelateMiddleUse
-                middleScaleTf.text = pixelateMiddleScale.toString()
-                colorsTf.text = pixelateColors.toString()
-                typeCb.selectedItem = pixelateScaleType
-                toleranceTf.text = pixelateScaleColorTolerance.toString()
-                ignoreBgCb.isSelected = pixelateIgnoreBgColor
-                bgColorTf.text = ColorUtils.toString(pixelateBgColor)
-                blendSmoothTf.text = pixelateBlendSmooth.toString()
-                smoothTypeCb.selectedItem = pixelateSmoothType
+            with (contentHolder.settings.pixelate) {
+                scaleTf.text = scale.toString()
+                useSizeCb.isSelected = useSize
+                sizeXTf.text = sizeX.toString()
+                sizeYTf.text = sizeY.toString()
+                middleUseCb.isSelected = middleUse
+                middleScaleTf.text = middleScale.toString()
+                colorsTf.text = colors.toString()
+                typeCb.selectedItem = scaleType
+                toleranceTf.text = scaleColorTolerance.toString()
+                ignoreBgCb.isSelected = ignoreBgColor
+                bgColorTf.text = ColorUtils.toString(backgroundColor)
+                blendSmoothTf.text = blendSmooth.toString()
+                smoothTypeCb.selectedItem = smoothType
             }
         }
 
         override fun applySettings() {
-            with (contentHolder.settings) {
-                pixelateScale = scaleTf.text.toDouble()
-                pixelateUseSize = useSizeCb.isSelected
-                pixelateSizeX = sizeXTf.text.toInt()
-                pixelateSizeY = sizeYTf.text.toInt()
-                pixelateMiddleUse = middleUseCb.isSelected
-                pixelateMiddleScale = middleScaleTf.text.toDouble()
-                pixelateColors = colorsTf.text.toInt()
-                pixelateScaleType = typeCb.selectedItem as ScaleType
-                pixelateScaleColorTolerance = toleranceTf.text.toInt()
-                pixelateIgnoreBgColor = ignoreBgCb.isSelected
-                pixelateBgColor = ColorUtils.parse(bgColorTf.text)
-                pixelateBlendSmooth = blendSmoothTf.text.toDouble()
-                pixelateSmoothType = smoothTypeCb.selectedItem as SmoothType
+            with (contentHolder.settings.pixelate) {
+                scale = scaleTf.text.toDouble()
+                useSize = useSizeCb.isSelected
+                sizeX = sizeXTf.text.toInt()
+                sizeY = sizeYTf.text.toInt()
+                middleUse = middleUseCb.isSelected
+                middleScale = middleScaleTf.text.toDouble()
+                colors = colorsTf.text.toInt()
+                scaleType = typeCb.selectedItem as ScaleType
+                scaleColorTolerance = toleranceTf.text.toInt()
+                ignoreBgColor = ignoreBgCb.isSelected
+                backgroundColor = ColorUtils.parse(bgColorTf.text)
+                blendSmooth = blendSmoothTf.text.toDouble()
+                smoothType = smoothTypeCb.selectedItem as SmoothType
             }
         }
     }

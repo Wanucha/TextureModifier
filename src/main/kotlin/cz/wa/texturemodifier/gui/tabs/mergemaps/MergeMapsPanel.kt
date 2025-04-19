@@ -1,6 +1,6 @@
 package cz.wa.texturemodifier.gui.tabs.mergemaps
 
-import cz.wa.texturemodifier.command.MergeMapCommand
+import cz.wa.texturemodifier.command.MergeMapsCommand
 import cz.wa.texturemodifier.gui.ContentHolder
 import cz.wa.texturemodifier.gui.tabs.AbstractPanel
 import cz.wa.texturemodifier.gui.tabs.ModifierAlphaViewer
@@ -15,9 +15,9 @@ open class MergeMapsPanel(contentHolder: ContentHolder) :
     override fun createPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) = ToolPanel(contentHolder, canvas)
 
     protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) :
-        AbstractToolPanel<ModifierAlphaViewer>(contentHolder, canvas, 240, MergeMapCommand::class.java) {
+        AbstractToolPanel<ModifierAlphaViewer>(contentHolder, canvas, 240, MergeMapsCommand::class.java) {
 
-        private val layoutCb = JComboBox(MapType.values())
+        private val layoutCb = JComboBox(MapType.entries.toTypedArray())
         private val map1Tf = JTextField()
         private val map2Tf = JTextField()
         private val map3Tf = JTextField()
@@ -51,19 +51,23 @@ open class MergeMapsPanel(contentHolder: ContentHolder) :
         }
 
         override fun showSettings() {
-            layoutCb.selectedItem = contentHolder.settings.mergeMapsLayout
-            map1Tf.text = contentHolder.settings.mergeMapsMap1
-            map2Tf.text = contentHolder.settings.mergeMapsMap2
-            map3Tf.text = contentHolder.settings.mergeMapsMap3
-            map4Tf.text = contentHolder.settings.mergeMapsMap4
+            with (contentHolder.settings.mergeMaps) {
+                layoutCb.selectedItem = this.layout
+                map1Tf.text = map1
+                map2Tf.text = map2
+                map3Tf.text = map3
+                map4Tf.text = map4
+            }
         }
 
         override fun applySettings() {
-            contentHolder.settings.mergeMapsLayout = layoutCb.selectedItem as MapType
-            contentHolder.settings.mergeMapsMap1 = map1Tf.text
-            contentHolder.settings.mergeMapsMap2 = map2Tf.text
-            contentHolder.settings.mergeMapsMap3 = map3Tf.text
-            contentHolder.settings.mergeMapsMap4 = map4Tf.text
+            with (contentHolder.settings.mergeMaps) {
+                this.layout = layoutCb.selectedItem as MapType
+                map1 = map1Tf.text
+                map2 = map2Tf.text
+                map3 = map3Tf.text
+                map4 = map4Tf.text
+            }
         }
     }
 }

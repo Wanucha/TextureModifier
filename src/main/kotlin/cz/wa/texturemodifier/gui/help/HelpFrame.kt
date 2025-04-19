@@ -10,7 +10,7 @@ class HelpFrame: JFrame("Texture Modifier Help") {
     init {
         bounds = Rectangle(200, 200, 540, 620)
 
-        layout = BorderLayout()
+        this@HelpFrame.layout = BorderLayout()
 
         var text1 = JLabel()
         text1.text = "<html>" +

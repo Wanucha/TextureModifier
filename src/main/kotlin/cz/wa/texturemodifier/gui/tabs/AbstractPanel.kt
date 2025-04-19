@@ -20,7 +20,7 @@ abstract class AbstractPanel<V : TextureViewer>(val contentHolder: ContentHolder
     }
 
     protected open fun initComponents() {
-        layout = BorderLayout()
+        this@AbstractPanel.layout = BorderLayout()
         MainFrame.instance!!.bgColorSlider.addListener { canvas.refresh() }
         add(canvas, BorderLayout.CENTER)
         add(toolPanel, BorderLayout.EAST)

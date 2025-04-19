@@ -49,17 +49,21 @@ open class FillBackgroundPanel(contentHolder: ContentHolder) :
         }
 
         override fun showSettings() {
-            iterationsTf.text = contentHolder.settings.fillBgIterations.toString()
-            includeCornersCb.isSelected = contentHolder.settings.fillBgIncludeCorners
-            averageFillCb.isSelected = contentHolder.settings.fillBgAverageFill
-            bgColorTf.text = ColorUtils.toString(contentHolder.settings.fillBgBgColor)
+            with (contentHolder.settings.fillBackground) {
+                iterationsTf.text = iterations.toString()
+                includeCornersCb.isSelected = includeCorners
+                averageFillCb.isSelected = averageFill
+                bgColorTf.text = ColorUtils.toString(bgColor)
+            }
         }
 
         override fun applySettings() {
-            contentHolder.settings.fillBgIterations = iterationsTf.text.toInt()
-            contentHolder.settings.fillBgIncludeCorners = includeCornersCb.isSelected
-            contentHolder.settings.fillBgAverageFill = averageFillCb.isSelected
-            contentHolder.settings.fillBgBgColor = ColorUtils.parse(bgColorTf.text)
+            with (contentHolder.settings.fillBackground) {
+                iterations = iterationsTf.text.toInt()
+                includeCorners = includeCornersCb.isSelected
+                averageFill = averageFillCb.isSelected
+                bgColor = ColorUtils.parse(bgColorTf.text)
+            }
         }
     }
 }

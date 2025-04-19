@@ -15,10 +15,10 @@ class BlurCommand(settings: Settings) : AbstractCommand(settings) {
 
 
     override fun execute(image: BufferedImage): BufferedImage {
-        check(settings.blurRadius > 1) { throw IllegalArgumentException("blurRadius must be > 1") }
-        check(settings.blurRatio > 0 && settings.blurRatio <= 1) { throw IllegalArgumentException("blurRatio must be > 0 and <= 1") }
+        check(settings.blur.radius > 1) { throw IllegalArgumentException("blurRadius must be > 1") }
+        check(settings.blur.ratio > 0 && settings.blur.ratio <= 1) { throw IllegalArgumentException("blurRatio must be > 0 and <= 1") }
 
-        val core = generateCore(settings.blurRadius)
+        val core = generateCore(settings.blur.radius)
         val orig = TextureF(Texture(image))
         var tmp = TextureF(orig)
         val blured = TextureF(tmp.width, tmp.height)
@@ -41,8 +41,8 @@ class BlurCommand(settings: Settings) : AbstractCommand(settings) {
         }
 
         // merge
-        if (settings.blurRatio < 1) {
-            val ratio = settings.blurRatio.toFloat()
+        if (settings.blur.ratio < 1) {
+            val ratio = settings.blur.ratio.toFloat()
             for (y in 0 until tmp.height) {
                 for (x in 0 until tmp.width) {
                     val c = orig.pixels[x][y].lerp(blured.pixels[x][y], ratio)

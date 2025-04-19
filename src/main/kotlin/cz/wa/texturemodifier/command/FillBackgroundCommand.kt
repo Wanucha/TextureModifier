@@ -15,15 +15,15 @@ class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
     private var bgColor: Int = 0
 
     override fun execute(image: BufferedImage): BufferedImage {
-        check(settings.fillBgIterations >= 1) { "fillBgIterations must be >= 1" }
+        check(settings.fillBackground.iterations >= 1) { "fillBgIterations must be >= 1" }
 
         var inTex = Texture(image)
         val ret = ImageUtils.copyImage(image)
         var outTex = Texture(ret)
-        bgColor = settings.fillBgBgColor.rgb
+        bgColor = settings.fillBackground.bgColor.rgb
 
         var started = false
-        for (i in 0 until settings.fillBgIterations) {
+        for (i in 0 until settings.fillBackground.iterations) {
             if (started) {
                 inTex = outTex
                 outTex = Texture(ImageUtils.copyImage(inTex.img))
@@ -66,7 +66,7 @@ class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
     }
 
     private fun computeColor(inTex: Texture, x: Int, y: Int): Int {
-        val colors = ArrayList<Int>(if (settings.fillBgIncludeCorners) 8 else 4)
+        val colors = ArrayList<Int>(if (settings.fillBackground.includeCorners) 8 else 4)
         iterateNearPixels(inTex, x, y) {
             if (it != bgColor) {
                 colors.add(it)
@@ -74,7 +74,7 @@ class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
             true
         }
 
-        return if (settings.fillBgAverageFill) {
+        return if (settings.fillBackground.averageFill) {
             ColorUtils.averageColor(colors)
         } else {
             mostColor(colors)
@@ -107,7 +107,7 @@ class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
                 return
             }
         }
-        if (settings.fillBgIncludeCorners) {
+        if (settings.fillBackground.includeCorners) {
             for (p in NEIGHBORS2) {
                 if (inTex.containsPoint(x + p.x, y + p.y) && !function.invoke(inTex.getPoint(x + p.x, y + p.y))) {
                     return

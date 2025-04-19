@@ -7,14 +7,15 @@ import cz.wa.texturemodifier.gui.tabs.fillbackground.FillBackgroundPanel
 import cz.wa.texturemodifier.gui.tabs.mergemaps.MergeMapsPanel
 import cz.wa.texturemodifier.gui.tabs.multiplycolor.MultiplyColorPanel
 import cz.wa.texturemodifier.gui.tabs.pixelate.PixelatePanel
-import cz.wa.texturemodifier.gui.tabs.propertieseditor.PropertiesEditor
 import cz.wa.texturemodifier.gui.tabs.removealpha.RemoveAlphaPanel
 import cz.wa.texturemodifier.gui.tabs.seamless.SeamlessPanel
+import cz.wa.texturemodifier.gui.tabs.settingseditor.SettingsEditor
 import cz.wa.texturemodifier.gui.tabs.source.SourcePanel
 import cz.wa.texturemodifier.gui.utils.ColorSlider
 import cz.wa.texturemodifier.gui.utils.ConfirmFileChooser
 import cz.wa.texturemodifier.gui.utils.GuiUtils
 import cz.wa.texturemodifier.settings.Settings
+import cz.wa.texturemodifier.settings.io.SettingsIO
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Rectangle
@@ -28,7 +29,7 @@ import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
 
 
-class MainFrame(settings: Settings, files: List<String>) : JFrame() {
+class MainFrame(settings: Settings, settingsFile: File?, files: List<String>) : JFrame() {
     private val tabs: JTabbedPane = JTabbedPane()
     private val menu: JMenuBar = JMenuBar()
     private val help: HelpFrame = HelpFrame()
@@ -42,7 +43,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
 
     private val imageOpenListeners = ArrayList<FileOpenListener>()
     private val imageRevertListeners = ArrayList<FileOpenListener>()
-    private val propertiesOpenListeners = ArrayList<FileOpenListener>()
+    private val settingsOpenListeners = ArrayList<FileOpenListener>()
 
     val contentHolder: ContentHolder
     val bgColorSlider = ColorSlider()
@@ -59,9 +60,9 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         }
 
         contentHolder = if (files is MutableList) {
-            ContentHolder(settings, files)
+            ContentHolder(settings, settingsFile, files)
         } else {
-            ContentHolder(settings, ArrayList(files))
+            ContentHolder(settings, settingsFile, ArrayList(files))
         }
 
         // allow drop files
@@ -83,7 +84,7 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         val imageMenu = JMenu("Image")
         menu.add(imageMenu)
 
-        val imageFile = if (contentHolder.files.isEmpty()) contentHolder.settings.file
+        val openedFile = if (contentHolder.files.isEmpty()) contentHolder.settingsFile
             ?: contentHolder.sourceFile else contentHolder.sourceFile
 
         val openImage = JMenuItem("Open")
@@ -115,25 +116,25 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         revertImage.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK)
         imageMenu.add(revertImage)
 
-        // properties
-        val propMenu = JMenu("Properties")
+        // settings
+        val propMenu = JMenu("Settings")
         menu.add(propMenu)
 
         val openProp = JMenuItem("Open")
-        openProp.addActionListener { openProperties() }
+        openProp.addActionListener { openSettings() }
         openProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(openProp)
-        propsOpenChooser.fileFilter = FileNameExtensionFilter("Properties", "properties")
+        propsOpenChooser.fileFilter = FileNameExtensionFilter("Settings", "yml", "yaml")
 
         val saveProp = JMenuItem("Save as")
-        saveProp.addActionListener { saveProperties() }
+        saveProp.addActionListener { saveSettings() }
         saveProp.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK)
         propMenu.add(saveProp)
-        propsSaveChooser.fileFilter = FileNameExtensionFilter("Properties", "properties")
+        propsSaveChooser.fileFilter = FileNameExtensionFilter("Settings", "yml", "yaml")
 
         // props label
         propsLabel.isEnabled = false
-        propsLabel.text = "= ${contentHolder.settings.file?.name}"
+        propsLabel.text = "= ${contentHolder.settingsFile?.name}"
         menu.add(propsLabel)
 
         // args help
@@ -149,16 +150,16 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         // show bounds
         val boundsCb = JCheckBox("Show bounds")
         boundsCb.isSelected = true
-        boundsCb.addActionListener { contentHolder.settings.guiShowBounds = boundsCb.isSelected }
+        boundsCb.addActionListener { contentHolder.settings.gui.showBounds = boundsCb.isSelected }
         menu.add(boundsCb)
 
         // bg color
-        bgColorSlider.addListener { contentHolder.settings.guiBgColor = Color(it, it, it) }
+        bgColorSlider.addListener { contentHolder.settings.gui.backgroundColor = Color(it, it, it) }
         bgColorSlider.toolTipText = "Change background color"
         menu.add(bgColorSlider)
 
         // Tabs
-        layout = BorderLayout()
+        this@MainFrame.layout = BorderLayout()
         add(tabs, BorderLayout.CENTER)
 
         tabs.addTab("Source image", SourcePanel(contentHolder))
@@ -169,19 +170,19 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         tabs.addTab("Merge maps", MergeMapsPanel(contentHolder))
         tabs.addTab("Multiply color", MultiplyColorPanel(contentHolder))
         tabs.addTab("Remove alpha", RemoveAlphaPanel(contentHolder))
-        tabs.addTab("Properties", PropertiesEditor(contentHolder))
+        tabs.addTab("Settings", SettingsEditor(contentHolder))
 
         // select each tab
         tabs.selectedIndex = tabs.tabCount - 1
         showPrevTab()
-        SwingUtilities.invokeLater { initComponentsLater(imageFile) }
+        SwingUtilities.invokeLater { initComponentsLater(openedFile) }
     }
 
     private fun initComponentsLater(imageFile: File) {
         imageOpenChooser.currentDirectory = imageFile
         imageSaveChooser.currentDirectory = imageFile
-        propsOpenChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile
-        propsSaveChooser.currentDirectory = contentHolder.settings.file ?: contentHolder.sourceFile
+        propsOpenChooser.currentDirectory = contentHolder.settingsFile ?: contentHolder.sourceFile
+        propsSaveChooser.currentDirectory = contentHolder.settingsFile ?: contentHolder.sourceFile
     }
 
     private fun loadIcons(): List<BufferedImage> {
@@ -210,8 +211,8 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         imageRevertListeners.add(l)
     }
 
-    fun addPropertiesOpenListener(l: FileOpenListener) {
-        propertiesOpenListeners.add(l)
+    fun addSettingsOpenListener(l: FileOpenListener) {
+        settingsOpenListeners.add(l)
     }
 
     private fun openImage() {
@@ -291,14 +292,14 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         imageRevertListeners.forEach { it.fileOpened(File(contentHolder.files[0])) }
     }
 
-    private fun openProperties() {
+    private fun openSettings() {
         if (propsOpenChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             GuiUtils.runCatch(this) {
                 val file = propsOpenChooser.selectedFile
-                contentHolder.settings = Settings.parseFile(file.absolutePath)
-                propsLabel.text = "= ${contentHolder.settings.file?.name}"
+                contentHolder.settings = SettingsIO.load(file)
+                propsLabel.text = "= ${contentHolder.settingsFile?.name}"
                 SwingUtilities.invokeLater {
-                    for (l in propertiesOpenListeners) {
+                    for (l in settingsOpenListeners) {
                         l.fileOpened(file)
                     }
                     contentHolder.callSettingsListeners()
@@ -307,14 +308,14 @@ class MainFrame(settings: Settings, files: List<String>) : JFrame() {
         }
     }
 
-    private fun saveProperties() {
+    private fun saveSettings() {
         if (propsSaveChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             var file = propsSaveChooser.selectedFile
             if (file.extension.isBlank()) {
-                file = File(file.path + ".properties")
+                file = File(file.path + ".yml")
             }
             GuiUtils.runCatch(this) {
-                Settings.save(contentHolder.settings, file)
+                SettingsIO.save(file, contentHolder.settings)
                 if (!file.isFile) {
                     JOptionPane.showMessageDialog(this@MainFrame, "File not saved: ${file.absolutePath}")
                 }

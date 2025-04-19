@@ -8,6 +8,7 @@ import javax.imageio.ImageIO
 
 class ContentHolder(
     var settings: Settings,
+    var settingsFile: File?,
     var files: MutableList<String>
 ) {
 

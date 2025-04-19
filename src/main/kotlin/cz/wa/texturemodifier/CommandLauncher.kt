@@ -63,7 +63,7 @@ class CommandLauncher(
             BLUR_CMD -> BlurCommand(settings)
             PIXELATE_CMD -> PixelateCommand(settings)
             FILL_BG_CMD -> FillBackgroundCommand(settings)
-            MERGE_MAPS_CMD -> MergeMapCommand(settings)
+            MERGE_MAPS_CMD -> MergeMapsCommand(settings)
             MULTIPLY_COLOR_CMD -> MultiplyColorCommand(settings)
             REMOVE_ALPHA_CMD -> RemoveAlphaCommand(settings)
             else -> throw IllegalArgumentException("Unknown command $command")

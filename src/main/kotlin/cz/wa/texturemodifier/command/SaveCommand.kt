@@ -26,7 +26,7 @@ class SaveCommand(settings: Settings, private val stats: SaveStats, private val 
         // check overwrite
         var existed = false
         if (newFile.isFile) {
-            if (settings.overwriteType == OverwriteType.OVERWRITE) {
+            if (settings.output.overwriteType == OverwriteType.OVERWRITE) {
                 existed = true
                 println("Overwriting file: $newName")
             } else {
@@ -60,12 +60,12 @@ class SaveCommand(settings: Settings, private val stats: SaveStats, private val 
     private fun getFileName(): String {
         val dir = origFile.parentFile
         val fileName = origFile.nameWithoutExtension
-        var ext = if (settings.outFormat.isNullOrBlank()) origFile.extension else settings.outFormat
+        var ext = if (settings.output.format.isNullOrBlank()) origFile.extension else settings.output.format
         if (ext.lowercase() in TextureModifierMain.IMAGE_JPG_EXTS) {
            ext = "png"
         }
 
-        return "${dir.path}/${settings.outPrefix}${fileName}${settings.outPostfix}.${ext}"
+        return "${dir.path}/${settings.output.prefix}${fileName}${settings.output.postfix}.${ext}"
     }
 
     override fun getHelp(): String {

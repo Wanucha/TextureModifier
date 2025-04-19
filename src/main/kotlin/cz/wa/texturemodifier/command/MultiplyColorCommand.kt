@@ -17,13 +17,13 @@ class MultiplyColorCommand(settings: Settings) : AbstractCommand(settings) {
         val ret = ImageUtils.copyImage(image)
         val outTex = Texture(ret)
 
-        val r1 = settings.multiplyColorMulColor.red / 255.0
-        val g1 = settings.multiplyColorMulColor.green / 255.0
-        val b1 = settings.multiplyColorMulColor.blue / 255.0
+        val r1 = settings.multiplyColor.mulColor.red / 255.0
+        val g1 = settings.multiplyColor.mulColor.green / 255.0
+        val b1 = settings.multiplyColor.mulColor.blue / 255.0
 
-        val r2 = settings.multiplyColorAddColor.red
-        val g2 = settings.multiplyColorAddColor.green
-        val b2 = settings.multiplyColorAddColor.blue
+        val r2 = settings.multiplyColor.addColor.red
+        val g2 = settings.multiplyColor.addColor.green
+        val b2 = settings.multiplyColor.addColor.blue
 
         for (y in 0 until ret.height) {
             for (x in 0 until ret.width) {

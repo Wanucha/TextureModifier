@@ -57,12 +57,12 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
     }
 
     private fun paintComponent(g: Graphics) {
-        g.color = contentHolder.settings.guiBgColor
+        g.color = contentHolder.settings.gui.backgroundColor
         g.fillRect(0, 0, width, height)
         if (contentHolder.sourceImage == null) {
             return
         }
-        if (contentHolder.settings.guiShowBounds) {
+        if (contentHolder.settings.gui.showBounds) {
             drawBounds(g)
         }
         drawBefore(g)
@@ -74,7 +74,7 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
     }
 
     protected open fun drawBounds(g: Graphics) {
-        val c = contentHolder.settings.guiBgColor
+        val c = contentHolder.settings.gui.backgroundColor
         g.color = Color((c.red + 128) % 256, (c.green + 128) % 256, (c.blue + 128) % 256)
         val image = getImage()!!
         val w = image.width
