@@ -3,7 +3,6 @@ package cz.wa.texturemodifier.gui.utils
 import java.awt.geom.AffineTransform
 import java.awt.image.AffineTransformOp
 import java.awt.image.BufferedImage
-import java.awt.image.DataBufferByte
 import java.awt.image.DataBufferInt
 
 
@@ -47,21 +46,11 @@ class ImageUtils {
 
         private fun convertToIntBuffer(img: BufferedImage): BufferedImage {
             val ret = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
-            val outData = (ret.raster.dataBuffer as DataBufferInt).data
-            val data = (img.raster.dataBuffer as DataBufferByte).data
 
-            val length = img.width * img.height
-            if (length * 4 == data.size && img.type != BufferedImage.TYPE_BYTE_INDEXED && img.type != BufferedImage.TYPE_4BYTE_ABGR) {
-                for (i in 0 until length) {
-                    val i2 = i * 4
-                    outData[i] =
-                        (data[i2].toInt() shl 24) or (data[i2 + 1].toInt() shl 16) or (data[i2 + 2].toInt() shl 8) or (data[i2 + 3].toInt())
-                }
-            } else {
-                for (i in 0 until length) {
-                    // TODO slow!!!
-                    outData[i] = img.getRGB(i % img.width, i / img.width)
-                }
+            val srcPixels = IntArray(img.width)
+            for (y in 0 until img.height) {
+                img.getRGB(0, y, img.width, 1, srcPixels, 0, img.width)
+                ret.setRGB(0, y, img.width, 1, srcPixels, 0, img.width)
             }
             return ret
         }
