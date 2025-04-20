@@ -2,6 +2,7 @@ package cz.wa.texturemodifier
 
 import cz.wa.texturemodifier.command.*
 import cz.wa.texturemodifier.gui.utils.ImageUtils
+import cz.wa.texturemodifier.settings.Settings
 import org.apache.commons.io.filefilter.WildcardFileFilter
 import java.awt.image.BufferedImage
 import java.io.File
@@ -62,7 +63,7 @@ class CommandLauncher(
             BLUR_CMD -> BlurCommand(settings)
             PIXELATE_CMD -> PixelateCommand(settings)
             FILL_BG_CMD -> FillBackgroundCommand(settings)
-            MERGE_MAPS_CMD -> MergeMapCommand(settings)
+            MERGE_MAPS_CMD -> MergeMapsCommand(settings)
             MULTIPLY_COLOR_CMD -> MultiplyColorCommand(settings)
             REMOVE_ALPHA_CMD -> RemoveAlphaCommand(settings)
             else -> throw IllegalArgumentException("Unknown command $command")
@@ -92,7 +93,7 @@ class CommandLauncher(
             }
         }
 
-        return ret;
+        return ret
     }
 
     private fun listFiles(ret: ArrayList<File>, file: String) {

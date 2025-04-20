@@ -12,7 +12,7 @@ class TextureF(val width: Int, val height: Int) {
     val size = Vec2i(width, height)
 
     init {
-        pixels = Array<Array<ColorF>>(width) {Array<ColorF>(height) {ColorF.BLACK} }
+        pixels = Array(width) {Array(height) {ColorF.BLACK} }
     }
 
     constructor(tex: Texture) : this(tex.width, tex.height) {

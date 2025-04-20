@@ -1,8 +1,5 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.ScaleType
-import cz.wa.texturemodifier.Settings
-import cz.wa.texturemodifier.SmoothType
 import cz.wa.texturemodifier.gui.utils.FilterType
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.ColorAF
@@ -10,6 +7,9 @@ import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
 import cz.wa.texturemodifier.math.Vec2f
 import cz.wa.texturemodifier.math.Vec2i
+import cz.wa.texturemodifier.settings.ScaleType
+import cz.wa.texturemodifier.settings.Settings
+import cz.wa.texturemodifier.settings.SmoothType
 import java.awt.image.BufferedImage
 import kotlin.math.max
 import kotlin.math.min
@@ -27,17 +27,17 @@ import kotlin.math.roundToInt
 class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
 
     override fun execute(image: BufferedImage): BufferedImage {
-        var sizeX = settings.pixelateSizeX
-        var sizeY = settings.pixelateSizeY
-        if (!settings.pixelateUseSize) {
-            sizeX = (image.width / settings.pixelateScale).roundToInt()
-            sizeY = (image.height / settings.pixelateScale).roundToInt()
+        var sizeX = settings.pixelate.sizeX
+        var sizeY = settings.pixelate.sizeY
+        if (!settings.pixelate.useSize) {
+            sizeX = (image.width / settings.pixelate.scale).roundToInt()
+            sizeY = (image.height / settings.pixelate.scale).roundToInt()
         }
 
-        validateSettings(image, sizeX, sizeY)
+        validateSettings(sizeX, sizeY)
 
         var img = image
-        if (settings.pixelateMiddleUse) {
+        if (settings.pixelate.middleUse) {
             img = doMiddleStep(img, sizeX, sizeY)
         }
 
@@ -58,16 +58,16 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
         val rx = image.width / sizeX.toFloat()
         val ry = image.height / sizeY.toFloat()
 
-        if (settings.pixelateBlendSmooth < 1) {
+        if (settings.pixelate.blendSmooth < 1) {
             // pixelate
 
-            if (settings.pixelateScaleType == ScaleType.NEAREST && !settings.pixelateIgnoreBgColor) {
+            if (settings.pixelate.scaleType == ScaleType.NEAREST && !settings.pixelate.ignoreBgColor) {
                 // simple nearest filter
                 ret = ImageUtils.getFilteredImage(image, sizeX, sizeY, FilterType.NEAREST)
                 outTex = Texture(ret)
             } else {
                 // some more complex filter
-                ret = ImageUtils.createEmptyImage(sizeX, sizeY);
+                ret = ImageUtils.createEmptyImage(sizeX, sizeY)
                 outTex = Texture(ret)
                 for (y in 0 until sizeX) {
                     for (x in 0 until sizeY) {
@@ -83,13 +83,13 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             outTex = Texture(ret)
         }
 
-        if (settings.pixelateBlendSmooth > 0) {
+        if (settings.pixelate.blendSmooth > 0) {
             // smooth
             var smoothTex = inTex
 
-            if (settings.pixelateSmoothType == SmoothType.ANISO || settings.pixelateSmoothType == SmoothType.ANISO_BILINEAR) {
+            if (settings.pixelate.smoothType == SmoothType.ANISO || settings.pixelate.smoothType == SmoothType.ANISO_BILINEAR) {
                 // create smooth texture
-                var anisoSize = findAnisoSize(image.width, image.height, sizeX, sizeY)
+                val anisoSize = findAnisoSize(image.width, image.height, sizeX, sizeY)
                 smoothTex = Texture(ImageUtils.createEmptyImage(anisoSize.x, anisoSize.y))
                 val rxA = image.width / anisoSize.x
                 val ryA = image.height / anisoSize.y
@@ -103,10 +103,18 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             }
 
             // apply to output
-            val bilinear = ((smoothTex.width != outTex.width) && (smoothTex.height != outTex.height) &&
-                (settings.pixelateSmoothType == SmoothType.BILINEAR || settings.pixelateSmoothType == SmoothType.ANISO_BILINEAR));
-            smoothTex = Texture(ImageUtils.getFilteredImage(smoothTex.img, sizeX, sizeY, if (bilinear) FilterType.BILINEAR else FilterType.NEAREST))
-            val blend = settings.pixelateBlendSmooth.toFloat()
+            val bilinear =
+                ((smoothTex.width != outTex.width) && (smoothTex.height != outTex.height) &&
+                        (settings.pixelate.smoothType == SmoothType.BILINEAR || settings.pixelate.smoothType == SmoothType.ANISO_BILINEAR))
+            smoothTex = Texture(
+                ImageUtils.getFilteredImage(
+                    smoothTex.img,
+                    sizeX,
+                    sizeY,
+                    if (bilinear) FilterType.BILINEAR else FilterType.NEAREST
+                )
+            )
+            val blend = settings.pixelate.blendSmooth.toFloat()
             for (y in 0 until sizeY) {
                 for (x in 0 until sizeX) {
                     val c = ColorAF(outTex.getPoint(x, y)).lerp(ColorAF(smoothTex.getPoint(x, y)), blend)
@@ -136,15 +144,15 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             "\t - ANISO - before filtering, scales down the map and averages color\n" +
             "\t - ANISO_BILINEAR - combines both (smoothest)"
 
-    private fun validateSettings(image: BufferedImage, sizeX: Int, sizeY: Int) {
+    private fun validateSettings(sizeX: Int, sizeY: Int) {
         check(sizeX >= 1) { "pixelateSizeX must be >= 1" }
         check(sizeY >= 1) { "pixelateSizeY must be >= 1" }
-        check(settings.pixelateColors in 2..256) { "pixelateColors must be > 1 and <= 256" }
-        check(settings.pixelateScaleColorTolerance in 0..255) {
+        check(settings.pixelate.colors in 2..256) { "pixelateColors must be > 1 and <= 256" }
+        check(settings.pixelate.scaleColorTolerance in 0..255) {
             "pixelateScaleColorTolerance must be >= 0 and < 256"
         }
-        check(settings.pixelateBlendSmooth in 0.0..1.0) {"pixelateBlendSmooth must be 0..1"}
-        check(settings.pixelateMiddleScale > 0.0) {"pixelateMiddleScale must be > 0"}
+        check(settings.pixelate.blendSmooth in 0.0..1.0) { "pixelateBlendSmooth must be 0..1" }
+        check(settings.pixelate.middleScale > 0.0) { "pixelateMiddleScale must be > 0" }
     }
 
     /**
@@ -158,31 +166,32 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
      */
     private fun processPixel(outTex: Texture, x: Int, y: Int, inTex: Texture, px: IntRange, py: IntRange) {
         val c: Int
-        when (settings.pixelateScaleType) {
+        c = when (settings.pixelate.scaleType) {
             ScaleType.NEAREST -> {
-                if (!settings.pixelateIgnoreBgColor) {
-                    c = roundColor(inTex.getPoint(middle(px), middle(py)))
+                if (!settings.pixelate.ignoreBgColor) {
+                    roundColor(inTex.getPoint(middle(px), middle(py)))
                 } else {
                     // TODO find first not BG
-                    c = roundColor(inTex.getPoint(middle(px), middle(py)))
+                    roundColor(inTex.getPoint(middle(px), middle(py)))
                 }
             }
+
             ScaleType.MOST_COLOR -> {
-                c = findMostColor(inTex, px, py)
+                findMostColor(inTex, px, py)
             }
         }
         outTex.setPoint(x, y, c)
     }
 
     private fun findMostColor(inTex: Texture, px: IntRange, py: IntRange): Int {
-        val colors = settings.pixelateColors
-        val bgColor = settings.pixelateBgColor.rgb
+        val colors = settings.pixelate.colors
+        val bgColor = settings.pixelate.backgroundColor.rgb
         // count colors
         val counts = IntArray(colors * colors * colors)
         for (y in py) {
             for (x in px) {
                 val c = inTex.getPoint(x, y)
-                if (settings.pixelateIgnoreBgColor && c == bgColor) {
+                if (settings.pixelate.ignoreBgColor && c == bgColor) {
                     // ignore bg
                     continue
                 }
@@ -203,7 +212,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
         }
         if (maxC == 0) {
             // only bg
-            return settings.pixelateBgColor.rgb
+            return settings.pixelate.backgroundColor.rgb
         }
 
         return unindexColor(maxI)
@@ -256,7 +265,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
             }
         }
 
-        var color = 0;
+        var color = 0
         if (ca > 0) {
             val newR = (r / ca).roundToInt()
             val newG = (g / ca).roundToInt()
@@ -278,17 +287,17 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
         return ColorUtils.fromRGB(r, g, b)
     }
 
-    private fun roundChannel(a: Int) = if (settings.pixelateColors >= 256) {
+    private fun roundChannel(a: Int) = if (settings.pixelate.colors >= 256) {
         a
     } else {
-        (a * (settings.pixelateColors / 256.0)).toInt() * 255 / (settings.pixelateColors - 1)
+        (a * (settings.pixelate.colors / 256.0)).toInt() * 255 / (settings.pixelate.colors - 1)
     }
 
     private fun getColorIndexRange(c: Int): List<Int> {
         val r = getColorIndexChannel(ColorUtils.getRed(c))
         val g = getColorIndexChannel(ColorUtils.getGreen(c))
         val b = getColorIndexChannel(ColorUtils.getBlue(c))
-        val tol = getColorIndexChannel(settings.pixelateScaleColorTolerance)
+        val tol = getColorIndexChannel(settings.pixelate.scaleColorTolerance)
         if (tol == 0) {
             return listOf(getColorIndex(r, g, b))
         }
@@ -305,26 +314,26 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
     }
 
     private fun doMiddleStep(img: BufferedImage, sizeX: Int, sizeY: Int): BufferedImage {
-        val smoothBlend = settings.pixelateBlendSmooth
+        val smoothBlend = settings.pixelate.blendSmooth
         try {
-            settings.pixelateBlendSmooth = 1.0
-            val sx = (sizeX * settings.pixelateMiddleScale).roundToInt()
-            val sy = (sizeY * settings.pixelateMiddleScale).roundToInt()
+            settings.pixelate.blendSmooth = 1.0
+            val sx = (sizeX * settings.pixelate.middleScale).roundToInt()
+            val sy = (sizeY * settings.pixelate.middleScale).roundToInt()
             return pixelateImage(img, sx, sy)
         } finally {
-            settings.pixelateBlendSmooth = smoothBlend
+            settings.pixelate.blendSmooth = smoothBlend
         }
     }
 
     private fun getColorRange(c: Int, tol: Int): IntRange {
-        return IntRange(max(c - tol, 0), min(c + tol, settings.pixelateColors - 1))
+        return IntRange(max(c - tol, 0), min(c + tol, settings.pixelate.colors - 1))
     }
 
     private fun unindexColor(c: Int): Int {
-        val r = c % settings.pixelateColors
-        val g = (c / settings.pixelateColors) % settings.pixelateColors
-        val b = c / (settings.pixelateColors * settings.pixelateColors)
-        val m = 255 / (settings.pixelateColors - 1)
+        val r = c % settings.pixelate.colors
+        val g = (c / settings.pixelate.colors) % settings.pixelate.colors
+        val b = c / (settings.pixelate.colors * settings.pixelate.colors)
+        val m = 255 / (settings.pixelate.colors - 1)
         return ColorUtils.fromRGB(r * m, g * m, b * m)
     }
 
@@ -336,7 +345,7 @@ class PixelateCommand(settings: Settings) : AbstractCommand(settings) {
     }
 
     private fun getColorIndex(r: Int, g: Int, b: Int) =
-        r + g * settings.pixelateColors + b * settings.pixelateColors * settings.pixelateColors
+        r + g * settings.pixelate.colors + b * settings.pixelate.colors * settings.pixelate.colors
 
-    private fun getColorIndexChannel(a: Int) = (a * (settings.pixelateColors / 256.0)).toInt()
+    private fun getColorIndexChannel(a: Int) = (a * (settings.pixelate.colors / 256.0)).toInt()
 }

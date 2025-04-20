@@ -1,4 +1,4 @@
-package cz.wa.texturemodifier
+package cz.wa.texturemodifier.settings
 
 enum class MapType {
     TWO_SIDE,

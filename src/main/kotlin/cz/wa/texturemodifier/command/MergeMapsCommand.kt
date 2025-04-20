@@ -1,11 +1,11 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.MapType
-import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
 import cz.wa.texturemodifier.math.Vec2i
+import cz.wa.texturemodifier.settings.MapType
+import cz.wa.texturemodifier.settings.Settings
 import java.awt.image.BufferedImage
 import kotlin.math.roundToInt
 
@@ -17,22 +17,22 @@ import kotlin.math.roundToInt
  * That means average values RGB from left and convert to R.
  * Then take G from right and convert to alpha and blue (same value for both).
  */
-class MergeMapCommand(settings: Settings) : AbstractCommand(settings) {
+class MergeMapsCommand(settings: Settings) : AbstractCommand(settings) {
 
     override fun execute(image: BufferedImage): BufferedImage {
         val maps = ArrayList<MapConvert>(4)
-        maps.add(parseMap(settings.mergeMapsMap1))
-        maps.add(parseMap(settings.mergeMapsMap2))
-        if (settings.mergeMapsLayout == MapType.FOUR_SQUARE) {
-            maps.add(parseMap(settings.mergeMapsMap3))
-            maps.add(parseMap(settings.mergeMapsMap4))
+        maps.add(parseMap(settings.mergeMaps.map1))
+        maps.add(parseMap(settings.mergeMaps.map2))
+        if (settings.mergeMaps.layout == MapType.FOUR_SQUARE) {
+            maps.add(parseMap(settings.mergeMaps.map3))
+            maps.add(parseMap(settings.mergeMaps.map4))
         }
 
-        check(settings.mergeMapsLayout == MapType.TWO_ABOVE || image.width % 2 == 0) { "Layout has maps by side, image width must be even" }
-        check(settings.mergeMapsLayout == MapType.TWO_SIDE || image.height % 2 == 0) { "Layout has maps above, image height must be even" }
+        check(settings.mergeMaps.layout == MapType.TWO_ABOVE || image.width % 2 == 0) { "Layout has maps by side, image width must be even" }
+        check(settings.mergeMaps.layout == MapType.TWO_SIDE || image.height % 2 == 0) { "Layout has maps above, image height must be even" }
 
-        val w = if (settings.mergeMapsLayout == MapType.TWO_ABOVE) image.width else image.width / 2
-        val h = if (settings.mergeMapsLayout == MapType.TWO_SIDE) image.height else image.height / 2
+        val w = if (settings.mergeMaps.layout == MapType.TWO_ABOVE) image.width else image.width / 2
+        val h = if (settings.mergeMaps.layout == MapType.TWO_SIDE) image.height else image.height / 2
 
         val ret = ImageUtils.createEmptyImage(w, h)
         val inTex = Texture(image)
@@ -64,7 +64,7 @@ class MergeMapCommand(settings: Settings) : AbstractCommand(settings) {
         val output = ArrayList<Int>(4)
         val c1 = getInputPixel(inTex, x, y, Vec2i.ZERO)
         output.add(maps[0].convert(c1))
-        if (settings.mergeMapsLayout == MapType.TWO_SIDE || settings.mergeMapsLayout == MapType.FOUR_SQUARE) {
+        if (settings.mergeMaps.layout == MapType.TWO_SIDE || settings.mergeMaps.layout == MapType.FOUR_SQUARE) {
             val c2 = getInputPixel(inTex, x, y, Vec2i(1, 0))
             output.add(maps[1].convert(c2))
         } else {
@@ -72,7 +72,7 @@ class MergeMapCommand(settings: Settings) : AbstractCommand(settings) {
             output.add(maps[1].convert(c2))
         }
 
-        if (settings.mergeMapsLayout == MapType.FOUR_SQUARE) {
+        if (settings.mergeMaps.layout == MapType.FOUR_SQUARE) {
             val c3 = getInputPixel(inTex, x, y, Vec2i(0, 1))
             output.add(maps[2].convert(c3))
             val c4 = getInputPixel(inTex, x, y, Vec2i(1, 1))
@@ -82,7 +82,7 @@ class MergeMapCommand(settings: Settings) : AbstractCommand(settings) {
         outTex.setPoint(x, y, mergeColors(output, maps))
     }
 
-    private fun mergeColors(colors: ArrayList<Int>, maps: ArrayList<MergeMapCommand.MapConvert>): Int {
+    private fun mergeColors(colors: ArrayList<Int>, maps: ArrayList<MapConvert>): Int {
         val r = ArrayList<Int>(4)
         val g = ArrayList<Int>(4)
         val b = ArrayList<Int>(4)

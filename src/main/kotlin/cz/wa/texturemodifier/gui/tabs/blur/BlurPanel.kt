@@ -51,13 +51,17 @@ open class BlurPanel(contentHolder: ContentHolder) :
         }
 
         override fun showSettings() {
-            radiusTf.text = contentHolder.settings.blurRadius.toString()
-            ratioTf.text = contentHolder.settings.blurRatio.toString()
+            with (contentHolder.settings.blur) {
+                radiusTf.text = radius.toString()
+                ratioTf.text = ratio.toString()
+            }
         }
 
         override fun applySettings() {
-            contentHolder.settings.blurRadius = radiusTf.text.toDouble()
-            contentHolder.settings.blurRatio = ratioTf.text.toDouble()
+            with (contentHolder.settings.blur) {
+                radius = radiusTf.text.toDouble()
+                ratio = ratioTf.text.toDouble()
+            }
         }
     }
 }

@@ -37,13 +37,17 @@ open class MultiplyColorPanel(contentHolder: ContentHolder) :
         }
 
         override fun showSettings() {
-            mulColorTf.text = ColorUtils.toString(contentHolder.settings.multiplyColorMulColor)
-            addColorTf.text = ColorUtils.toString(contentHolder.settings.multiplyColorAddColor)
+            with (contentHolder.settings.multiplyColor) {
+                mulColorTf.text = ColorUtils.toString(mulColor)
+                addColorTf.text = ColorUtils.toString(addColor)
+            }
         }
 
         override fun applySettings() {
-            contentHolder.settings.multiplyColorMulColor = ColorUtils.parse(mulColorTf.text)
-            contentHolder.settings.multiplyColorAddColor = ColorUtils.parse(addColorTf.text)
+            with (contentHolder.settings.multiplyColor) {
+                mulColor = ColorUtils.parse(mulColorTf.text)
+                addColor = ColorUtils.parse(addColorTf.text)
+            }
         }
     }
 }

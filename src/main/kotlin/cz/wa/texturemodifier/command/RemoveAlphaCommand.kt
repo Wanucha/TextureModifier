@@ -1,15 +1,15 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
+import cz.wa.texturemodifier.settings.Settings
 import java.awt.image.BufferedImage
 
 class RemoveAlphaCommand(settings: Settings) : AbstractCommand(settings) {
 
     override fun execute(image: BufferedImage): BufferedImage {
-        check(settings.removeAlphaThreshold in 0..256) { "removeAlphaThreshold must be 0..256" }
+        check(settings.removeAlpha.threshold in 0..256) { "removeAlphaThreshold must be 0..256" }
 
         val ret = ImageUtils.copyImage(image)
         val tex = Texture(ret)
@@ -28,10 +28,10 @@ class RemoveAlphaCommand(settings: Settings) : AbstractCommand(settings) {
     }
 
     private fun computeAlpha(a: Int): Int {
-        if (a >= settings.removeAlphaThreshold) {
-            return 255
+        return if (a >= settings.removeAlpha.threshold) {
+            255
         } else {
-            return 0
+            0
         }
     }
 

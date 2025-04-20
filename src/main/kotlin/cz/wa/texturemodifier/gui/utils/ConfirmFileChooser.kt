@@ -6,7 +6,7 @@ import javax.swing.JOptionPane
 class ConfirmFileChooser: JFileChooser() {
     override fun approveSelection() {
         val f = selectedFile
-        if (f.isFile() && dialogType == JFileChooser.SAVE_DIALOG) {
+        if (f.isFile() && dialogType == SAVE_DIALOG) {
             val result = JOptionPane.showConfirmDialog(
                 this,
                 "File ${f.absolutePath} already exists, overwrite?",

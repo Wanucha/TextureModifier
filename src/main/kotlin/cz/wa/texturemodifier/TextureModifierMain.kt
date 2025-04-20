@@ -1,12 +1,14 @@
 package cz.wa.texturemodifier
 
 import cz.wa.texturemodifier.gui.MainFrame
+import cz.wa.texturemodifier.settings.Settings
+import cz.wa.texturemodifier.settings.io.SettingsIO
 import java.io.File
 
 class TextureModifierMain {
 
     companion object {
-        const val VERSION = "0.3.8"
+        const val VERSION = "0.4.0"
 
         val IMAGE_OPEN_EXTS = arrayOf("png", "jpg", "jpeg", "gif", "bmp")
         val IMAGE_SAVE_EXTS = arrayOf("png", "gif", "bmp")
@@ -19,18 +21,23 @@ class TextureModifierMain {
             println(printTitle())
             var settings = Settings()
             var files = emptyList<String>()
+            var settingsFile: File? = null
             try {
                 if (args.isNotEmpty()) {
-                    val settingsFile = findProperties(args)
-                    if (settingsFile.isNotEmpty()) {
-                        settings = Settings.parseFile(settingsFile)
+                    val settingsFileName = findSettings(args)
+                    if (settingsFileName.isNotEmpty()) {
+                        settingsFile = File(settingsFileName)
+                        settings = SettingsIO.load(settingsFile)
+                        if (SettingsIO.isProperties(settingsFile)) {
+                            println("Loaded obsolete properties file, save settings as yml and load the new file next time")
+                        }
                     }
                     files = parseImageFiles(args)
                     val commands = parseCommands(args)
 
                     if (commands.isNotEmpty()) {
                         // has commands, run them
-                        if (settingsFile.isEmpty()) {
+                        if (settingsFileName.isEmpty()) {
                             println("Error running commands: Commands found but no settings specified")
                         } else {
                             println("Commands found (${commands.size}), running commands")
@@ -46,17 +53,18 @@ class TextureModifierMain {
                 printMessages(e)
                 throw e
             }
-            MainFrame(settings, files)
+            MainFrame(settings, settingsFile, files)
         }
 
-        private fun findProperties(args: Array<String>): String {
+        private fun findSettings(args: Array<String>): String {
             var ret = ""
             for (arg in args) {
-                if (arg.endsWith(".properties")) {
+                if (arg.endsWith(".yml", true) || arg.endsWith(".yaml", true)
+                    || arg.endsWith(".properties", true)) {
                     if (ret.isEmpty()) {
                         ret = arg
                     } else {
-                        println("Multiple properties, ignored: $arg")
+                        println("Multiple settings, ignored: $arg")
                     }
                 }
             }
@@ -88,7 +96,7 @@ class TextureModifierMain {
 
         fun printUsage(): String {
             return "Usage:\n" +
-                    "file path as an argument - open the file at start (can be image or properties)\n" +
+                    "file path as an argument - open the file at start (can be image or settings)\n" +
                     "\tfile in a directory can be specified with * or ?, example 'img/*.png'\n" +
                     "If no command specified, starts GUI\n" +
                     "If a command is specified, processes the input files and saves them\n" +

@@ -33,11 +33,15 @@ open class RemoveAlphaPanel(contentHolder: ContentHolder) :
         }
 
         override fun showSettings() {
-            thresholdTf.text = contentHolder.settings.removeAlphaThreshold.toString()
+            with (contentHolder.settings.removeAlpha) {
+                thresholdTf.text = threshold.toString()
+            }
         }
 
         override fun applySettings() {
-            contentHolder.settings.removeAlphaThreshold = thresholdTf.text.toInt()
+            with (contentHolder.settings.removeAlpha) {
+                threshold = thresholdTf.text.toInt()
+            }
         }
     }
 }

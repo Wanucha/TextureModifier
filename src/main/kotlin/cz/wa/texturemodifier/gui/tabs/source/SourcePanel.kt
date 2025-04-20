@@ -17,15 +17,15 @@ class SourcePanel(val contentHolder: ContentHolder) : JPanel() {
     private val toolPanel = ToolPanel(contentHolder, canvas)
 
     init {
-        layout = BorderLayout()
+        this@SourcePanel.layout = BorderLayout()
         MainFrame.instance!!.bgColorSlider.addListener { canvas.refresh() }
         add(canvas, BorderLayout.CENTER)
         add(toolPanel, BorderLayout.EAST)
     }
 
     class ToolPanel(val contentHolder: ContentHolder, val canvas: SourceViewer) : JPanel() {
-        private val labelW = JLabel();
-        private val labelH = JLabel();
+        private val labelW = JLabel()
+        private val labelH = JLabel()
 
         init {
             maximumSize = Dimension(200, 4096)

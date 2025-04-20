@@ -59,15 +59,19 @@ open class SeamlessPanel(contentHolder: ContentHolder) :
         }
 
         override fun showSettings() {
-            distTf.text = contentHolder.settings.seamlessDist.toString()
-            alphaCb.isSelected = contentHolder.settings.seamlessAlpha
-            overlapCb.isSelected = contentHolder.settings.seamlessOverlap
+            with (contentHolder.settings.seamless) {
+                distTf.text = distance.toString()
+                alphaCb.isSelected = alpha
+                overlapCb.isSelected = overlap
+            }
         }
 
         override fun applySettings() {
-            contentHolder.settings.seamlessDist = distTf.text.toInt()
-            contentHolder.settings.seamlessAlpha = alphaCb.isSelected
-            contentHolder.settings.seamlessOverlap = overlapCb.isSelected
+            with (contentHolder.settings.seamless) {
+                distance = distTf.text.toInt()
+                alpha = alphaCb.isSelected
+                overlap = overlapCb.isSelected
+            }
         }
     }
 }

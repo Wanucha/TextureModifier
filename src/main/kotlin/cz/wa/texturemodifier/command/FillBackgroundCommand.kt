@@ -1,10 +1,10 @@
 package cz.wa.texturemodifier.command
 
-import cz.wa.texturemodifier.Settings
 import cz.wa.texturemodifier.gui.utils.ImageUtils
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.math.ColorUtils
 import cz.wa.texturemodifier.math.Vec2i
+import cz.wa.texturemodifier.settings.Settings
 import java.awt.image.BufferedImage
 
 /**
@@ -12,18 +12,18 @@ import java.awt.image.BufferedImage
  */
 class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
 
-    private var bgColor: Int = 0;
+    private var bgColor: Int = 0
 
     override fun execute(image: BufferedImage): BufferedImage {
-        check(settings.fillBgIterations >= 1) { "fillBgIterations must be >= 1" }
+        check(settings.fillBackground.iterations >= 1) { "fillBgIterations must be >= 1" }
 
         var inTex = Texture(image)
         val ret = ImageUtils.copyImage(image)
         var outTex = Texture(ret)
-        bgColor = settings.fillBgBgColor.rgb
+        bgColor = settings.fillBackground.bgColor.rgb
 
         var started = false
-        for (i in 0 until settings.fillBgIterations) {
+        for (i in 0 until settings.fillBackground.iterations) {
             if (started) {
                 inTex = outTex
                 outTex = Texture(ImageUtils.copyImage(inTex.img))
@@ -66,7 +66,7 @@ class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
     }
 
     private fun computeColor(inTex: Texture, x: Int, y: Int): Int {
-        val colors = ArrayList<Int>(if (settings.fillBgIncludeCorners) 8 else 4)
+        val colors = ArrayList<Int>(if (settings.fillBackground.includeCorners) 8 else 4)
         iterateNearPixels(inTex, x, y) {
             if (it != bgColor) {
                 colors.add(it)
@@ -74,10 +74,10 @@ class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
             true
         }
 
-        if (settings.fillBgAverageFill) {
-            return ColorUtils.averageColor(colors)
+        return if (settings.fillBackground.averageFill) {
+            ColorUtils.averageColor(colors)
         } else {
-            return mostColor(colors)
+            mostColor(colors)
         }
     }
 
@@ -104,13 +104,13 @@ class FillBackgroundCommand(settings: Settings) : AbstractCommand(settings) {
     private fun iterateNearPixels(inTex: Texture, x: Int, y: Int, function: (Int) -> Boolean) {
         for (p in NEIGHBORS1) {
             if (inTex.containsPoint(x + p.x, y + p.y) && !function.invoke(inTex.getPoint(x + p.x, y + p.y))) {
-                return;
+                return
             }
         }
-        if (settings.fillBgIncludeCorners) {
+        if (settings.fillBackground.includeCorners) {
             for (p in NEIGHBORS2) {
                 if (inTex.containsPoint(x + p.x, y + p.y) && !function.invoke(inTex.getPoint(x + p.x, y + p.y))) {
-                    return;
+                    return
                 }
             }
         }
