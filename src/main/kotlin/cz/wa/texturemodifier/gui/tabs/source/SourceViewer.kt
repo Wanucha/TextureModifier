@@ -8,7 +8,7 @@ import cz.wa.texturemodifier.gui.texturecanvas.TextureViewer
  * Displays original texture
  */
 class SourceViewer(contentHolder: ContentHolder) : TextureViewer(contentHolder) {
-    init {
-        MainFrame.instance!!.addImageOpenListener(createImageListener())
-    }
+	init {
+		MainFrame.instance!!.addImageOpenListener(createImageListener())
+	}
 }

@@ -9,45 +9,45 @@ import cz.wa.texturemodifier.math.ColorUtils
 import javax.swing.JTextField
 
 open class MultiplyColorPanel(contentHolder: ContentHolder) :
-    AbstractPanel<ModifierViewer>(contentHolder, ModifierViewer(contentHolder)) {
+	AbstractPanel<ModifierViewer>(contentHolder, ModifierViewer(contentHolder)) {
 
-    override fun createPanel(contentHolder: ContentHolder, canvas: ModifierViewer) = ToolPanel(contentHolder, canvas)
+	override fun createPanel(contentHolder: ContentHolder, canvas: ModifierViewer) = ToolPanel(contentHolder, canvas)
 
-    protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierViewer) :
-        AbstractToolPanel<ModifierViewer>(contentHolder, canvas, 200, MultiplyColorCommand::class.java) {
-        private val mulColorTf = JTextField("#FFFFFF")
-        private val addColorTf = JTextField("#000000")
+	protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierViewer) :
+		AbstractToolPanel<ModifierViewer>(contentHolder, canvas, 200, MultiplyColorCommand::class.java) {
+		private val mulColorTf = JTextField("#FFFFFF")
+		private val addColorTf = JTextField("#000000")
 
-        init {
-            // help
-            add(createHelpButton())
-            add(createEmptyPanel(40))
+		init {
+			// help
+			add(createHelpButton())
+			add(createEmptyPanel(40))
 
-            // multiply
-            mulColorTf.columns = 7
-            add(GuiUtils.createValuePanel("Multiply color", mulColorTf))
+			// multiply
+			mulColorTf.columns = 7
+			add(GuiUtils.createValuePanel("Multiply color", mulColorTf))
 
-            // add
-            addColorTf.columns = 7
-            add(GuiUtils.createValuePanel("Add color", addColorTf))
-            // apply
-            add(createApplyButton())
+			// add
+			addColorTf.columns = 7
+			add(GuiUtils.createValuePanel("Add color", addColorTf))
+			// apply
+			add(createApplyButton())
 
-            showSettings()
-        }
+			showSettings()
+		}
 
-        override fun showSettings() {
-            with (contentHolder.settings.multiplyColor) {
-                mulColorTf.text = ColorUtils.toString(mulColor)
-                addColorTf.text = ColorUtils.toString(addColor)
-            }
-        }
+		override fun showSettings() {
+			with(contentHolder.settings.multiplyColor) {
+				mulColorTf.text = ColorUtils.toString(mulColor)
+				addColorTf.text = ColorUtils.toString(addColor)
+			}
+		}
 
-        override fun applySettings() {
-            with (contentHolder.settings.multiplyColor) {
-                mulColor = ColorUtils.parse(mulColorTf.text)
-                addColor = ColorUtils.parse(addColorTf.text)
-            }
-        }
-    }
+		override fun applySettings() {
+			with(contentHolder.settings.multiplyColor) {
+				mulColor = ColorUtils.parse(mulColorTf.text)
+				addColor = ColorUtils.parse(addColorTf.text)
+			}
+		}
+	}
 }

@@ -14,103 +14,103 @@ import kotlin.math.roundToInt
  * Slider for color, currently changes bg color
  */
 class ColorSlider() : JPanel(), MouseListener, MouseMotionListener {
-    var color1: Color = Color.BLACK
-    var color2: Color = Color.WHITE
-    var valueColor: Color = Color.RED
+	var color1: Color = Color.BLACK
+	var color2: Color = Color.WHITE
+	var valueColor: Color = Color.RED
 
-    private var bgImage: BufferedImage = generateBgImage()
-    private var mouseDown = false
-    private val listeners = HashSet<(Int) -> Unit>()
+	private var bgImage: BufferedImage = generateBgImage()
+	private var mouseDown = false
+	private val listeners = HashSet<(Int) -> Unit>()
 
-    var value = 0
-        set(value) {
-            field = value.coerceIn(0, 255)
-            refresh()
-        }
+	var value = 0
+		set(value) {
+			field = value.coerceIn(0, 255)
+			refresh()
+		}
 
-    init {
-        addMouseListener(this)
-        addMouseMotionListener(this)
-        cursor = Cursor(Cursor.E_RESIZE_CURSOR)
-    }
+	init {
+		addMouseListener(this)
+		addMouseMotionListener(this)
+		cursor = Cursor(Cursor.E_RESIZE_CURSOR)
+	}
 
-    private fun generateBgImage(): BufferedImage {
-        val ret = ImageUtils.createEmptyImage(256, 1)
-        for (i in 0..255) {
-            val c = getColorAt(i)
-            ret.setRGB(i, 0, c.rgb)
-        }
-        return ret
-    }
+	private fun generateBgImage(): BufferedImage {
+		val ret = ImageUtils.createEmptyImage(256, 1)
+		for (i in 0..255) {
+			val c = getColorAt(i)
+			ret.setRGB(i, 0, c.rgb)
+		}
+		return ret
+	}
 
-    private fun getColorAt(i: Int): Color {
-        val d2 = i / (256f * 256f)
-        val d1 = (1 - i / 256f) / 256f
-        val c = Color(
-            color1.red * d1 + color2.red * d2,
-            color1.green * d1 + color2.green * d2,
-            color1.blue * d1 + color2.blue * d2
-        )
-        return c
-    }
+	private fun getColorAt(i: Int): Color {
+		val d2 = i / (256f * 256f)
+		val d1 = (1 - i / 256f) / 256f
+		val c = Color(
+			color1.red * d1 + color2.red * d2,
+			color1.green * d1 + color2.green * d2,
+			color1.blue * d1 + color2.blue * d2
+		)
+		return c
+	}
 
-    override fun paint(g: Graphics) {
-        // colors
-        g.drawImage(bgImage, 0, 0, width, height, 0, 0, bgImage.width, bgImage.height, null)
-        // value
-        val x = (value * width / 256f).roundToInt()
-        g.color = valueColor
-        g.drawLine(x, 0, x, height)
-    }
+	override fun paint(g: Graphics) {
+		// colors
+		g.drawImage(bgImage, 0, 0, width, height, 0, 0, bgImage.width, bgImage.height, null)
+		// value
+		val x = (value * width / 256f).roundToInt()
+		g.color = valueColor
+		g.drawLine(x, 0, x, height)
+	}
 
-    fun refresh() {
-        paint(graphics)
-    }
+	fun refresh() {
+		paint(graphics)
+	}
 
-    fun addListener(l: (Int) -> Unit) {
-        listeners.add(l)
-    }
+	fun addListener(l: (Int) -> Unit) {
+		listeners.add(l)
+	}
 
-    fun removeListener(l: (Int) -> Unit) {
-        listeners.remove(l)
-    }
+	fun removeListener(l: (Int) -> Unit) {
+		listeners.remove(l)
+	}
 
-    override fun mousePressed(e: MouseEvent) {
-        mouseDown = true
-        mouseMoved(e)
-    }
+	override fun mousePressed(e: MouseEvent) {
+		mouseDown = true
+		mouseMoved(e)
+	}
 
-    override fun mouseReleased(e: MouseEvent) {
-        mouseDown = false
-    }
+	override fun mouseReleased(e: MouseEvent) {
+		mouseDown = false
+	}
 
-    override fun mouseEntered(e: MouseEvent?) {
-        // empty
-    }
+	override fun mouseEntered(e: MouseEvent?) {
+		// empty
+	}
 
-    override fun mouseClicked(e: MouseEvent?) {
-        // empty
-    }
+	override fun mouseClicked(e: MouseEvent?) {
+		// empty
+	}
 
-    override fun mouseExited(e: MouseEvent?) {
-        // empty
-    }
+	override fun mouseExited(e: MouseEvent?) {
+		// empty
+	}
 
-    override fun mouseMoved(e: MouseEvent) {
-        if (mouseDown) {
-            value = (256f * (e.x / width.toFloat())).roundToInt()
-            refresh()
-            for (l in listeners) {
-                l.invoke(value)
-            }
-        }
-    }
+	override fun mouseMoved(e: MouseEvent) {
+		if (mouseDown) {
+			value = (256f * (e.x / width.toFloat())).roundToInt()
+			refresh()
+			for (l in listeners) {
+				l.invoke(value)
+			}
+		}
+	}
 
-    override fun mouseDragged(e: MouseEvent) {
-        mouseMoved(e)
-    }
+	override fun mouseDragged(e: MouseEvent) {
+		mouseMoved(e)
+	}
 
-    interface ValueListener {
-        fun valueChanged(value: Int)
-    }
+	interface ValueListener {
+		fun valueChanged(value: Int)
+	}
 }

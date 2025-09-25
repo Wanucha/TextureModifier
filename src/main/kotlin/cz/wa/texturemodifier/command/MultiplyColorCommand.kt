@@ -13,32 +13,32 @@ import kotlin.math.roundToInt
  */
 class MultiplyColorCommand(settings: Settings) : AbstractCommand(settings) {
 
-    override fun execute(image: BufferedImage): BufferedImage {
-        val ret = ImageUtils.copyImage(image)
-        val outTex = Texture(ret)
+	override fun execute(image: BufferedImage): BufferedImage {
+		val ret = ImageUtils.copyImage(image)
+		val outTex = Texture(ret)
 
-        val r1 = settings.multiplyColor.mulColor.red / 255.0
-        val g1 = settings.multiplyColor.mulColor.green / 255.0
-        val b1 = settings.multiplyColor.mulColor.blue / 255.0
+		val r1 = settings.multiplyColor.mulColor.red / 255.0
+		val g1 = settings.multiplyColor.mulColor.green / 255.0
+		val b1 = settings.multiplyColor.mulColor.blue / 255.0
 
-        val r2 = settings.multiplyColor.addColor.red
-        val g2 = settings.multiplyColor.addColor.green
-        val b2 = settings.multiplyColor.addColor.blue
+		val r2 = settings.multiplyColor.addColor.red
+		val g2 = settings.multiplyColor.addColor.green
+		val b2 = settings.multiplyColor.addColor.blue
 
-        for (y in 0 until ret.height) {
-            for (x in 0 until ret.width) {
-                val c = outTex.getPoint(x, y)
-                val r = min(255, (ColorUtils.getRed(c) * r1 + r2).roundToInt())
-                val g = min(255, (ColorUtils.getGreen(c) * g1 + g2).roundToInt())
-                val b = min(255, (ColorUtils.getBlue(c) * b1 + b2).roundToInt())
-                outTex.setPoint(x, y, ColorUtils.fromRGB(r, g, b))
-            }
-        }
+		for (y in 0 until ret.height) {
+			for (x in 0 until ret.width) {
+				val c = outTex.getPoint(x, y)
+				val r = min(255, (ColorUtils.getRed(c) * r1 + r2).roundToInt())
+				val g = min(255, (ColorUtils.getGreen(c) * g1 + g2).roundToInt())
+				val b = min(255, (ColorUtils.getBlue(c) * b1 + b2).roundToInt())
+				outTex.setPoint(x, y, ColorUtils.fromRGB(r, g, b))
+			}
+		}
 
-        return ret
-    }
+		return ret
+	}
 
-    override fun getHelp(): String = "Multyply by color and add color\n" +
-            "* multiply color - 1. multiplies by this color\n" +
-            "* add color - 2. adds this color\n"
+	override fun getHelp(): String = "Multyply by color and add color\n" +
+			"* multiply color - 1. multiplies by this color\n" +
+			"* add color - 2. adds this color\n"
 }
