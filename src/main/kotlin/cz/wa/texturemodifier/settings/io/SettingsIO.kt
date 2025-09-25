@@ -19,6 +19,10 @@ object SettingsIO {
     private val config: YamlConfig = YamlConfig().apply {
         setClassTag("settings", Settings::class.java)
         setClassTag("color", Color::class.java)
+        writeConfig.setWriteDefaultValues(true)
+        writeConfig.setKeepBeanPropertyOrder(true)
+        writeConfig.setIndentSize(2)
+        writeConfig.setQuoteChar(YamlConfig.Quote.DOUBLE)
 
         // custom serializer
         setScalarSerializer(Color::class.java, ColorSerializer())
