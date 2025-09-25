@@ -11,67 +11,67 @@ import javax.swing.JPanel
 import javax.swing.JTextField
 
 open class SeamlessPanel(contentHolder: ContentHolder) :
-    AbstractPanel<TillingMdofierViewer>(contentHolder, TillingMdofierViewer(contentHolder)) {
+	AbstractPanel<TillingMdofierViewer>(contentHolder, TillingMdofierViewer(contentHolder)) {
 
-    override fun createPanel(contentHolder: ContentHolder, canvas: TillingMdofierViewer) = ToolPanel(contentHolder, canvas)
+	override fun createPanel(contentHolder: ContentHolder, canvas: TillingMdofierViewer) = ToolPanel(contentHolder, canvas)
 
-    protected class ToolPanel(contentHolder: ContentHolder, canvas: TillingMdofierViewer) :
-        AbstractToolPanel<TillingMdofierViewer>(contentHolder, canvas, 150, SeamlessCommand::class.java) {
+	protected class ToolPanel(contentHolder: ContentHolder, canvas: TillingMdofierViewer) :
+		AbstractToolPanel<TillingMdofierViewer>(contentHolder, canvas, 150, SeamlessCommand::class.java) {
 
-        private val distTf = JTextField()
-        private val alphaCb = JCheckBox("Alpha blending")
-        private val overlapCb = JCheckBox("Overlap (reduce size)")
-        private val previewCb = JCheckBox("Preview tilling")
+		private val distTf = JTextField()
+		private val alphaCb = JCheckBox("Alpha blending")
+		private val overlapCb = JCheckBox("Overlap (reduce size)")
+		private val previewCb = JCheckBox("Preview tilling")
 
-        init {
-            // help
-            add(createHelpButton())
+		init {
+			// help
+			add(createHelpButton())
 
-            // distance
-            val p1 = JPanel(FlowLayout())
+			// distance
+			val p1 = JPanel(FlowLayout())
 
-            p1.add(JLabel("Distance PX"))
+			p1.add(JLabel("Distance PX"))
 
-            distTf.columns = 4
-            p1.add(distTf)
+			distTf.columns = 4
+			p1.add(distTf)
 
-            add(p1)
+			add(p1)
 
-            // alpha
-            add(alphaCb)
+			// alpha
+			add(alphaCb)
 
-            // overlap
-            add(overlapCb)
+			// overlap
+			add(overlapCb)
 
-            // apply
-            add(createApplyButton())
+			// apply
+			add(createApplyButton())
 
-            // preview
-            previewCb.addChangeListener { togglePreviewChanged() }
-            add(previewCb)
+			// preview
+			previewCb.addChangeListener { togglePreviewChanged() }
+			add(previewCb)
 
-            showSettings()
-        }
+			showSettings()
+		}
 
-        private fun togglePreviewChanged() {
-            canvas.showTilling = previewCb.isSelected
-            canvas.refresh()
-        }
+		private fun togglePreviewChanged() {
+			canvas.showTilling = previewCb.isSelected
+			canvas.refresh()
+		}
 
-        override fun showSettings() {
-            with (contentHolder.settings.seamless) {
-                distTf.text = distance.toString()
-                alphaCb.isSelected = alpha
-                overlapCb.isSelected = overlap
-            }
-        }
+		override fun showSettings() {
+			with(contentHolder.settings.seamless) {
+				distTf.text = distance.toString()
+				alphaCb.isSelected = alpha
+				overlapCb.isSelected = overlap
+			}
+		}
 
-        override fun applySettings() {
-            with (contentHolder.settings.seamless) {
-                distance = distTf.text.toInt()
-                alpha = alphaCb.isSelected
-                overlap = overlapCb.isSelected
-            }
-        }
-    }
+		override fun applySettings() {
+			with(contentHolder.settings.seamless) {
+				distance = distTf.text.toInt()
+				alpha = alphaCb.isSelected
+				overlap = overlapCb.isSelected
+			}
+		}
+	}
 }

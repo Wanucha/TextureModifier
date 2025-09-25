@@ -8,40 +8,40 @@ import cz.wa.texturemodifier.gui.utils.GuiUtils
 import javax.swing.JTextField
 
 open class RemoveAlphaPanel(contentHolder: ContentHolder) :
-    AbstractPanel<ModifierAlphaViewer>(contentHolder, ModifierAlphaViewer(contentHolder)) {
+	AbstractPanel<ModifierAlphaViewer>(contentHolder, ModifierAlphaViewer(contentHolder)) {
 
-    override fun createPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) =
-        ToolPanel(contentHolder, canvas)
+	override fun createPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) =
+		ToolPanel(contentHolder, canvas)
 
-    protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) :
-        AbstractToolPanel<ModifierAlphaViewer>(contentHolder, canvas, 130, RemoveAlphaCommand::class.java) {
+	protected class ToolPanel(contentHolder: ContentHolder, canvas: ModifierAlphaViewer) :
+		AbstractToolPanel<ModifierAlphaViewer>(contentHolder, canvas, 130, RemoveAlphaCommand::class.java) {
 
-        private val thresholdTf = JTextField()
+		private val thresholdTf = JTextField()
 
-        init {
-            // help
-            add(createHelpButton())
+		init {
+			// help
+			add(createHelpButton())
 
-            // threshold
-            thresholdTf.columns = 3
-            add(GuiUtils.createValuePanel("Threshold", thresholdTf))
+			// threshold
+			thresholdTf.columns = 3
+			add(GuiUtils.createValuePanel("Threshold", thresholdTf))
 
-            // apply
-            add(createApplyButton())
+			// apply
+			add(createApplyButton())
 
-            showSettings()
-        }
+			showSettings()
+		}
 
-        override fun showSettings() {
-            with (contentHolder.settings.removeAlpha) {
-                thresholdTf.text = threshold.toString()
-            }
-        }
+		override fun showSettings() {
+			with(contentHolder.settings.removeAlpha) {
+				thresholdTf.text = threshold.toString()
+			}
+		}
 
-        override fun applySettings() {
-            with (contentHolder.settings.removeAlpha) {
-                threshold = thresholdTf.text.toInt()
-            }
-        }
-    }
+		override fun applySettings() {
+			with(contentHolder.settings.removeAlpha) {
+				threshold = thresholdTf.text.toInt()
+			}
+		}
+	}
 }
