@@ -26,7 +26,6 @@ object SettingsIO {
 		writeConfig.setWriteDefaultValues(true)
 		writeConfig.setKeepBeanPropertyOrder(true)
 		writeConfig.setIndentSize(2)
-		writeConfig.setQuoteChar(YamlConfig.Quote.DOUBLE)
 
 		// custom serializer
 		setScalarSerializer(Color::class.java, ColorSerializer())
