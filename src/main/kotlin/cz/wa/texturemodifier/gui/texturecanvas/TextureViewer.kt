@@ -156,7 +156,7 @@ open class TextureViewer(val contentHolder: ContentHolder) : Canvas(),
         val image = getImage()
         if (image != null && p.x >= 0 && p.x < image.width && p.y >= 0 && p.y < image.height) {
             val color = image.getRGB(p.x, p.y)
-            text += ", color: ${ColorUtils.toString(color)}"
+            text += ", color: ${ColorUtils.toStringWithAlpha(color)}"
         }
         return text
     }
