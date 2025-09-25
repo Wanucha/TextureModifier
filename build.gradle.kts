@@ -15,11 +15,9 @@ repositories {
 }
 
 dependencies {
-    implementation("commons-io:commons-io:2.15.1")
     implementation(kotlin("stdlib-jdk8"))
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.0")
-
+    implementation("commons-io:commons-io:2.15.1")
+    implementation ("com.esotericsoftware.yamlbeans:yamlbeans:1.15")
     testImplementation("junit:junit:4.13.2")
 }
 

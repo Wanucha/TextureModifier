@@ -1,30 +1,38 @@
 package cz.wa.texturemodifier.settings.io
 
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.esotericsoftware.yamlbeans.YamlConfig
+import com.esotericsoftware.yamlbeans.YamlReader
+import com.esotericsoftware.yamlbeans.YamlWriter
 import cz.wa.texturemodifier.settings.Settings
 import java.awt.Color
-import java.io.File
+import java.io.*
 
 /**
  * Class to load/save settings in YML format
  * Also supports reading legacy properties
  */
 object SettingsIO {
-    const val PROPERTIES_EXT = "properties"
-    const val YML_EXT = "yml"
-    const val YAML_EXT = "yaml"
+    private const val PROPERTIES_EXT = "properties"
+    private const val YML_EXT = "yml"
+    private const val YAML_EXT = "yaml"
+
+    private val config: YamlConfig = YamlConfig().apply {
+        setClassTag("settings", Settings::class.java)
+        setClassTag("color", Color::class.java)
+
+        // custom serializer
+        setScalarSerializer(Color::class.java, ColorSerializer())
+    }
 
     fun load(file: File): Settings {
         if (isProperties(file)) {
             return PropertiesSettingsParser.parseFile(file)
         }
         if (isYml(file)) {
-            return mapper.readValue(file)
+            val reader = YamlReader(FileReader(file), config)
+            return reader.read(Settings::class.java)
         }
-        throw IllegalArgumentException("Unsupported format: " + file.extension)
+        throw IllegalArgumentException("Unsupported format: ${file.extension}")
     }
 
     fun save(file: File, settings: Settings) {
@@ -32,18 +40,25 @@ object SettingsIO {
             throw IllegalArgumentException("Settings cannot be saved as obsolete properties, use yml instead")
         }
         if (isYml(file)) {
-            mapper.writeValue(file, settings)
+            val writer = YamlWriter(FileWriter(file), config)
+            writer.write(settings)
+            writer.close()
             return
         }
-        throw IllegalArgumentException("Unsupported format: " + file.extension)
+        throw IllegalArgumentException("Unsupported format: ${file.extension}")
     }
 
     fun loadFromString(ymlContent: String): Settings {
-        return mapper.readValue(ymlContent)
+        val reader = YamlReader(StringReader(ymlContent), config)
+        return reader.read(Settings::class.java)
     }
 
     fun saveToString(settings: Settings): String {
-        return mapper.writeValueAsString(settings)
+        val writer = StringWriter()
+        val yamlWriter = YamlWriter(writer, config)
+        yamlWriter.write(settings)
+        yamlWriter.close()
+        return writer.toString()
     }
 
     fun isYml(file: File): Boolean =
@@ -51,12 +66,4 @@ object SettingsIO {
 
     fun isProperties(file: File): Boolean =
         file.extension.equals(PROPERTIES_EXT, true)
-
-    private val mapper = YAMLMapper().apply {
-        registerKotlinModule()
-        registerModule(SimpleModule().apply {
-            addDeserializer(Color::class.java, ColorDeserializer())
-            addSerializer(Color::class.java, ColorSerializer())
-        })
-    }
 }
