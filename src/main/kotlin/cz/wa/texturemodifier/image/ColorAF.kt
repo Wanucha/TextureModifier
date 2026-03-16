@@ -33,6 +33,10 @@ class ColorAF(val r: Float, val g: Float, val b: Float, val a: Float) {
 	fun toColor() = Color(rgba)
 
 	companion object {
+        val FUCHSIA = ColorAF(255, 0, 255, 255)
+        val WHITE = ColorAF(255, 255, 255, 255)
+        val BLACK = ColorAF(0, 0, 0, 0)
+
 		fun parse(s: String) =
 			ColorAF(Integer.parseInt(s.replaceFirst("#", ""), 16))
 	}
