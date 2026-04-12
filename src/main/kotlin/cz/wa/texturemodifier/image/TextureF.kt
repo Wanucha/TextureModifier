@@ -8,17 +8,17 @@ import java.awt.image.BufferedImage
  * Creates new texture made of ColorF pixels from existing image.
  */
 class TextureF(val width: Int, val height: Int) {
-	val pixels: Array<Array<ColorF>>
+	val pixels: Array<Array<ColorAF>>
 	val size = Vec2i(width, height)
 
 	init {
-		pixels = Array(width) { Array(height) { ColorF.BLACK } }
+		pixels = Array(width) { Array(height) { ColorAF.BLACK } }
 	}
 
 	constructor(tex: Texture) : this(tex.width, tex.height) {
 		for (y in 0 until tex.height) {
 			for (x in 0 until tex.width) {
-				pixels[x][y] = ColorF(tex.getPoint(x, y))
+				pixels[x][y] = ColorAF(tex.getPoint(x, y))
 			}
 		}
 	}
@@ -36,7 +36,7 @@ class TextureF(val width: Int, val height: Int) {
 		val tex = Texture(ret)
 		for (y in 0 until height) {
 			for (x in 0 until width) {
-				tex.setPoint(x, y, pixels[x][y].rgb)
+				tex.setPoint(x, y, pixels[x][y].rgba)
 			}
 		}
 		return ret

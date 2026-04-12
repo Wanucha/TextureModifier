@@ -1,6 +1,7 @@
 package cz.wa.texturemodifier.command
 
 import cz.wa.texturemodifier.gui.utils.MathUtils
+import cz.wa.texturemodifier.image.ColorAF
 import cz.wa.texturemodifier.image.ColorF
 import cz.wa.texturemodifier.image.Texture
 import cz.wa.texturemodifier.image.TextureF
@@ -58,10 +59,11 @@ class BlurCommand(settings: Settings) : AbstractCommand(settings) {
 			"* radius - radius of the blur\n" +
 			"* ratio - merges blurred result with original image, 1 means fully blurred, 0.5 means average between original and blurred"
 
-	private fun blurPixel(source: TextureF, core: FloatArray, x: Int, y: Int, dirX: Boolean): ColorF {
+	private fun blurPixel(source: TextureF, core: FloatArray, x: Int, y: Int, dirX: Boolean): ColorAF {
 		var r = 0f
 		var g = 0f
 		var b = 0f
+        var a = 0f
 
 		val d = core.size / 2
 		for (i in core.indices) {
@@ -72,8 +74,9 @@ class BlurCommand(settings: Settings) : AbstractCommand(settings) {
 			r += c.r * cr
 			g += c.g * cr
 			b += c.b * cr
+            a += c.a * cr
 		}
-		return ColorF(r, g, b)
+		return ColorAF(r, g, b, a)
 	}
 
 	private fun generateCore(radius: Double): FloatArray {
